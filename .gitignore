@@ -1,0 +1,6 @@
+target/*
+resources/*
+*catalog-v001.xml
+*.DS_Store
+nb-configuration.xml
+logging.properties
