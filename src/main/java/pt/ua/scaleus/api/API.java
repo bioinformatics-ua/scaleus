@@ -48,6 +48,8 @@ public class API {
     }
 
     public final void initDatasets() {
+        File mainDir = new File(directory);
+        if(!mainDir.exists()) mainDir.mkdir();
         String[] datasets_list = getDatasetsList();
         for (String dataset : datasets_list) {
             getDataset(dataset);
