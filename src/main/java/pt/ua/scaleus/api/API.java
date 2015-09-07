@@ -35,8 +35,8 @@ import org.apache.log4j.Logger;
 public class API {
 
     private static final Logger logger = Logger.getLogger(API.class.getName());
-    String input = "resources/data/output.rdf";
-    String directory = "resources/";
+    //String input = "resources/data/output.rdf";
+    String directory = "datasets/";
     HashMap<String, Dataset> datasets = new HashMap<>();
 
     public HashMap<String, Dataset> getDatasets() {
@@ -62,15 +62,7 @@ public class API {
      * @return
      */
     public String[] getDatasetsList() {
-
-        File src = new File(directory);
-        String dir[] = src.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return dir.isDirectory();
-            }
-        });
-        return dir;
+        return Utils.getFolderContentList(directory);
     }
 
     /**
@@ -147,57 +139,12 @@ public class API {
             File nameFile = new File(directory + name);
             if (nameFile.exists()) {
                 logger.debug("Deleting: " + nameFile.getAbsolutePath());
-                deleteDirectory(nameFile);
+                Utils.deleteDirectory(nameFile);
             }
         }
     }
 
-    /**
-     * Delete a Directory.
-     *
-     * @param file
-     * @throws IOException
-     */
-    public static void deleteDirectory(File file)
-            throws IOException {
-
-        if (file.isDirectory()) {
-
-            //directory is empty, then delete it
-            if (file.list().length == 0) {
-
-                file.delete();
-                logger.debug("Directory is deleted : "
-                        + file.getAbsolutePath());
-
-            } else {
-
-                //list all the directory contents
-                String files[] = file.list();
-
-                for (String temp : files) {
-
-                    //construct the file structure
-                    File fileDelete = new File(file, temp);
-
-                    //recursive delete
-                    deleteDirectory(fileDelete);
-                }
-
-                //check the directory again, if empty then delete it
-                if (file.list().length == 0) {
-                    file.delete();
-                    logger.debug("Directory is deleted : "
-                            + file.getAbsolutePath());
-                }
-            }
-
-        } else {
-            //if file, then delete it
-            file.delete();
-            logger.debug("File is deleted : " + file.getAbsolutePath());
-        }
-    }
+ 
 
     /**
      * Perform a SPARQL SELECT query with inference to TDB.
@@ -258,7 +205,7 @@ public class API {
         return describedModel;
     }
 
-    public void read(String database) {
+    public void read(String database, String input) {
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {

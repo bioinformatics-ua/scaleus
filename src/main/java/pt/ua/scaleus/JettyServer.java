@@ -8,6 +8,11 @@ package pt.ua.scaleus;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -17,18 +22,45 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import pt.ua.scaleus.api.Init;
+
 /**
  *
  * @author Pedro Sernadela <sernadela at ua.pt>
  */
 public class JettyServer {
+
     static final String WEBAPPDIR_STATIC = "webapp/WEB-INF/static";
     static final String WEBAPPDIR_APP = "webapp/WEB-INF/app";
 
     public static void main(String[] args) {
         
-        Server jettyServer = new Server(80);
-        
+        int port = 80;
+        String database = "default";
+        String data_import = "resources/";
+
+        try {
+            Options options = new Options();
+            options.addOption("p", "port", true, "Server port");
+            options.addOption("d", "database", true, "Database name");
+            options.addOption("i", "import", true, "Folder or file location to import");
+            CommandLineParser parser = new DefaultParser();
+            CommandLine cmd = parser.parse(options, args);
+            if( cmd.hasOption( "p" ) ) {
+                String cmd_port = cmd.getOptionValue( "p" );
+                port = Integer.parseInt(cmd_port);
+            }
+            if( cmd.hasOption( "d" ) && cmd.hasOption( "i" ) ) {
+                database = cmd.getOptionValue( "d" );
+                data_import = cmd.getOptionValue( "i" );
+            }
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+   
+
+        Server jettyServer = new Server(port);
+
         URL warURL = JettyServer.class.getClassLoader().getResource(WEBAPPDIR_STATIC);
         //System.err.println(warURL);
         final String warURLString_statics = warURL.toExternalForm();
@@ -44,13 +76,12 @@ public class JettyServer {
         appContext.setContextPath("/app/");
         appContext.setResourceBase(warURLString_app);
         appContext.addServlet(DefaultServlet.class, "/");
-        
+
         ServletContextHandler servletContextHandler = new ServletContextHandler(jettyServer, "/api/", true, false);
         ServletHolder jerseyServlet = servletContextHandler.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
         jerseyServlet.setInitOrder(0);
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
-
 
         Handler[] sh = jettyServer.getHandlers();
         Handler[] h = new Handler[sh.length + 2];
@@ -60,14 +91,15 @@ public class JettyServer {
         handlers.setHandlers(h);
 
         jettyServer.setHandler(handlers);
-        
+
         try {
             Init.getAPI();
+            Init.dataImport(database, data_import);
             jettyServer.start();
             jettyServer.join();
         } catch (Exception e) {
             Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, e);
-        }finally {
+        } finally {
             jettyServer.destroy();
         }
     }
