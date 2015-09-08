@@ -5,15 +5,8 @@
  */
 package pt.ua.scaleus.service.query;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import pt.ua.scaleus.service.data.Namespace;
 import pt.ua.scaleus.service.data.Triple;
@@ -24,43 +17,23 @@ import pt.ua.scaleus.service.data.Triple;
  */
 public interface IService {
 
-    @GET
-    @Path("/sparqler/{dataset}/sparql")
-    public abstract Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query);
+    public abstract Response sparqler(String dataset, String query);
 
-    @GET
-    @Path("/resource/{database}/{prefix}/{id}/{format}")
-    public abstract Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("id") String id, @PathParam("format") String format);
+    public abstract Response resource(String database, String prefix, String id, String format);
 
-    @POST
-    @Path("/dataset/{name}")
-    public abstract Response addDataset(@PathParam("name") String name);
+    public abstract Response addDataset(String name);
 
-    @DELETE
-    @Path("/dataset/{name}")
-    public abstract Response removeDataset(@PathParam("name") String name);
+    public abstract Response removeDataset(String name);
 
-    @GET
-    @Path("/dataset")
-    @Produces(MediaType.APPLICATION_JSON)
-    public abstract Response listDataset(@PathParam("name") String name);
+    public abstract Response listDataset(String name);
 
-    @GET
-    @Path("/namespaces/{database}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public abstract Response getNamespaces(@PathParam("database") String database);
+    public abstract Response getNamespaces(String database);
 
-    @POST
-    @Path("/namespace/{database}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public abstract Response putNamespace(@PathParam("database") String database, Namespace namespace);
+    public abstract Response putNamespace(String database, Namespace namespace);
 
-    @DELETE
-    @Path("/namespace/{database}/{prefix}")
-    public abstract Response removeNamespace(@PathParam("database") String database, @PathParam("prefix") String prefix);
+    public abstract Response removeNamespace(String database, String prefix);
 
-    @POST
-    @Path("/store/{database}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public abstract Response store(@PathParam("database") String database, Triple triple);
+    public abstract Response storeTriple(String database, Triple triple);
+    
+    public abstract Response removeTriple(String database, Triple triple);
 }

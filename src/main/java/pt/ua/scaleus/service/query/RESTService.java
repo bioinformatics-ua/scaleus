@@ -7,8 +7,6 @@ package pt.ua.scaleus.service.query;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
@@ -43,11 +41,15 @@ public class RESTService implements IService {
 
     API api = Init.getAPI();
 
+    @GET
+    @Path("/sparqler/{dataset}/sparql")
     @Override
-    public Response sparqler(String dataset, String query) {
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query) {
         return Response.status(200).entity(api.select(dataset, query)).build();
     }
 
+    @GET
+    @Path("/resource/{database}/{prefix}/{id}/{format}")
     @Override
     public Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("id") String id, @PathParam("format") String format) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -65,12 +67,16 @@ public class RESTService implements IService {
         return Response.status(200).entity(os.toString()).build();
     }
 
+    @POST
+    @Path("/dataset/{name}")
     @Override
     public Response addDataset(@PathParam("name") String name) {
         api.getDataset(name);
         return Response.status(200).build();
     }
 
+    @DELETE
+    @Path("/dataset/{name}")
     @Override
     public Response removeDataset(@PathParam("name") String name) {
         try {
@@ -81,8 +87,10 @@ public class RESTService implements IService {
         return Response.status(200).build();
     }
 
-    @Override
+    @GET
+    @Path("/dataset")
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response listDataset(@PathParam("name") String name) {
         Set<String> datasets = api.getDatasets().keySet();
         JSONArray json = new JSONArray();
@@ -92,6 +100,9 @@ public class RESTService implements IService {
         return Response.status(200).entity(json.toJSONString()).build();
     }
 
+    @GET
+    @Path("/namespaces/{database}")
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response getNamespaces(@PathParam("database") String database) {
         JSONObject json = null;
@@ -104,6 +115,9 @@ public class RESTService implements IService {
         return Response.status(200).entity(json.toJSONString()).build();
     }
 
+    @POST
+    @Path("/namespace/{database}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response putNamespace(@PathParam("database") String database, Namespace namespace) {
         try {
@@ -117,6 +131,8 @@ public class RESTService implements IService {
         return Response.status(200).build();
     }
 
+    @DELETE
+    @Path("/namespace/{database}/{prefix}")
     @Override
     public Response removeNamespace(@PathParam("database") String database, @PathParam("prefix") String prefix) {
         try {
@@ -128,20 +144,28 @@ public class RESTService implements IService {
         return Response.status(200).build();
     }
 
-//    @POST
-//    @Path("/triple/{s}/{p}/{o}/{format}")
-//    //@Produces("text/plain")
-//    public Response query(@PathParam("format") String dataset, Triple triple) {
-//        return Response.status(200).entity(api.select(dataset, query)).build();
-//    }
+    @POST
+    @Path("/store/{database}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response store(@PathParam("database") String database, Triple triple) {
+    public Response storeTriple(@PathParam("database") String database, Triple triple) {
         System.out.println(triple);
         try {
-            Resource s = api.createResource(database, triple.getS());
-            Property p = api.createProperty(database, triple.getP());
-            Resource o = api.createResource(database, triple.getO());
-            api.addStatement(database, s, p, o);
+            api.addStatement(database, triple);
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Response.status(200).build();
+    }
+
+    @DELETE
+    @Path("/remove/{database}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Override
+    public Response removeTriple(@PathParam("database") String database, Triple triple) {
+        System.out.println(triple);
+        try {
+            api.removeStatement(database, triple);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         }

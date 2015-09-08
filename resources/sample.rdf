@@ -6,7 +6,7 @@
 
     <rdf:Description rdf:about="http://bioinformatics.ua.pt">
 	<dc:title>University of Aveiro</dc:title>
-        <dc:description>A computational biology and biomedical informatics research group</dc:description>
+    <dc:description>A computational biology and biomedical informatics research group</dc:description>
     </rdf:Description>
 
 </rdf:RDF>
