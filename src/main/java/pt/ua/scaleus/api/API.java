@@ -11,6 +11,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -23,10 +24,12 @@ import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
-
+import pt.ua.scaleus.service.data.Triple;
 
 /**
  *
@@ -35,8 +38,8 @@ import org.apache.log4j.Logger;
 public class API {
 
     private static final Logger logger = Logger.getLogger(API.class.getName());
-    String input = "resources/data/output.rdf";
-    String directory = "resources/";
+    //String input = "resources/data/output.rdf";
+    String directory = "datasets/";
     HashMap<String, Dataset> datasets = new HashMap<>();
 
     public HashMap<String, Dataset> getDatasets() {
@@ -48,6 +51,10 @@ public class API {
     }
 
     public final void initDatasets() {
+        File mainDir = new File(directory);
+        if (!mainDir.exists()) {
+            mainDir.mkdir();
+        }
         String[] datasets_list = getDatasetsList();
         for (String dataset : datasets_list) {
             getDataset(dataset);
@@ -60,15 +67,7 @@ public class API {
      * @return
      */
     public String[] getDatasetsList() {
-
-        File src = new File(directory);
-        String dir[] = src.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return dir.isDirectory();
-            }
-        });
-        return dir;
+        return Utils.getFolderContentList(directory);
     }
 
     /**
@@ -145,55 +144,8 @@ public class API {
             File nameFile = new File(directory + name);
             if (nameFile.exists()) {
                 logger.debug("Deleting: " + nameFile.getAbsolutePath());
-                deleteDirectory(nameFile);
+                Utils.deleteDirectory(nameFile);
             }
-        }
-    }
-
-    /**
-     * Delete a Directory.
-     *
-     * @param file
-     * @throws IOException
-     */
-    public static void deleteDirectory(File file)
-            throws IOException {
-
-        if (file.isDirectory()) {
-
-            //directory is empty, then delete it
-            if (file.list().length == 0) {
-
-                file.delete();
-                logger.debug("Directory is deleted : "
-                        + file.getAbsolutePath());
-
-            } else {
-
-                //list all the directory contents
-                String files[] = file.list();
-
-                for (String temp : files) {
-
-                    //construct the file structure
-                    File fileDelete = new File(file, temp);
-
-                    //recursive delete
-                    deleteDirectory(fileDelete);
-                }
-
-                //check the directory again, if empty then delete it
-                if (file.list().length == 0) {
-                    file.delete();
-                    logger.debug("Directory is deleted : "
-                            + file.getAbsolutePath());
-                }
-            }
-
-        } else {
-            //if file, then delete it
-            file.delete();
-            logger.debug("File is deleted : " + file.getAbsolutePath());
         }
     }
 
@@ -246,9 +198,7 @@ public class API {
             System.out.println(query);
             describedModel = qe.execDescribe();
             qe.close();
-            //model.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            model.close();
         } finally {
             dataset.end();
         }
@@ -256,7 +206,7 @@ public class API {
         return describedModel;
     }
 
-    public void read(String database) {
+    public void read(String database, String input) {
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {
@@ -270,20 +220,63 @@ public class API {
     }
 
     /**
-     * Adds the given triple statement to given database.
+     * Removes the given triple statement in the database.
      *
      * @param database
-     * @param subject a Resource for to the statement subject.
-     * @param predicate a Property for the statement predicate.
-     * @param object a Resource for the statement object.
-     * @return success of the operation.
+     * @param triple
      */
-    public boolean addStatement(String database, Resource subject, Property predicate, Resource object) {
+    public void removeStatement(String database, Triple triple) {
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {
             Model model = dataset.getDefaultModel();
-            model.add(subject, predicate, object);
+
+            Resource s = model.createResource(triple.getS());
+            Property p = model.createProperty(triple.getP());
+
+            UrlValidator urlValidator = new UrlValidator();
+            if (urlValidator.isValid(triple.getO())) {
+                Resource o = model.createResource(triple.getO());
+                Statement stat = model.createStatement(s, p, o);
+                model.remove(stat);
+            } else {
+                Statement stat = model.createLiteralStatement(s, p, triple.getO());
+                if (model.contains(stat)) {
+                    model.remove(stat);
+                }
+            }
+
+            dataset.commit();
+            model.close();
+        } finally {
+            dataset.end();
+        }
+    }
+
+    /**
+     * Adds the given triple statement to the database.
+     *
+     * @param database
+     * @param triple
+     * @return success of the operation.
+     */
+    public boolean addStatement(String database, Triple triple) {
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.WRITE);
+        try {
+            Model model = dataset.getDefaultModel();
+
+            Resource s = model.createResource(triple.getS());
+            Property p = model.createProperty(database, triple.getP());
+
+            UrlValidator urlValidator = new UrlValidator();
+            if (urlValidator.isValid(triple.getO())) {
+                Resource o = model.createResource(triple.getO());
+                model.add(s, p, o);
+            } else {
+                model.add(s, p, triple.getO());
+            }
+
             dataset.commit();
             model.close();
         } finally {
@@ -292,60 +285,4 @@ public class API {
         return true;
     }
 
-    /**
-     * Adds the given triple statement to given database.
-     *
-     * @param database
-     * @param subject a Resource for to the statement subject.
-     * @param predicate a Property for the statement predicate.
-     * @param object a Resource for the statement object.
-     * @return success of the operation.
-     */
-    public boolean addStatement(String database, Resource subject, Property predicate, String object) {
-
-        Dataset dataset = getDataset(database);
-        dataset.begin(ReadWrite.WRITE);
-        try {
-            Model model = dataset.getDefaultModel();
-            model.add(subject, predicate, object);
-            dataset.commit();
-            model.close();
-        } finally {
-            dataset.end();
-        }
-        return true;
-    }
-
-    /**
-     * Creates a new Resource.
-     *
-     * @param database
-     * @param uri the URI for the new Resource.
-     * @return the newly created Resource.
-     */
-    public Resource createResource(String database, String uri) {
-        Dataset dataset = getDataset(database);
-        Model model = dataset.getDefaultModel();
-        Resource resource = model.createResource(uri);
-        model.close();
-
-        return resource;
-    }
-
-    /**
-     * Creates a new Resource.
-     *
-     * @param database
-     * @param uri the URI for the new Resource.
-     * @return the newly created Resource.
-     */
-    public Property createProperty(String database, String uri) {
-
-        Dataset dataset = getDataset(database);
-        Model model = dataset.getDefaultModel();
-        Property property = model.createProperty(uri);
-        model.close();
-
-        return property;
-    }
 }
