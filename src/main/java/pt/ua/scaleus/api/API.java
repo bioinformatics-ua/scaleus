@@ -17,6 +17,7 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
@@ -27,8 +28,14 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import pt.ua.scaleus.service.data.Triple;
 
 /**
@@ -178,32 +185,89 @@ public class API {
     }
 
     /**
-     * Perform a SPARQL DESCRIBE query to TDB.
+     * DESCRIBES a resource in the TDB.
      *
      * @param database
-     * @param resource
+     * @param prefix
+     * @param id
+     * @param format
      * @return
      */
-    public Model describe(String database, String resource) {
-        String queryString = getSparqlPrefixes(database) + "DESCRIBE " + resource;
+    public String describeResource(String database, String prefix, String id, String format) {
         Model describedModel = ModelFactory.createDefaultModel();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
-
         try {
             Model model = dataset.getDefaultModel();
-            Query query = QueryFactory.create(queryString);
-            System.out.println(query.isDescribeType());
-            QueryExecution qe = QueryExecutionFactory.create(query, model);
-            System.out.println(query);
-            describedModel = qe.execDescribe();
-            qe.close();
-            model.close();
+            String namespace = model.getNsPrefixMap().get(prefix);
+            Resource resource = model.getResource(namespace + id);
+            StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
+            describedModel.add(stat);
+            describedModel.setNsPrefixes(model.getNsPrefixMap());
+            switch (format) {
+                case "js":
+                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFJSON);
+                    break;
+                case "rdf":
+                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+                    break;
+                case "ttl":
+                    RDFDataMgr.write(os, describedModel, RDFFormat.TTL);
+                    break;
+                default:
+                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+            }
         } finally {
             dataset.end();
         }
 
-        return describedModel;
+        return os.toString();
+    }
+
+    /**
+     * Executes SPARQL queries.
+     *
+     * @param qe Jena QueryExecution object.
+     * @param format expected return format.
+     * @return
+     */
+    private String execute(QueryExecution qe, String format) {
+        String response = "";
+        try {
+            ResultSet rs = qe.execSelect();
+            switch (format) {
+                case "txt":
+                case "text":
+                    response = ResultSetFormatter.asText(rs);
+                    break;
+                case "json":
+                case "js": {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ResultSetFormatter.outputAsJSON(os, rs);
+                    response = os.toString();
+                    break;
+                }
+                case "xml":
+                    response = ResultSetFormatter.asXMLString(rs);
+                    break;
+                case "rdf": {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_XML);
+                    response = os.toString();
+                    break;
+                }
+                case "csv": {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ResultSetFormatter.outputAsCSV(os, rs);
+                    response = os.toString();
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+
+        }
+        return response;
     }
 
     public void read(String database, String input) {
@@ -267,7 +331,7 @@ public class API {
             Model model = dataset.getDefaultModel();
 
             Resource s = model.createResource(triple.getS());
-            Property p = model.createProperty(database, triple.getP());
+            Property p = model.createProperty(triple.getP());
 
             UrlValidator urlValidator = new UrlValidator();
             if (urlValidator.isValid(triple.getO())) {

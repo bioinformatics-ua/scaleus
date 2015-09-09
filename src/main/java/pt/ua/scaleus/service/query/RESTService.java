@@ -5,9 +5,6 @@
  */
 package pt.ua.scaleus.service.query;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +20,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import pt.ua.scaleus.api.API;
@@ -50,21 +45,16 @@ public class RESTService implements IService {
 
     @GET
     @Path("/resource/{database}/{prefix}/{id}/{format}")
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("id") String id, @PathParam("format") String format) {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        Model m = ModelFactory.createDefaultModel();
+        String response="";
         try {
-            String resource = prefix + ":" + id;
-            m = api.describe(database, resource);
-            RDFDataMgr.write(os, m, RDFFormat.RDFXML);
+            response = api.describeResource(database, prefix, id, format);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            m.close();
-        }
-
-        return Response.status(200).entity(os.toString()).build();
+        } 
+        return Response.status(200).entity(response).build();
     }
 
     @POST
