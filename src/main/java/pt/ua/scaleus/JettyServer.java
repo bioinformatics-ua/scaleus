@@ -27,7 +27,7 @@ public class JettyServer {
 
     public static void main(String[] args) {
         
-        Server jettyServer = new Server(80);
+        Server jettyServer = new Server(8000);
         
         URL warURL = JettyServer.class.getClassLoader().getResource(WEBAPPDIR_STATIC);
         //System.err.println(warURL);
