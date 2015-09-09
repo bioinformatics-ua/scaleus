@@ -1,15 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="scaleusApp">
 
-    <head>
-        <title>Title</title>
+<head>
+<title>Scaleus</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+<!-- <script src="https://code.angularjs.org/1.4.5/angular-resource.min.js "></script>  -->
+<script src="scaleus.js"></script>
+</head>
 
-    </head>
+<body>
+	<a href="sample.html">Go to sample</a>
+	<div data-ng-controller="appController as DBList">
+		<br>
 
-    <body>
-        
-        <a href="sample.html">Go to sample</a>
+		<div>
+			<form name="delDB">
+				<select data-ng-click="DBList.getNamespaces()"
+					data-ng-model="selectedDB"
+					data-ng-options="opt as opt for opt in DBList.dataset" required>
+				</select>
+				<button data-ng-click="DBList.removeDatabase()">Remove</button>
+			</form>
+			<br>
+			<form name="addDB">
+				<input type="text" placeholder="DB name"
+					data-ng-model="formDatabase" data-ng-model-instant required>
+				<button data-ng-click="DBList.addDatabase()">Add Database</button>
+			</form>
+		</div>
 
-    </body>
+		<br>
+
+		<div ng-show="selectedDB">
+			<div>
+				<ul class="unstyled">
+					<li data-ng-repeat="ns in DBList.modelContainer"><input
+						type="checkbox" data-ng-model="ns.checked"
+						data-ng-click="DBList.setPrefix()" /> <span>{{ns.item.prefix}}</span>
+						<button data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
+					</li>
+				</ul>
+				<br>
+				<form name="addNS">
+					<input type="text" placeholder="Prefix" data-ng-model="formPrefix"
+						data-ng-model-instant required> <input type="text"
+						placeholder="Namespace" data-ng-model="formNamespace"
+						data-ng-model-instant required>
+					<button data-ng-click="DBList.putNamespace()">Add
+						Namespace</button>
+				</form>
+			</div>
+
+			<br>
+			<div>
+				<div
+					data-ng-repeat="ns in DBList.modelContainer | filter:{checked:true}">
+					{{ns.item.prefix}}:{{ns.item.namespace}}</div>
+				<form name="querySPARQL">
+					<textarea placeholder="Write your SPARQL query here"
+						data-ng-model="formSPARQL" data-ng-model-instant rows="16"
+						cols="60" required></textarea>
+					<button data-ng-click="DBList.sparqler()">Get data</button>
+				</form>
+			</div>
+			<br>
+		</div>
+	</div>
+</body>
 
 </html>

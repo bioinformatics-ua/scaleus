@@ -4,3 +4,7 @@ datasets/*
 *.DS_Store
 nb-configuration.xml
 logging.properties
+/target/
+.project
+.classpath
+.settings/*
