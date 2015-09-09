@@ -10,7 +10,7 @@ app.controller('appController', function($scope, $http) {
 
 	// GET datasets
 	DBList.getDatasets = function () {
-		$http.get("http://localhost:8000/api/v1/dataset/")
+		$http.get("../api/v1/dataset/")
 		.then(function (response) {
 			DBList.dataset = response.data;
 		});
@@ -20,7 +20,7 @@ app.controller('appController', function($scope, $http) {
 	DBList.addDatabase = function () {
 		if ($scope.formDatabase) {
 			console.log('adding DB '+$scope.formDatabase+'\n');
-			$http.post("http://localhost:8000/api/v1/dataset/"+$scope.formDatabase,{})
+			$http.post("../api/v1/dataset/"+$scope.formDatabase,{})
 			.then(function (response) {
 				DBList.getDatasets();
 				$scope.formDatabase = "";
@@ -34,7 +34,7 @@ app.controller('appController', function($scope, $http) {
 	DBList.removeDatabase = function () {
 		if ($scope.selectedDB) {
 			console.log('removing '+$scope.selectedDB+'\n');
-			$http.delete("http://localhost:8000/api/v1/dataset/"+$scope.selectedDB)
+			$http.delete("../api/v1/dataset/"+$scope.selectedDB)
 			.then(function (response) {
 				console.log(response);
 				DBList.getDatasets();
@@ -47,7 +47,7 @@ app.controller('appController', function($scope, $http) {
 	// GET namespaces
 	DBList.getNamespaces = function () {
 		if ($scope.selectedDB) {
-			$http.get("http://localhost:8000/api/v1/namespaces/"+$scope.selectedDB)
+			$http.get("../api/v1/namespaces/"+$scope.selectedDB)
 			.then(function (response) {
 				DBList.namespaces = response.data;
 				DBList.modelContainer = [];
@@ -61,7 +61,7 @@ app.controller('appController', function($scope, $http) {
 	// POST namespaces
 	DBList.putNamespace = function () {
 		if ( $scope.formPrefix && $scope.formNamespace ) {
-			$http.post("http://localhost:8000/api/v1/namespace/"+$scope.selectedDB, {'prefix': $scope.formPrefix, 'namespace': $scope.formNamespace})
+			$http.post("../api/v1/namespace/"+$scope.selectedDB, {'prefix': $scope.formPrefix, 'namespace': $scope.formNamespace})
 			.then(function (response) {
 				console.log(response);
 				// TODO dont uncheck checked namespaces
@@ -76,7 +76,7 @@ app.controller('appController', function($scope, $http) {
 
 	// DELETE namespace
 	DBList.removeNamespace = function (prefix) {
-		$http.delete("http://localhost:8000/api/v1/namespace/"+$scope.selectedDB+"/"+prefix)
+		$http.delete("../api/v1/namespace/"+$scope.selectedDB+"/"+prefix)
 		.then(function (response) {
 			// TODO dont uncheck checked namespaces
 			DBList.getNamespaces();
@@ -86,8 +86,8 @@ app.controller('appController', function($scope, $http) {
 	// GET query sparql
 	DBList.sparqler = function () {
 		if ($scope.formSPARQL) {
-		console.log("http://localhost:8000/api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL));
-		$http.get("http://localhost:8000/api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL))
+		console.log("../api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL));
+		$http.get("../api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL))
 		.then(function (response) {
 			// TODO show data
 			console.log(response);
