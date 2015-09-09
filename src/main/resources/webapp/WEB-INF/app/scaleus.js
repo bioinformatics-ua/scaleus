@@ -86,8 +86,8 @@ app.controller('appController', function($scope, $http) {
 	// GET query sparql
 	DBList.sparqler = function () {
 		if ($scope.formSPARQL) {
-		console.log("http://localhost:8000/api/v1/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL));
-		$http.get("http://localhost:8000/api/v1/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL))
+		console.log("http://localhost:8000/api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL));
+		$http.get("http://localhost:8000/api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent($scope.formSPARQL))
 		.then(function (response) {
 			// TODO show data
 			console.log(response);
