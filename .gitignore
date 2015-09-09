@@ -5,3 +5,6 @@ datasets/*
 nb-configuration.xml
 logging.properties
 /target/
+.project
+.classpath
+.settings/*
