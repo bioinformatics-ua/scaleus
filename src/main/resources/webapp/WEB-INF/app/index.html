@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="scaleusApp">
+<html data-ng-app="scaleusApp">
 
 <head>
 <title>Scaleus</title>
@@ -15,38 +15,36 @@
 		<br>
 
 		<div>
-			<form name="delDB">
+			<form name="removeDatabase">
 				<select data-ng-click="DBList.getNamespaces()"
 					data-ng-model="selectedDB"
-					data-ng-options="opt as opt for opt in DBList.dataset" required>
+					data-ng-options="opt for opt in DBList.dataset" required>
 				</select>
 				<button data-ng-click="DBList.removeDatabase()">Remove</button>
 			</form>
 			<br>
-			<form name="addDB">
+			<form name="addDatabase">
 				<input type="text" placeholder="DB name"
-					data-ng-model="formDatabase" data-ng-model-instant required>
+					data-ng-model="formDatabase" required>
 				<button data-ng-click="DBList.addDatabase()">Add Database</button>
 			</form>
 		</div>
 
 		<br>
 
-		<div ng-show="selectedDB">
+		<div data-ng-show="selectedDB">
 			<div>
-				<ul class="unstyled">
+				<ul>
 					<li data-ng-repeat="ns in DBList.modelContainer"><input
-						type="checkbox" data-ng-model="ns.checked"
-						data-ng-click="DBList.setPrefix()" /> <span>{{ns.item.prefix}}</span>
+						type="checkbox" data-ng-model="ns.checked" /> <span>{{ns.item.prefix}}</span>
 						<button data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
 					</li>
 				</ul>
 				<br>
-				<form name="addNS">
+				<form name="putNamespace">
 					<input type="text" placeholder="Prefix" data-ng-model="formPrefix"
-						data-ng-model-instant required> <input type="text"
-						placeholder="Namespace" data-ng-model="formNamespace"
-						data-ng-model-instant required>
+						required> <input type="text" placeholder="Namespace"
+						data-ng-model="formNamespace" required>
 					<button data-ng-click="DBList.putNamespace()">Add
 						Namespace</button>
 				</form>
@@ -56,12 +54,35 @@
 			<div>
 				<div
 					data-ng-repeat="ns in DBList.modelContainer | filter:{checked:true}">
-					{{ns.item.prefix}}:{{ns.item.namespace}}</div>
-				<form name="querySPARQL">
+					PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
+				<form name="sparqler">
 					<textarea placeholder="Write your SPARQL query here"
-						data-ng-model="formSPARQL" data-ng-model-instant rows="16"
-						cols="60" required></textarea>
-					<button data-ng-click="DBList.sparqler()">Get data</button>
+						data-ng-model="formSPARQL" rows="16" cols="60" required>{{prefixQuery}}</textarea>
+					<button data-ng-click="DBList.getData()">Get data</button>
+				</form>
+				<table data-ng-show="DBList.queryResults.length != 0">
+					<caption>Query results</caption>
+					<thead>
+						<tr>
+							<td data-ng-repeat="(key, val) in DBList.queryResults[0]"> {{key}} </td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-ng-repeat="result in DBList.queryResults">
+							<td data-ng-repeat="obj in result">{{obj.value}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<form name="manageTriples">
+					<input type="text" placeholder="Subject"
+						data-ng-model="formSubject" required> 
+					<input type="text"
+						placeholder="Predicate" data-ng-model="formPredicate" required>
+					<input type="text" placeholder="Object" data-ng-model="formObject"
+						required>
+					<br>
+					<button data-ng-click="DBList.addTriple()">Add triple</button>
+					<button data-ng-click="DBList.removeTriple()">Remove triple</button>
 				</form>
 			</div>
 			<br>
