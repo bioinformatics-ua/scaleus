@@ -78,7 +78,6 @@ app.controller('appController', function($scope, $http) {
 			$http.post("../api/v1/namespace/"+$scope.selectedDB, {'prefix': $scope.formPrefix, 'namespace': $scope.formNamespace})
 			.then(function (response) {
 				console.log(response);
-				// TODO dont uncheck checked namespaces
 				DBList.getNamespaces();
 				$scope.formPrefix = "";
 				$scope.formNamespace = "";
@@ -95,7 +94,6 @@ app.controller('appController', function($scope, $http) {
 	DBList.removeNamespace = function (prefix) {
 		$http.delete("../api/v1/namespace/"+$scope.selectedDB+"/"+prefix)
 		.then(function (response) {
-			// TODO dont uncheck checked namespaces
 			DBList.getNamespaces();
 		}, function (response) {
 			// an error occured

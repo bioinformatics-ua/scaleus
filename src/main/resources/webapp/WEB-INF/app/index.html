@@ -40,7 +40,6 @@
 						<button data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
 					</li>
 				</ul>
-				<br>
 				<form name="putNamespace">
 					<input type="text" placeholder="Prefix" data-ng-model="formPrefix"
 						required> <input type="text" placeholder="Namespace"
@@ -64,7 +63,8 @@
 					<caption>Query results</caption>
 					<thead>
 						<tr>
-							<td data-ng-repeat="(key, val) in DBList.queryResults[0]"> {{key}} </td>
+							<td data-ng-repeat="(key, val) in DBList.queryResults[0]">
+								{{key}}</td>
 						</tr>
 					</thead>
 					<tbody>
@@ -73,20 +73,20 @@
 						</tr>
 					</tbody>
 				</table>
+
 				<form name="manageTriples">
 					<input type="text" placeholder="Subject"
-						data-ng-model="formSubject" required> 
-					<input type="text"
+						data-ng-model="formSubject" required> <input type="text"
 						placeholder="Predicate" data-ng-model="formPredicate" required>
 					<input type="text" placeholder="Object" data-ng-model="formObject"
-						required>
-					<br>
+						required> <br>
 					<button data-ng-click="DBList.addTriple()">Add triple</button>
-					<button data-ng-click="DBList.removeTriple()">Remove triple</button>
+					<button data-ng-click="DBList.removeTriple()">Remove
+						triple</button>
 				</form>
 			</div>
-			<br>
 		</div>
+
 	</div>
 </body>
 
