@@ -24,7 +24,6 @@ app.controller('appController', function($scope, $http) {
 	// POST new database
 	DBList.addDatabase = function () {
 		if ($scope.formDatabase) {
-			console.log('adding DB '+$scope.formDatabase+'\n');
 			$http.post("../api/v1/dataset/"+$scope.formDatabase,{})
 			.then(function (response) {
 				DBList.getDatasets();
@@ -41,7 +40,6 @@ app.controller('appController', function($scope, $http) {
 	// DELETE database
 	DBList.removeDatabase = function () {
 		if ($scope.selectedDB) {
-			console.log('removing '+$scope.selectedDB+'\n');
 			$http.delete("../api/v1/dataset/"+$scope.selectedDB)
 			.then(function (response) {
 				console.log(response);
@@ -167,17 +165,25 @@ app.controller('appController', function($scope, $http) {
 			DBList.sparqler();
 		} else {
 			alert("Write your query");
-		}
-	}
+		};
+	};
 
 	DBList.checkedPrefix = function() {
 		var prefix = "";
 		angular.forEach(DBList.modelContainer, function(ns) {
 			if (ns.checked) {
 				prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
-			}
+			};
 		});
 		return prefix;
+	};
+	
+	DBList.getAll = function () {
+		$scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n}';
+	};
+	
+	DBList.countAll = function () {
+		$scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
 	};
 
 	DBList.getDatasets();

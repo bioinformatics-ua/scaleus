@@ -7,11 +7,11 @@
 <meta name="generator" content="Bootply" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
 <!--[if lt IE 9]>
 			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-<link href="css/styles.css" rel="stylesheet">
+<link href="/css/styles.css" rel="stylesheet">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 <script src="scaleus.js"></script>
@@ -127,6 +127,13 @@
 					</div>
 
 					<hr>
+					
+					<h3>Predefined queries</h3>
+					<div>
+				      <button class="btn btn-xs btn-default" data-ng-click="DBList.getAll()">Get all</button>
+				      <button class="btn btn-xs btn-default" data-ng-click="DBList.countAll()">Count all</button>
+  					</div>
+  					<br>
 					<div>
 						<div
 							data-ng-repeat="ns in DBList.modelContainer | filter:{checked:true}">
@@ -134,7 +141,7 @@
 						<form class="form-horizontal well" name="sparqler">
 							<textarea class="form-control input-xlarge"
 								placeholder="Write your SPARQL query here"
-								data-ng-model="formSPARQL" rows="16" cols="60" required>{{prefixQuery}}</textarea>
+								data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
 							<div class="form-actions">
 								<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
 									data</button>
@@ -153,7 +160,10 @@
 								</thead>
 								<tbody>
 									<tr data-ng-repeat="result in DBList.queryResults">
-										<td data-ng-repeat="obj in result">{{obj.value}}</td>
+										<td data-ng-repeat="obj in result" data-ng-switch="obj.type == 'uri'">
+											<a data-ng-href="{{obj.value}}" data-ng-switch-when="true">{{obj.value}}</a>
+											<span data-ng-switch-when="false">{{obj.value}}</span>
+										</td>
 									</tr>
 								</tbody>
 							</table>
