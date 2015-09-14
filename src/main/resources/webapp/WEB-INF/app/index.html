@@ -1,93 +1,202 @@
 <!DOCTYPE html>
-<html data-ng-app="scaleusApp">
-
+<html lang="en" data-ng-app="scaleusApp">
 <head>
-<title>Scaleus</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Dashboard with Off-canvas Sidebar</title>
+<meta name="generator" content="Bootply" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+<link href="css/styles.css" rel="stylesheet">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-<!-- <script src="https://code.angularjs.org/1.4.5/angular-resource.min.js "></script>  -->
 <script src="scaleus.js"></script>
 </head>
-
-<body>
-	<a href="sample.html">Go to sample</a>
-	<div data-ng-controller="appController as DBList">
-		<br>
-
-		<div>
-			<form name="removeDatabase">
-				<select data-ng-click="DBList.getNamespaces()"
-					data-ng-model="selectedDB"
-					data-ng-options="opt for opt in DBList.dataset" required>
-				</select>
-				<button data-ng-click="DBList.removeDatabase()">Remove</button>
-			</form>
-			<br>
-			<form name="addDatabase">
-				<input type="text" placeholder="DB name"
-					data-ng-model="formDatabase" required>
-				<button data-ng-click="DBList.addDatabase()">Add Database</button>
-			</form>
-		</div>
-
-		<br>
-
-		<div data-ng-show="selectedDB">
-			<div>
-				<ul>
-					<li data-ng-repeat="ns in DBList.modelContainer"><input
-						type="checkbox" data-ng-model="ns.checked" /> <span>{{ns.item.prefix}}</span>
-						<button data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
-					</li>
+<body data-ng-controller="appController as DBList">
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">SCALEUS</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Dashboard</a></li>
+					<li><a href="#">Settings</a></li>
+					<li><a href="#">Profile</a></li>
+					<li><a href="#">Help</a></li>
 				</ul>
-				<form name="putNamespace">
-					<input type="text" placeholder="Prefix" data-ng-model="formPrefix"
-						required> <input type="text" placeholder="Namespace"
-						data-ng-model="formNamespace" required>
-					<button data-ng-click="DBList.putNamespace()">Add
-						Namespace</button>
-				</form>
-			</div>
-
-			<br>
-			<div>
-				<div
-					data-ng-repeat="ns in DBList.modelContainer | filter:{checked:true}">
-					PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
-				<form name="sparqler">
-					<textarea placeholder="Write your SPARQL query here"
-						data-ng-model="formSPARQL" rows="16" cols="60" required>{{prefixQuery}}</textarea>
-					<button data-ng-click="DBList.getData()">Get data</button>
-				</form>
-				<table data-ng-show="DBList.queryResults.length != 0">
-					<caption>Query results</caption>
-					<thead>
-						<tr>
-							<td data-ng-repeat="(key, val) in DBList.queryResults[0]">
-								{{key}}</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr data-ng-repeat="result in DBList.queryResults">
-							<td data-ng-repeat="obj in result">{{obj.value}}</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<form name="manageTriples">
-					<input type="text" placeholder="Subject"
-						data-ng-model="formSubject" required> <input type="text"
-						placeholder="Predicate" data-ng-model="formPredicate" required>
-					<input type="text" placeholder="Object" data-ng-model="formObject"
-						required> <br>
-					<button data-ng-click="DBList.addTriple()">Add triple</button>
-					<button data-ng-click="DBList.removeTriple()">Remove
-						triple</button>
+				<form class="navbar-form navbar-right">
+					<input type="text" class="form-control" placeholder="Search...">
 				</form>
 			</div>
 		</div>
+	</nav>
 
+	<div class="container-fluid">
+
+		<div class="row row-offcanvas row-offcanvas-left">
+
+			<div class="col-sm-3 col-md-2 sidebar-offcanvas" id="sidebar"
+				role="navigation">
+
+				<ul class="nav nav-sidebar">
+					<li class="active"><a href="#">Overview</a></li>
+					<li><a href="#">Reports</a></li>
+					<li><a href="#">Analytics</a></li>
+					<li><a href="#">Export</a></li>
+				</ul>
+				<ul class="nav nav-sidebar">
+					<li><a href="">Nav item</a></li>
+					<li><a href="">Nav item again</a></li>
+					<li><a href="">One more nav</a></li>
+					<li><a href="">Another nav item</a></li>
+					<li><a href="">More navigation</a></li>
+				</ul>
+
+			</div>
+			<!--/span-->
+
+			<div class="col-sm-9 col-md-10 main">
+
+				<!--toggle sidebar button-->
+				<p class="visible-xs">
+					<button type="button" class="btn btn-primary btn-xs"
+						data-toggle="offcanvas">
+						<i class="glyphicon glyphicon-chevron-left"></i>
+					</button>
+				</p>
+
+				<h1 class="page-header">Dashboard</h1>
+
+				<h3>Select database</h3>
+				<form class="form-inline well" name="removeDatabase">
+					<div class="col-md-3">
+						<select class="form-control"
+							data-ng-click="DBList.getNamespaces()" data-ng-model="selectedDB"
+							data-ng-options="opt for opt in DBList.dataset" required>
+						</select>
+					</div>
+					<button class="btn btn-danger"
+						data-ng-click="DBList.removeDatabase()">Remove</button>
+				</form>
+				<form class="form-inline well" name="addDatabase">
+					<div class="col-md-3">
+						<input type="text" class="form-control" placeholder="DB name"
+							data-ng-model="formDatabase" required>
+					</div>
+					<button class="btn btn-success"
+						data-ng-click="DBList.addDatabase()">Add Database</button>
+				</form>
+
+
+				<hr>
+
+				<div data-ng-show="selectedDB">
+					<div>
+						<ul>
+							<li data-ng-repeat="ns in DBList.modelContainer">
+								<div class="checkbox">
+									<input type="checkbox" data-ng-model="ns.checked" /> <span>{{ns.item.prefix}}</span>
+									<button class="btn btn-danger"
+										data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
+								</div>
+							</li>
+						</ul>
+						<form class="form-inline well" name="putNamespace">
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Prefix"
+									data-ng-model="formPrefix" required>
+							</div>
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Namespace"
+									data-ng-model="formNamespace" required>
+							</div>
+							<button class="btn btn-success"
+								data-ng-click="DBList.putNamespace()">Add Namespace</button>
+						</form>
+					</div>
+
+					<hr>
+					<div>
+						<div
+							data-ng-repeat="ns in DBList.modelContainer | filter:{checked:true}">
+							PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
+						<form class="form-horizontal well" name="sparqler">
+							<textarea class="form-control input-xlarge"
+								placeholder="Write your SPARQL query here"
+								data-ng-model="formSPARQL" rows="16" cols="60" required>{{prefixQuery}}</textarea>
+							<div class="form-actions">
+								<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
+									data</button>
+							</div>
+						</form>
+						<h2 class="sub-header"
+							data-ng-show="DBList.queryResults.length != 0">Query results</h2>
+						<div class="table-responsive">
+							<table class="table table-striped"
+								data-ng-show="DBList.queryResults.length != 0">
+								<thead>
+									<tr>
+										<th data-ng-repeat="(key, val) in DBList.queryResults[0]">
+											{{key}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr data-ng-repeat="result in DBList.queryResults">
+										<td data-ng-repeat="obj in result">{{obj.value}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<hr>
+						<form class="form-inline well" name="manageTriples">
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Subject"
+									data-ng-model="formSubject" required>
+							</div>
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Predicate"
+									data-ng-model="formPredicate" required>
+							</div>
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Object"
+									data-ng-model="formObject" required>
+							</div>
+							<button class="btn btn-success"
+								data-ng-click="DBList.addTriple()">Add triple</button>
+							<button class="btn btn-danger"
+								data-ng-click="DBList.removeTriple()">Remove triple</button>
+						</form>
+					</div>
+				</div>
+
+			</div>
+			<!--/row-->
+		</div>
 	</div>
-</body>
+	<!--/.container-->
 
+	<footer>
+		<p class="pull-right">
+			©2015 <a target="_blank" title="UA.PT Bioinformatics"
+				href="http://bioinformatics.ua.pt/">University of Aveiro</a>
+		</p>
+	</footer>
+
+	<!-- script references -->
+	<script
+		src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/scripts.js"></script>
+</body>
 </html>
