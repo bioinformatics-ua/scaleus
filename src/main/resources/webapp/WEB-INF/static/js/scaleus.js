@@ -189,7 +189,7 @@ app.controller('appController', function($scope, $http) {
 	};
 	
 	DBList.getAll = function () {
-		$scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n}';
+		$scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n} LIMIT 1000';
 	};
 	
 	DBList.countAll = function () {

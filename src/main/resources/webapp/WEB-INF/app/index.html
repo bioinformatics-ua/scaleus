@@ -33,7 +33,7 @@
             <!-- Navigation -->
             <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="index.html">Scaleus</a>
+                    <a class="navbar-brand" href="triples_manager.html">Scaleus</a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -56,7 +56,7 @@
                                 <!-- /input-group -->
                             </li>
                             <li>
-                                <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                                <a href="triples_manager.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                             </li>
                             <!--
                             <li>
@@ -194,24 +194,7 @@
                                 </table>
                             </div>
                             <hr>
-                            <form class="form-inline well" name="manageTriples">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="Subject"
-                                           data-ng-model="formSubject" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="Predicate"
-                                           data-ng-model="formPredicate" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="Object"
-                                           data-ng-model="formObject" required>
-                                </div>
-                                <button class="btn btn-success"
-                                        data-ng-click="DBList.addTriple()">Add triple</button>
-                                <button class="btn btn-danger"
-                                        data-ng-click="DBList.removeTriple()">Remove triple</button>
-                            </form>
+                            <div ng-include="'triples_manager.html'"></div>
                         </div>
                     </div>
                 </div>

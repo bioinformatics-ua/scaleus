@@ -1,0 +1,18 @@
+<form class="form-inline well" name="manageTriples">
+    <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Subject"
+               data-ng-model="formSubject" required>
+    </div>
+    <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Predicate"
+               data-ng-model="formPredicate" required>
+    </div>
+    <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Object"
+               data-ng-model="formObject" required>
+    </div>
+    <button class="btn btn-success"
+            data-ng-click="DBList.addTriple()">Add triple</button>
+    <button class="btn btn-danger"
+            data-ng-click="DBList.removeTriple()">Remove triple</button>
+</form>
