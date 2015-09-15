@@ -186,7 +186,7 @@
                                     <tbody>
                                         <tr data-ng-repeat="result in DBList.queryResults">
                                             <td data-ng-repeat="obj in result" data-ng-switch="obj.type == 'uri'">
-                                                <a data-ng-href="{{obj.value}}" data-ng-switch-when="true">{{obj.value}}</a>
+                                                <a data-ng-href="{{obj.value}}" target="_self" data-ng-switch-when="true">{{obj.value}}</a>
                                                 <span data-ng-switch-when="false">{{obj.value}}</span>
                                             </td>
                                         </tr>
