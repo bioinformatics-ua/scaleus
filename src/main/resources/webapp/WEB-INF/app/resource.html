@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="scaleusApp">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Scaleus</title>
+<meta name="generator" content="Bootply" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+<link href="/css/styles.css" rel="stylesheet">
+<!-- script references -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+<script src="/js/resource.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/scripts.js"></script>
+</head>
+<body data-ng-controller="appTest as Resource">
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">SCALEUS</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="/app/index.html" target="_self">Dashboard</a></li>
+					<li><a href="#">Settings</a></li>
+					<li><a href="#">Profile</a></li>
+					<li><a href="#">Help</a></li>
+				</ul>
+				<form class="navbar-form navbar-right">
+					<input type="text" class="form-control" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container-fluid">
+
+		<div class="row row-offcanvas row-offcanvas-left">
+
+			<div class="col-sm-3 col-md-2 sidebar-offcanvas" id="sidebar"
+				role="navigation">
+
+				<ul class="nav nav-sidebar">
+					<li class="active"><a href="#">Overview</a></li>
+					<li><a href="#">Reports</a></li>
+					<li><a href="#">Analytics</a></li>
+					<li><a href="#">Export</a></li>
+				</ul>
+				<ul class="nav nav-sidebar">
+					<li><a href="">Nav item</a></li>
+					<li><a href="">Nav item again</a></li>
+					<li><a href="">One more nav</a></li>
+					<li><a href="">Another nav item</a></li>
+					<li><a href="">More navigation</a></li>
+				</ul>
+
+			</div>
+			<!--/span-->
+
+			<div class="col-sm-9 col-md-10 main">
+
+				<!--toggle sidebar button-->
+				<p class="visible-xs">
+					<button type="button" class="btn btn-primary btn-xs"
+						data-toggle="offcanvas">
+						<i class="glyphicon glyphicon-chevron-left"></i>
+					</button>
+				</p>
+
+				<h1 class="page-header">Resource description</h1>
+
+				<a href='{{Resource.description.key}}'>{{Resource.description.key}}</a>
+
+				<div class="table-responsive"
+					data-ng-repeat="(res, obj) in Resource.description">
+					<h3>
+						<a href="{{res}}">{{res}}</a>
+					</h3>
+					<hr>
+					<table class="table table-striped" data-ng-show="obj.length != 0">
+						<thead>
+							<tr>
+								<th>Property</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-ng-repeat="(key,val) in obj">
+								<td><a href="{{key}}"  target="_self">{{key}}</a></td>
+								<td data-ng-repeat="(k,v) in val"
+									data-ng-switch="v.type == 'uri'"><a
+									data-ng-href="{{v.value}}"  target="_self" data-ng-switch-when="true">{{v.value}}</a>
+									<span data-ng-switch-when="false">{{v.value}}</span></td>
+							</tr>
+						</tbody>
+
+					</table>
+				</div>
+
+			</div>
+			<!--/row-->
+		</div>
+	</div>
+	<!--/.container-->
+
+	<footer>
+		<p class="pull-right">
+			©2015 <a target="_blank" title="UA.PT Bioinformatics"
+				href="http://bioinformatics.ua.pt/">University of Aveiro</a>
+		</p>
+	</footer>
+
+</body>
+</html>
