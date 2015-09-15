@@ -1,12 +1,22 @@
 /**
  * @lgonzalez
  */
-var app = angular.module('scaleusApp', []);
+var app = angular.module('scaleusApp', ['ngRoute']);
+
+
+app.config(function ($locationProvider) {
+
+    //routing DOESN'T work without html5Mode
+	//required to access route parameters
+	$locationProvider.html5Mode({
+		  enabled: true,
+		  requireBase: false
+		});
+});
 
 app.controller('appController', function($scope, $http) {
 
 	var DBList = this;
-
 
 	// GET datasets
 	DBList.getDatasets = function () {
