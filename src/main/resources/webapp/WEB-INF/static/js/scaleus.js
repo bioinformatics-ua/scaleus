@@ -122,9 +122,9 @@ app.controller('appController', function($scope, $http) {
 	};
 
 	// POST new triple
-	DBList.addTriple = function () {
+	DBList.addTriple = function (database) {
 		if ( $scope.formSubject && $scope.formPredicate && $scope.formObject ) {
-			$http.post("../api/v1/store/"+$scope.selectedDB, 
+			$http.post("../api/v1/store/"+database, 
 					{'s': $scope.formSubject, 
 				'p': $scope.formPredicate,
 				'o': $scope.formObject})
@@ -143,12 +143,12 @@ app.controller('appController', function($scope, $http) {
 	};
 
 	// DELETE triple
-	DBList.removeTriple = function () {
+	DBList.removeTriple = function (database) {
 		if ( $scope.formSubject && $scope.formPredicate && $scope.formObject ) {
 			// inject custom config to send 'data' on a DELETE request
 			var config = {
 					method : 'DELETE',
-					url : "../api/v1/remove/"+$scope.selectedDB,
+					url : "../api/v1/remove/"+database,
 					data : {'s': $scope.formSubject, 
 						'p': $scope.formPredicate,
 						'o': $scope.formObject},

@@ -13,8 +13,8 @@
                data-ng-model="formObject" required>
     </div>
     <button class="btn btn-success"
-            data-ng-click="DBList.addTriple()">Add triple</button>
+            data-ng-click="DBList.addTriple($parent.selectedDB)">Add triple</button>
     <button class="btn btn-danger"
-            data-ng-click="DBList.removeTriple()">Remove triple</button>
+            data-ng-click="DBList.removeTriple($parent.selectedDB)">Remove triple</button>
 </form>
 </div>
