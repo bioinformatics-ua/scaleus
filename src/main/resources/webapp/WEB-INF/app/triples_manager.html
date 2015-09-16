@@ -1,20 +1,18 @@
-<div data-ng-controller="appController as DBList">
 <form class="form-inline well" name="manageTriples">
     <div class="col-md-3">
         <input type="text" class="form-control" placeholder="Subject"
-               data-ng-model="formSubject" required>
+               data-ng-model="$parent.formSubject" required>
     </div>
     <div class="col-md-3">
         <input type="text" class="form-control" placeholder="Predicate"
-               data-ng-model="formPredicate" required>
+               data-ng-model="$parent.formPredicate" required>
     </div>
     <div class="col-md-3">
         <input type="text" class="form-control" placeholder="Object"
-               data-ng-model="formObject" required>
+               data-ng-model="$parent.formObject" required>
     </div>
     <button class="btn btn-success"
             data-ng-click="DBList.addTriple($parent.selectedDB)">Add triple</button>
     <button class="btn btn-danger"
             data-ng-click="DBList.removeTriple($parent.selectedDB)">Remove triple</button>
 </form>
-</div>

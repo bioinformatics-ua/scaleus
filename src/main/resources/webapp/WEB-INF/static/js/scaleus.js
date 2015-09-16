@@ -1,7 +1,7 @@
 /**
  * @lgonzalez
  */
-var app = angular.module('scaleusApp', ['ngRoute']);
+var app = angular.module('scaleusApp', ['ngRoute', 'scaleusApp.services']);
 
 
 app.config(function ($locationProvider) {
@@ -14,13 +14,12 @@ app.config(function ($locationProvider) {
 		});
 });
 
-app.controller('appController', function($scope, $http) {
+app.controller('appController', function($scope, scaleusAPIservice) {
 
 	var DBList = this;
-
-	// GET datasets
+	
 	DBList.getDatasets = function () {
-		$http.get("../api/v1/dataset/")
+	scaleusAPIservice.getDatasets()
 		.then(function (response) {
 			DBList.dataset = response.data;
 			$scope.selectedDB = DBList.dataset[0];
@@ -31,10 +30,9 @@ app.controller('appController', function($scope, $http) {
 		});
 	};
 
-	// POST new database
 	DBList.addDatabase = function () {
 		if ($scope.formDatabase) {
-			$http.post("../api/v1/dataset/"+$scope.formDatabase,{})
+			scaleusAPIservice.addDatabase($scope.formDatabase)
 			.then(function (response) {
 				DBList.getDatasets();
 				$scope.formDatabase = "";
@@ -47,10 +45,9 @@ app.controller('appController', function($scope, $http) {
 		};
 	};
 
-	// DELETE database
 	DBList.removeDatabase = function () {
 		if ($scope.selectedDB) {
-			$http.delete("../api/v1/dataset/"+$scope.selectedDB)
+			scaleusAPIservice.deleteDatabase($scope.selectedDB)
 			.then(function (response) {
 				console.log(response);
 				DBList.getDatasets();
@@ -66,7 +63,7 @@ app.controller('appController', function($scope, $http) {
 	// GET namespaces
 	DBList.getNamespaces = function () {
 		if ($scope.selectedDB) {
-			$http.get("../api/v1/namespaces/"+$scope.selectedDB)
+			scaleusAPIservice.getNamespaces($scope.selectedDB)
 			.then(function (response) {
 				DBList.namespaces = response.data;
 				DBList.modelContainer = [];
@@ -80,10 +77,9 @@ app.controller('appController', function($scope, $http) {
 		};
 	};
 
-	// POST namespaces
 	DBList.putNamespace = function () {
 		if ( $scope.formPrefix && $scope.formNamespace ) {
-			$http.post("../api/v1/namespace/"+$scope.selectedDB, {'prefix': $scope.formPrefix, 'namespace': $scope.formNamespace})
+			scaleusAPIservice.addNamespace($scope.selectedDB, $scope.formPrefix, $scope.formNamespace)
 			.then(function (response) {
 				console.log(response);
 				DBList.getNamespaces();
@@ -98,9 +94,8 @@ app.controller('appController', function($scope, $http) {
 		};
 	};
 
-	// DELETE namespace
 	DBList.removeNamespace = function (prefix) {
-		$http.delete("../api/v1/namespace/"+$scope.selectedDB+"/"+prefix)
+		scaleusAPIservice.deleteNamespace($scope.selectedDB, prefix)
 		.then(function (response) {
 			DBList.getNamespaces();
 		}, function (response) {
@@ -109,25 +104,31 @@ app.controller('appController', function($scope, $http) {
 		});
 	};
 
-	// GET query sparql
+
+	DBList.getData = function () {
+		if ($scope.formSPARQL) {
+			var query = DBList.checkedPrefix()+$scope.formSPARQL;
+			scaleusAPIservice.getSparqler($scope.selectedDB, query)
+			.then(function (response) {
+				DBList.queryResults = response.data.results.bindings;
+				console.log(DBList.queryResults);
+			}, function (response) {
+				// an error occured
+				alert (response.status + " " + response.statusText);
+			});
+		} else {
+			alert("Write your query");
+		};
+	};
+	
 	DBList.sparqler = function () {
-		$http.get("../api/v1/sparqler/"+$scope.selectedDB+"/sparql?query="+encodeURIComponent(DBList.query))
-		.then(function (response) {
-			DBList.queryResults = response.data.results.bindings;
-			console.log(DBList.queryResults);
-		}, function (response) {
-			// an error occured
-			alert (response.status + " " + response.statusText);
-		});
+		
 	};
 
-	// POST new triple
 	DBList.addTriple = function (database) {
+		console.log('Adding on database ' + database);
 		if ( $scope.formSubject && $scope.formPredicate && $scope.formObject ) {
-			$http.post("../api/v1/store/"+database, 
-					{'s': $scope.formSubject, 
-				'p': $scope.formPredicate,
-				'o': $scope.formObject})
+			scaleusAPIservice.addTriple($scope.selectedDB, $scope.formSubject, $scope.formPredicate, $scope.formObject)
 				.then(function (response) {
 					console.log(response);
 					$scope.formSubject = "";
@@ -142,19 +143,9 @@ app.controller('appController', function($scope, $http) {
 		};
 	};
 
-	// DELETE triple
 	DBList.removeTriple = function (database) {
 		if ( $scope.formSubject && $scope.formPredicate && $scope.formObject ) {
-			// inject custom config to send 'data' on a DELETE request
-			var config = {
-					method : 'DELETE',
-					url : "../api/v1/remove/"+database,
-					data : {'s': $scope.formSubject, 
-						'p': $scope.formPredicate,
-						'o': $scope.formObject},
-						headers: {"Content-Type": "application/json;charset=utf-8"}
-			};
-			$http(config)
+			scaleusAPIservice.deleteTriple(database, $scope.formSubject, $scope.formPredicate, $scope.formObject)
 			.then(function (response) {
 				console.log('STATUS ' + response.status);
 				$scope.formSubject = "";
@@ -166,15 +157,6 @@ app.controller('appController', function($scope, $http) {
 			});
 		} else {
 			alert("Incomplete triple");
-		};
-	};
-
-	DBList.getData = function () {
-		if ($scope.formSPARQL) {
-			DBList.query = DBList.checkedPrefix()+$scope.formSPARQL;
-			DBList.sparqler();
-		} else {
-			alert("Write your query");
 		};
 	};
 

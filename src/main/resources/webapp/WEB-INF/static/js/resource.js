@@ -1,7 +1,8 @@
 /**
  * @lgonzalez
  */
-var app = angular.module('scaleusApp', ['ngRoute']);
+var app = angular.module('scaleusApp', ['ngRoute', 'scaleusApp.services']);
+
 
 app.config(function ($locationProvider) {
 
@@ -13,16 +14,16 @@ app.config(function ($locationProvider) {
 		});
 });
 
-app.controller('appTest', function($scope, $http, $rootElement, $location) {
+app.controller('appTest', function($scope, $rootElement, $location, scaleusAPIservice) {
 
 	var Resource = this;
 	Resource.dataset = $location.search().dataset;
 	Resource.prefix = $location.search().prefix;
 	Resource.resource = $location.search().resource;
 
-	// GET describe resources
+
 	Resource.getResources = function () {
-		$http.get("../api/v1/resource/"+Resource.dataset+"/"+Resource.prefix+"/"+Resource.resource+"/js")
+		scaleusAPIservice.getResources(Resource.dataset, Resource.prefix, Resource.resource)
 		.then(function (response) {
 			console.log(response.data);
 			Resource.description = response.data;
