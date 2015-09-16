@@ -1,20 +1,10 @@
 /**
  * @lgonzalez
  */
-var app = angular.module('scaleusApp', ['ngRoute', 'scaleusApp.services']);
+var app = angular.module('scaleusApp.queries', []);
 
 
-app.config(function ($locationProvider) {
-
-    //routing DOESN'T work without html5Mode
-	//required to access route parameters
-	$locationProvider.html5Mode({
-		  enabled: true,
-		  requireBase: false
-		});
-});
-
-app.controller('appController', function($scope, scaleusAPIservice) {
+app.controller('queriesController', function($scope, scaleusAPIservice) {
 
 	var DBList = this;
 	

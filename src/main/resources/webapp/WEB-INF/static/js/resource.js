@@ -1,20 +1,9 @@
 /**
  * @lgonzalez
  */
-var app = angular.module('scaleusApp', ['ngRoute', 'scaleusApp.services']);
+var app = angular.module('scaleusApp.resources', []);
 
-
-app.config(function ($locationProvider) {
-
-    //routing DOESN'T work without html5Mode
-	//required to access route parameters
-	$locationProvider.html5Mode({
-		  enabled: true,
-		  requireBase: false
-		});
-});
-
-app.controller('appTest', function($scope, $rootElement, $location, scaleusAPIservice) {
+app.controller('resourcesController', function($scope, $rootElement, $location, scaleusAPIservice) {
 
 	var Resource = this;
 	Resource.dataset = $location.search().dataset;
