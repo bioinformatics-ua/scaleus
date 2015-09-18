@@ -43,20 +43,6 @@ public class RESTService implements IService {
         return Response.status(200).entity(api.select(dataset, query)).build();
     }
 
-    @GET
-    @Path("/resource/{database}/{prefix}/{id}/{format}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Override
-    public Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("id") String id, @PathParam("format") String format) {
-        String response="";
-        try {
-            response = api.describeResource(database, prefix, id, format);
-        } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        return Response.status(200).entity(response).build();
-    }
-
     @POST
     @Path("/dataset/{name}")
     @Override
