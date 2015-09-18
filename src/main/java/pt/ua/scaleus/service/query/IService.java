@@ -19,8 +19,6 @@ public interface IService {
 
     public abstract Response sparqler(String dataset, String query);
 
-    public abstract Response resource(String database, String prefix, String id, String format);
-
     public abstract Response addDataset(String name);
 
     public abstract Response removeDataset(String name);

@@ -7,17 +7,13 @@ package pt.ua.scaleus.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.query.Dataset;
-import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
@@ -34,8 +30,6 @@ import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import pt.ua.scaleus.service.data.Triple;
 
 /**
@@ -99,7 +93,7 @@ public class API {
         try {
             Model model = dataset.getDefaultModel();
             namespaces = model.getNsPrefixMap();
-            model.close();
+            //model.close();
         } finally {
             dataset.end();
         }
@@ -113,7 +107,7 @@ public class API {
             Model model = dataset.getDefaultModel();
             model.setNsPrefix(prefix, namespace);
             dataset.commit();
-            model.close();
+            //model.close();
         } finally {
             dataset.end();
         }
@@ -126,7 +120,7 @@ public class API {
             Model model = dataset.getDefaultModel();
             model.removeNsPrefix(prefix);
             dataset.commit();
-            model.close();
+            //model.close();
         } finally {
             dataset.end();
         }
@@ -175,9 +169,11 @@ public class API {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ResultSetFormatter.outputAsJSON(os, rs);
             response = os.toString();
-            qe.close();
-            model.close();
-            inf.close();
+            //qe.close();
+            //model.close();
+            //inf.close();
+        }catch (Exception e) {
+            e.printStackTrace();
         } finally {
             dataset.end();
         }
@@ -190,12 +186,10 @@ public class API {
      * @param database
      * @param prefix
      * @param id
-     * @param format
      * @return
      */
-    public String describeResource(String database, String prefix, String id, String format) {
-        Model describedModel = ModelFactory.createDefaultModel();
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
+    public String describeResource(String database, String prefix, String id) {
+        String response ="";
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
         try {
@@ -203,26 +197,21 @@ public class API {
             String namespace = model.getNsPrefixMap().get(prefix);
             Resource resource = model.getResource(namespace + id);
             StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
-            describedModel.add(stat);
-            describedModel.setNsPrefixes(model.getNsPrefixMap());
-            switch (format) {
-                case "js":
-                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFJSON);
-                    break;
-                case "rdf":
-                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
-                    break;
-                case "ttl":
-                    RDFDataMgr.write(os, describedModel, RDFFormat.TTL);
-                    break;
-                default:
-                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+            
+            while (stat.hasNext()) {
+                Statement next = stat.next();
+                if(next.getObject().isResource())
+                response+= "<h2><a href='../resource/"+database+"/"+prefix+"/"+next.getSubject().getLocalName()+"'>"+ next.getSubject().toString()+"</a> "+ next.getPredicate().toString()+" <a href='/resource/"+database+"/"+prefix+"/"+next.getObject().asResource().getLocalName()+"'>"+ next.getObject().toString()+"</a></h2>";
+                else response+= "<h2><a href='../resource/"+database+"/"+prefix+"/"+next.getSubject().getLocalName()+"'>"+ next.getSubject().toString()+"</a> "+ next.getPredicate().toString()+" "+ next.getObject().toString()+"</a></h2>";
             }
+            
+        }catch(Exception e){
+            e.printStackTrace();
         } finally {
             dataset.end();
         }
 
-        return os.toString();
+        return response;
     }
 
     /**
@@ -277,7 +266,7 @@ public class API {
             Model model = dataset.getDefaultModel();
             model.read(input);
             dataset.commit();
-            model.close();
+            //model.close();
         } finally {
             dataset.end();
         }
@@ -311,7 +300,7 @@ public class API {
             }
 
             dataset.commit();
-            model.close();
+            //model.close();
         } finally {
             dataset.end();
         }
@@ -342,7 +331,7 @@ public class API {
             }
 
             dataset.commit();
-            model.close();
+            //model.close();
         } finally {
             dataset.end();
         }

@@ -22,6 +22,7 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import pt.ua.scaleus.api.Init;
+import pt.ua.scaleus.service.query.ResourceService;
 
 /**
  *
@@ -33,7 +34,7 @@ public class JettyServer {
     static final String WEBAPPDIR_APP = "webapp/WEB-INF/app";
 
     public static void main(String[] args) {
-        
+
         int port = 80;
         String database = "default";
         String data_import = "resources/";
@@ -45,19 +46,18 @@ public class JettyServer {
             options.addOption("i", "import", true, "Folder or file location to import");
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options, args);
-            if( cmd.hasOption( "p" ) ) {
-                String cmd_port = cmd.getOptionValue( "p" );
+            if (cmd.hasOption("p")) {
+                String cmd_port = cmd.getOptionValue("p");
                 port = Integer.parseInt(cmd_port);
             }
-            if( cmd.hasOption( "d" ) && cmd.hasOption( "i" ) ) {
-                database = cmd.getOptionValue( "d" );
-                data_import = cmd.getOptionValue( "i" );
+            if (cmd.hasOption("d") && cmd.hasOption("i")) {
+                database = cmd.getOptionValue("d");
+                data_import = cmd.getOptionValue("i");
             }
-            
+
         } catch (ParseException ex) {
             Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-   
 
         Server jettyServer = new Server(port);
 
@@ -82,12 +82,20 @@ public class JettyServer {
         jerseyServlet.setInitOrder(0);
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
+        
+        ServletContextHandler servletContextHandlerLD = new ServletContextHandler(jettyServer, "/resource/", true, false);
+        ServletHolder jerseyServletLD = servletContextHandlerLD.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        jerseyServletLD.setInitOrder(0);
+        // Tells the Jersey Servlet which REST service/class to load.
+        jerseyServletLD.setInitParameter("jersey.config.server.provider.classnames", ResourceService.class.getCanonicalName());
 
         Handler[] sh = jettyServer.getHandlers();
-        Handler[] h = new Handler[sh.length + 2];
+        Handler[] h = new Handler[sh.length + 3];
         System.arraycopy(sh, 0, h, 0, sh.length);
+        h[h.length - 3] = servletContextHandler;
         h[h.length - 2] = resource_handler;
         h[h.length - 1] = appContext;
+        
         handlers.setHandlers(h);
 
         jettyServer.setHandler(handlers);
