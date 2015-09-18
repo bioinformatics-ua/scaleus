@@ -19,3 +19,17 @@ app.config(function ($locationProvider) {
 		  requireBase: false
 		});
 });
+
+app.config(['$routeProvider', function($routeProvider) {
+	  $routeProvider.
+	  when("/app/index.html", {
+		  templateUrl: "partials/sparqler.html"
+	  }).
+	  when("/app/namespaces.html", {
+		  templateUrl: "partials/namespaces.html"
+	  }).
+	  when("/app/triples.html", {
+		  templateUrl: "partials/triples_manager.html"
+	  }).
+	  otherwise({redirectTo: '/app/index.html'});
+	}]);

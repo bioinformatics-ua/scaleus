@@ -1,0 +1,64 @@
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Sparqler</h1>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+
+<!-- /.row -->
+<div class="row">
+
+	<h4>Select prefix</h4>
+	<div>
+		<div class="btn-group" data-ng-repeat="ns in DBList.modelContainer">
+	    	<button type="button" class="btn btn-sm btn-default" ng-click="ns.checked = !ns.checked">{{ns.item.prefix}}</button>
+	    </div>
+	</div>
+
+	<h3>Predefined queries</h3>
+	<div>
+		<button class="btn btn-xs btn-default" data-ng-click="DBList.getAll()">Get
+			all</button>
+		<button class="btn btn-xs btn-default"
+			data-ng-click="DBList.countAll()">Count all</button>
+	</div>
+	<br>
+	<div>
+		<div
+			data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
+			PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
+		<form class="form-horizontal well" name="sparqler">
+			<textarea class="form-control input-xlarge"
+				placeholder="Write your SPARQL query here"
+				data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
+			<div class="form-actions">
+				<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
+					data</button>
+			</div>
+		</form>
+		<h2 class="sub-header" data-ng-show="DBList.queryResults.length != 0">Query
+			results</h2>
+		<div class="table-responsive">
+			<table class="table table-striped"
+				data-ng-show="DBList.queryResults.length != 0">
+				<thead>
+					<tr>
+						<th data-ng-repeat="(key, val) in DBList.queryResults[0]">
+							{{key}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-ng-repeat="result in DBList.queryResults">
+						<td data-ng-repeat="obj in result"
+							data-ng-switch="obj.type == 'uri'"><a
+							data-ng-href="{{obj.value}}" target="_self"
+							data-ng-switch-when="true">{{obj.value}}</a> <span
+							data-ng-switch-when="false">{{obj.value}}</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
+<!-- /.row -->

@@ -1,0 +1,36 @@
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Manage namespaces</h1>
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+
+<!-- /.row -->
+<div class="row">
+
+	<div>
+		<ul>
+			<li data-ng-repeat="ns in DBList.modelContainer">
+				<div>
+					<span>{{ns.item.prefix}}</span>
+					<button class="btn btn-danger"
+						data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
+				</div>
+			</li>
+		</ul>
+		<form class="form-inline well" name="putNamespace">
+			<div class="col-md-3">
+				<input type="text" class="form-control" placeholder="Prefix"
+					data-ng-model="$parent.formPrefix" required>
+			</div>
+			<div class="col-md-3">
+				<input type="text" class="form-control" placeholder="Namespace"
+					data-ng-model="$parent.formNamespace" required>
+			</div>
+			<button class="btn btn-success" data-ng-click="DBList.putNamespace()">Add
+				Namespace</button>
+		</form>
+	</div>
+
+</div>
+<!-- /.row -->
