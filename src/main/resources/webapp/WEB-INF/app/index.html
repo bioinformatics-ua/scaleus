@@ -1,64 +1,99 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="scaleusApp">
-    
-    <head>
 
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
+<head>
 
-        <title>Scaleus - High performance triple store</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
 
-        <!-- Bootstrap Core CSS -->
-        <link href="/css/bootstrap.min.css" rel="stylesheet">
+<title>Scaleus - High performance triple store</title>
 
-        <!-- MetisMenu CSS -->
-        <link href="/css/metisMenu.min.css" rel="stylesheet">
+<!-- Bootstrap Core CSS -->
+<link href="/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Custom CSS -->
-        <link href="/css/sb-admin-2.css" rel="stylesheet">
+<!-- MetisMenu CSS -->
+<link href="/css/metisMenu.min.css" rel="stylesheet">
 
-        <!-- Custom Fonts -->
-        <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<!-- Custom CSS -->
+<link href="/css/sb-admin-2.css" rel="stylesheet">
 
-    </head>
+<!-- Custom Fonts -->
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-    <body data-ng-controller="queriesController as DBList">
+</head>
 
-        <div id="wrapper">
+<body data-ng-controller="queriesController as DBList">
+
+	<div id="wrapper">
 
 
-            <!-- Navigation -->
-            <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="triples_manager.html">Scaleus</a>
-                </div>
-                <!-- /.navbar-header -->
+		<!-- Navigation -->
+		<nav class="navbar navbar-default navbar-static-top" role="navigation"
+			style="margin-bottom: 0">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="triples_manager.html">Scaleus</a>
+			</div>
+			<!-- /.navbar-header -->
 
-                <ul class="nav navbar-top-links navbar-right">
+			<ul class="nav navbar-top-links navbar-right">
 
-                </ul>
+			</ul>
 
-                <div class="navbar-default sidebar" role="navigation">
-                    <div class="sidebar-nav navbar-collapse">
-                        <ul class="nav" id="side-menu">
-                            <li class="sidebar-search">
-                                <div class="input-group custom-search-form">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                                <!-- /input-group -->
-                            </li>
-                            <li>
-                                <a href="/app/index.html" target="_self"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-                            </li>
-                            <!--
+			<div class="navbar-default sidebar" role="navigation">
+				<div class="sidebar-nav navbar-collapse">
+					<ul class="nav" id="side-menu">
+						<li class="sidebar-search">
+							<div class="input-group custom-search-form">
+								<input type="text" class="form-control" placeholder="Search...">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button">
+										<i class="fa fa-search"></i>
+									</button>
+								</span>
+							</div> <!-- /input-group -->
+						</li>
+						<li class="sidebar-search">
+							<form name="removeDatabase">
+								<div class="input-group custom-search-form">
+									<select class="form-control"
+										data-ng-click="DBList.getNamespaces()"
+										data-ng-model="selectedDB"
+										data-ng-options="opt for opt in DBList.dataset" required>
+									</select> <span class="input-group-btn">
+										<button class="btn btn-default"
+											data-ng-click="DBList.removeDatabase()"
+											ng-confirm-click="Are you sure you want to delete {{selectedDB}}">
+											<i class="fa fa-trash-o"></i>
+										</button>
+										<button class="btn btn-default"
+											data-ng-click="DBList.showAddDatabase()">
+											<i class="fa fa-plus-square-o"></i>
+										</button>
+									</span>
+
+								</div>
+							</form>
+							<div ng-show="showFormDatabase">
+								<br>
+								<form name="addDatabase">
+									<div class="input-group ">
+										<input type="text" class="form-control" placeholder="DB name"
+											data-ng-model="formDatabase" required> <span
+											class="input-group-btn">
+											<button class="btn btn-success"
+												data-ng-click="DBList.addDatabase()">Add</button>
+										</span>
+									</div>
+
+								</form>
+							</div>
+						</li>
+						<li><a href="/app/index.html" target="_self"><i
+								class="fa fa-dashboard fa-fw"></i> Sparqler</a></li>
+						<!--
                             <li>
                                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
@@ -77,163 +112,159 @@
                                 </ul>
                             </li>
                             -->
-                            <li>
-                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Linked Data</a>
-                                <!-- /.nav-second-level -->
-                            </li>                  
-                            <li>
-                                <a href="#"><i class="fa fa-group fa-fw"></i> Contact</a>
-                                <!-- /.nav-second-level -->
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /.sidebar-collapse -->
-                </div>
-                <!-- /.navbar-static-side -->
-            </nav>
+						<li><a href="#"><i class="fa fa-files-o fa-fw"></i>
+								Linked Data</a> <!-- /.nav-second-level --></li>
+						<li><a href="#"><i class="fa fa-group fa-fw"></i> Contact</a>
+							<!-- /.nav-second-level --></li>
+					</ul>
+				</div>
+				<!-- /.sidebar-collapse -->
+			</div>
+			<!-- /.navbar-static-side -->
+		</nav>
 
-            <div id="page-wrapper">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1 class="page-header">Dashboard</h1>
-                    </div>
-                    <!-- /.col-lg-12 -->
-                </div>
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Sparqler</h1>
+				</div>
+				<!-- /.col-lg-12 -->
+			</div>
 
-                <!-- /.row -->
-                <div class="row">
+			<!-- /.row -->
+			<div class="row">
 
-                    <h3>Select database</h3>
-                    <form class="form-inline well" name="removeDatabase">
-                        <div class="col-md-3">
-                            <select class="form-control"
-                                    data-ng-click="DBList.getNamespaces()" data-ng-model="selectedDB"
-                                    data-ng-options="opt for opt in DBList.dataset" required>
-                            </select>
-                        </div>
-                        <button class="btn btn-danger"
-                                data-ng-click="DBList.removeDatabase()">Remove</button>
-                    </form>
-                    <form class="form-inline well" name="addDatabase">
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" placeholder="DB name"
-                                   data-ng-model="formDatabase" required>
-                        </div>
-                        <button class="btn btn-success"
-                                data-ng-click="DBList.addDatabase()">Add Database</button>
-                    </form>
+				<div data-ng-show="selectedDB">
+					
+					<div>
+						<div class="btn-group" data-ng-repeat="ns in DBList.modelContainer">
+					        <label class="btn btn-primary" ng-model="ns.checked" btn-checkbox>{{ns.item.prefix}}</label>
+    					</div>
+					</div>
+					
+					<div>
+						<ul>
+							<li data-ng-repeat="ns in DBList.modelContainer">
+								<div class="checkbox">
+									<input type="checkbox" data-ng-model="ns.checked" /> <span>{{ns.item.prefix}}</span>
+									<button class="btn btn-danger"
+										data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
+								</div>
+							</li>
+						</ul>
+						<form class="form-inline well" name="putNamespace">
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Prefix"
+									data-ng-model="formPrefix" required>
+							</div>
+							<div class="col-md-3">
+								<input type="text" class="form-control" placeholder="Namespace"
+									data-ng-model="formNamespace" required>
+							</div>
+							<button class="btn btn-success"
+								data-ng-click="DBList.putNamespace()">Add Namespace</button>
+						</form>
+					</div>
 
+					<hr>
 
-                    <hr>
+					<h3>Predefined queries</h3>
+					<div>
+						<button class="btn btn-xs btn-default"
+							data-ng-click="DBList.getAll()">Get all</button>
+						<button class="btn btn-xs btn-default"
+							data-ng-click="DBList.countAll()">Count all</button>
+					</div>
+					<br>
+					<div>
+						<div
+							data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
+							PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
+						<form class="form-horizontal well" name="sparqler">
+							<textarea class="form-control input-xlarge"
+								placeholder="Write your SPARQL query here"
+								data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
+							<div class="form-actions">
+								<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
+									data</button>
+							</div>
+						</form>
+						<h2 class="sub-header"
+							data-ng-show="DBList.queryResults.length != 0">Query results</h2>
+						<div class="table-responsive">
+							<table class="table table-striped"
+								data-ng-show="DBList.queryResults.length != 0">
+								<thead>
+									<tr>
+										<th data-ng-repeat="(key, val) in DBList.queryResults[0]">
+											{{key}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr data-ng-repeat="result in DBList.queryResults">
+										<td data-ng-repeat="obj in result"
+											data-ng-switch="obj.type == 'uri'"><a
+											data-ng-href="{{obj.value}}" target="_self"
+											data-ng-switch-when="true">{{obj.value}}</a> <span
+											data-ng-switch-when="false">{{obj.value}}</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<hr>
+						<div ng-include="'triples_manager.html'"></div>
+					</div>
+				</div>
+			</div>
+			<!-- /.row -->
 
-                    <div data-ng-show="selectedDB">
-                        <div>
-                            <ul>
-                                <li data-ng-repeat="ns in DBList.modelContainer">
-                                    <div class="checkbox">
-                                        <input type="checkbox" data-ng-model="ns.checked" /> <span>{{ns.item.prefix}}</span>
-                                        <button class="btn btn-danger"
-                                                data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
-                                    </div>
-                                </li>
-                            </ul>
-                            <form class="form-inline well" name="putNamespace">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="Prefix"
-                                           data-ng-model="formPrefix" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="Namespace"
-                                           data-ng-model="formNamespace" required>
-                                </div>
-                                <button class="btn btn-success"
-                                        data-ng-click="DBList.putNamespace()">Add Namespace</button>
-                            </form>
-                        </div>
+			<footer>
+				<p>&nbsp;</p>
+				<p class="text-muted credit pull-right">
+					&copy; <a target="_blank" title="UA.PT Bioinformatics"
+						href="http://bioinformatics.ua.pt/">University of Aveiro</a>
+					<script>
+						document.write(new Date().getFullYear());
+					</script>
+					- Support provided by <a href="http://bmd-software.com"
+						target="_blank">BMD Software, LDA</a>
+				</p>
+			</footer>
 
-                        <hr>
-
-                        <h3>Predefined queries</h3>
-                        <div>
-                            <button class="btn btn-xs btn-default" data-ng-click="DBList.getAll()">Get all</button>
-                            <button class="btn btn-xs btn-default" data-ng-click="DBList.countAll()">Count all</button>
-                        </div>
-                        <br>
-                        <div>
-                            <div
-                                data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
-                                PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
-                            <form class="form-horizontal well" name="sparqler">
-                                <textarea class="form-control input-xlarge"
-                                          placeholder="Write your SPARQL query here"
-                                          data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" data-ng-click="DBList.getData()">Get
-                                        data</button>
-                                </div>
-                            </form>
-                            <h2 class="sub-header"
-                                data-ng-show="DBList.queryResults.length != 0">Query results</h2>
-                            <div class="table-responsive">
-                                <table class="table table-striped"
-                                       data-ng-show="DBList.queryResults.length != 0">
-                                    <thead>
-                                        <tr>
-                                            <th data-ng-repeat="(key, val) in DBList.queryResults[0]">
-                                                {{key}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr data-ng-repeat="result in DBList.queryResults">
-                                            <td data-ng-repeat="obj in result" data-ng-switch="obj.type == 'uri'">
-                                                <a data-ng-href="{{obj.value}}" target="_self" data-ng-switch-when="true">{{obj.value}}</a>
-                                                <span data-ng-switch-when="false">{{obj.value}}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <hr>
-                            <div ng-include="'triples_manager.html'"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.row -->
-
-                <footer>
-                    <p>&nbsp;</p>
-                    <p class="text-muted credit pull-right">&copy; <a target="_blank" title="UA.PT Bioinformatics" href="http://bioinformatics.ua.pt/">University of Aveiro</a> <script> document.write(new Date().getFullYear());</script> - Support provided by <a href="http://bmd-software.com" target="_blank">BMD Software, LDA</a></p>
-                </footer>
-            
-            </div>
-            <!-- /#page-wrapper -->
+		</div>
+		<!-- /#page-wrapper -->
 
 
-        </div>
-        <!--/#wrapper-->
+	</div>
+	<!--/#wrapper-->
 
-        <!-- script references -->
+	<!-- script references -->
 
-        <!-- jQuery -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+	<!-- jQuery -->
+	<script
+		src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 
-        <!-- Angular JS -->
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+	<!-- Angular JS -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+		
 
-        <!-- APP -->
-        <script src="/js/app.js"></script>
-        <script src="/js/scaleus.js"></script>
-        <script src="/js/resource.js"></script>
-        <script src="/js/services.js"></script>
+	<!-- APP -->
+	<script src="/js/app.js"></script>
+	<script src="/js/scaleus.js"></script>
+	<script src="/js/resource.js"></script>
+	<script src="/js/services.js"></script>
+	<script src="/js/directives.js"></script>
+	
+	<!-- Bootstrap Core JavaScript -->
+	<script src="/js/bootstrap.min.js"></script>
 
-        <!-- Bootstrap Core JavaScript -->
-        <script src="/js/bootstrap.min.js"></script>
+	<!-- Metis Menu Plugin JavaScript -->
+	<script src="/js/metisMenu.min.js"></script>
 
-        <!-- Metis Menu Plugin JavaScript -->
-        <script src="/js/metisMenu.min.js"></script>
-
-        <!-- Custom Theme JavaScript -->
-        <script src="/js/sb-admin-2.js"></script>
-    </body>
+	<!-- Custom Theme JavaScript -->
+	<script src="/js/sb-admin-2.js"></script>
+</body>
 </html>

@@ -167,6 +167,10 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 	DBList.countAll = function () {
 		$scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
 	};
+	
+	DBList.showAddDatabase = function () {
+		$scope.showFormDatabase = $scope.showFormDatabase ? false : true;
+	};
 
 	DBList.getDatasets();
 	DBList.queryResults = [];

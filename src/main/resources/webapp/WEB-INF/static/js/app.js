@@ -6,7 +6,8 @@ var app = angular.module('scaleusApp', [
   'ngRoute',
   'scaleusApp.queries',
   'scaleusApp.resources',
-  'scaleusApp.services'
+  'scaleusApp.services',
+  'scaleusApp.directives'
 ]);
 
 app.config(function ($locationProvider) {

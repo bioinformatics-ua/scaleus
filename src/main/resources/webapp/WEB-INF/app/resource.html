@@ -2,91 +2,103 @@
 <html lang="en" data-ng-app="scaleusApp">
 
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
 <meta charset="utf-8">
-<title>Scaleus</title>
-<meta name="generator" content="Bootply" />
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>Scaleus - High performance triple store</title>
+
+<!-- Bootstrap Core CSS -->
 <link href="/css/bootstrap.min.css" rel="stylesheet">
-<!--[if lt IE 9]>
-			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-<link href="/css/styles.css" rel="stylesheet">
-<!-- script references -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
-<script src="/js/app.js"></script>
-<script src="/js/resource.js"></script>
-<script src="/js/scaleus.js"></script>
-<script src="/js/services.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/scripts.js"></script>
+
+<!-- MetisMenu CSS -->
+<link href="/css/metisMenu.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link href="/css/sb-admin-2.css" rel="stylesheet">
+
+<!-- Custom Fonts -->
+<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
 </head>
+
 <body data-ng-controller="resourcesController as Resource">
-	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-		<div class="container-fluid">
+
+	<div id="wrapper">
+
+
+		<!-- Navigation -->
+		<nav class="navbar navbar-default navbar-static-top" role="navigation"
+			style="margin-bottom: 0">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">SCALEUS</a>
+				<a class="navbar-brand" href="triples_manager.html">Scaleus</a>
 			</div>
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="/app/index.html" target="_self">Dashboard</a></li>
-					<li><a href="#">Settings</a></li>
-					<li><a href="#">Profile</a></li>
-					<li><a href="#">Help</a></li>
-				</ul>
-				<form class="navbar-form navbar-right">
-					<input type="text" class="form-control" placeholder="Search...">
-				</form>
+			<!-- /.navbar-header -->
+
+			<ul class="nav navbar-top-links navbar-right">
+
+			</ul>
+
+			<div class="navbar-default sidebar" role="navigation">
+				<div class="sidebar-nav navbar-collapse">
+					<ul class="nav" id="side-menu">
+						<li class="sidebar-search">
+							<div class="input-group custom-search-form">
+								<input type="text" class="form-control" placeholder="Search...">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button">
+										<i class="fa fa-search"></i>
+									</button>
+								</span>
+							</div> <!-- /input-group -->
+						</li>
+						<li><a href="/app/index.html" target="_self"><i
+								class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+						<!--
+                            <li>
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="#">Second Level Item</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Third Level <span class="fa arrow"></span></a>
+                                        <ul class="nav nav-third-level">
+                                            <li>
+                                                <a href="#">Third Level Item</a>
+                                            </li>
+                                        </ul>
+
+                                    </li>
+                                </ul>
+                            </li>
+                            -->
+						<li><a href="#"><i class="fa fa-files-o fa-fw"></i>
+								Linked Data</a> <!-- /.nav-second-level --></li>
+						<li><a href="#"><i class="fa fa-group fa-fw"></i> Contact</a>
+							<!-- /.nav-second-level --></li>
+					</ul>
+				</div>
+				<!-- /.sidebar-collapse -->
 			</div>
-		</div>
-	</nav>
+			<!-- /.navbar-static-side -->
+		</nav>
 
-	<div class="container-fluid">
-
-		<div class="row row-offcanvas row-offcanvas-left">
-
-			<div class="col-sm-3 col-md-2 sidebar-offcanvas" id="sidebar"
-				role="navigation">
-
-				<ul class="nav nav-sidebar">
-					<li class="active"><a href="#">Overview</a></li>
-					<li><a href="#">Reports</a></li>
-					<li><a href="#">Analytics</a></li>
-					<li><a href="#">Export</a></li>
-				</ul>
-				<ul class="nav nav-sidebar">
-					<li><a href="">Nav item</a></li>
-					<li><a href="">Nav item again</a></li>
-					<li><a href="">One more nav</a></li>
-					<li><a href="">Another nav item</a></li>
-					<li><a href="">More navigation</a></li>
-				</ul>
-
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Dashboard</h1>
+				</div>
+				<!-- /.col-lg-12 -->
 			</div>
-			<!--/span-->
 
-			<div class="col-sm-9 col-md-10 main">
+			<!-- /.row -->
+			<div class="row">
 
-				<!--toggle sidebar button-->
-				<p class="visible-xs">
-					<button type="button" class="btn btn-primary btn-xs"
-						data-toggle="offcanvas">
-						<i class="glyphicon glyphicon-chevron-left"></i>
-					</button>
-				</p>
-
-				<h1 class="page-header">Resource description</h1>
+				<h3>Resource description</h3>
 
 				<a href='{{Resource.description.key}}'>{{Resource.description.key}}</a>
 
@@ -105,11 +117,12 @@
 						</thead>
 						<tbody>
 							<tr data-ng-repeat="(key,val) in obj">
-								<td><a href="{{key}}"  target="_self">{{key}}</a></td>
+								<td><a href="{{key}}" target="_self">{{key}}</a></td>
 								<td data-ng-repeat="(k,v) in val"
 									data-ng-switch="v.type == 'uri'"><a
-									data-ng-href="{{v.value}}"  target="_self" data-ng-switch-when="true">{{v.value}}</a>
-									<span data-ng-switch-when="false">{{v.value}}</span></td>
+									data-ng-href="{{v.value}}" target="_self"
+									data-ng-switch-when="true">{{v.value}}</a> <span
+									data-ng-switch-when="false">{{v.value}}</span></td>
 							</tr>
 						</tbody>
 
@@ -117,17 +130,51 @@
 				</div>
 
 			</div>
-			<!--/row-->
+			<!-- /.row -->
+
+			<footer>
+				<p>&nbsp;</p>
+				<p class="text-muted credit pull-right">
+					&copy; <a target="_blank" title="UA.PT Bioinformatics"
+						href="http://bioinformatics.ua.pt/">University of Aveiro</a>
+					<script> document.write(new Date().getFullYear());</script>
+					- Support provided by <a href="http://bmd-software.com"
+						target="_blank">BMD Software, LDA</a>
+				</p>
+			</footer>
+
 		</div>
+		<!-- /#page-wrapper -->
+
+
 	</div>
-	<!--/.container-->
+	<!--/#wrapper-->
 
-	<footer>
-		<p class="pull-right">
-			©2015 <a target="_blank" title="UA.PT Bioinformatics"
-				href="http://bioinformatics.ua.pt/">University of Aveiro</a>
-		</p>
-	</footer>
+	<!-- script references -->
 
+	<!-- jQuery -->
+	<script
+		src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+
+	<!-- Angular JS -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+
+	<!-- APP -->
+	<script src="/js/app.js"></script>
+	<script src="/js/scaleus.js"></script>
+	<script src="/js/resource.js"></script>
+	<script src="/js/services.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="/js/bootstrap.min.js"></script>
+
+	<!-- Metis Menu Plugin JavaScript -->
+	<script src="/js/metisMenu.min.js"></script>
+
+	<!-- Custom Theme JavaScript -->
+	<script src="/js/sb-admin-2.js"></script>
 </body>
 </html>
