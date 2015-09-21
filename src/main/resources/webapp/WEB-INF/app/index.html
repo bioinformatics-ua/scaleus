@@ -32,7 +32,7 @@
 
 
 		<!-- Navigation -->
-		<nav class="navbar navbar-default navbar-static-top" role="navigation"
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation"
 			style="margin-bottom: 0">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="/app/index.html">Scaleus</a>
@@ -62,7 +62,7 @@
 							<form name="removeDatabase">
 								<div class="input-group custom-search-form">
 									<select class="form-control"
-										data-ng-click="DBList.getNamespaces()"
+										data-ng-click="DBList.changeDB()"
 										data-ng-model="selectedDB"
 										data-ng-options="opt for opt in DBList.dataset" required>
 									</select> <span class="input-group-btn">
@@ -167,8 +167,6 @@
 		<!-- APP -->
 		<script src="/js/app.js"></script>
 		<script src="/js/scaleus.js"></script>
-		<script src="/js/databases.js"></script>
-		<script src="/js/namespaces.js"></script>
 		<script src="/js/resource.js"></script>
 		<script src="/js/services.js"></script>
 		<script src="/js/directives.js"></script>

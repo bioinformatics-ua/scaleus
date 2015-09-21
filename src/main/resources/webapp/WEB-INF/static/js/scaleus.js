@@ -80,7 +80,7 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 				alert (response.status + " " + response.statusText);
 			});
 		} else {
-			alert("Incomplete namespace");
+			alert("Invalid namespace");
 		};
 	};
 
@@ -110,10 +110,6 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 			alert("Write your query");
 		};
 	};
-	
-	DBList.sparqler = function () {
-		
-	};
 
 	DBList.addTriple = function (database) {
 		console.log('Adding on database ' + database);
@@ -124,12 +120,20 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 					$scope.formSubject = "";
 					$scope.formPredicate = "";
 					$scope.formObject = "";
+					// show alert: successful
+					$scope.successTextAlert = "Triple added successfully!";
+					$scope.showSuccessAlert = true;
+					$scope.showErrorAlert = false;
 				}, function (response) {
 					// an error occured
 					alert (response.status + " " + response.statusText);
+					// show alert: failed
+					$scope.errorTextAlert = "Couldn't add triple";
+					$scope.showErrorAlert = true;
+					$scope.showSuccessAlert = false;
 				});
 		} else {
-			alert("Incomplete triple");
+			alert("Invalid triple");
 		};
 	};
 
@@ -141,9 +145,17 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 				$scope.formSubject = "";
 				$scope.formPredicate = "";
 				$scope.formObject = "";
+				// show alert: successful
+				$scope.successTextAlert = "Triple removed successfully!";
+				$scope.showSuccessAlert = true;
+				$scope.showErrorAlert = false;
 			}, function (response) {
 				// an error occured
 				alert (response.status + " " + response.statusText);
+				// show alert: failed
+				$scope.errorTextAlert = "Couldn't remove triple";
+				$scope.showErrorAlert = true;
+				$scope.showSuccessAlert = false;
 			});
 		} else {
 			alert("Incomplete triple");
@@ -159,6 +171,20 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 		});
 		return prefix;
 	};
+	
+	DBList.changeDB = function () {
+		DBList.getNamespaces();
+		// Clear results
+		DBList.queryResults = [];
+		$scope.formSPARQL = "";
+	}
+	
+	DBList.addAllPrefix = function () {
+		angular.forEach(DBList.modelContainer, function(ns){
+			console.log(ns);
+			ns.checked = true;
+		});
+	}
 	
 	DBList.getAll = function () {
 		$scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n} LIMIT 1000';

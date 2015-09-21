@@ -9,9 +9,9 @@
 <div class="row">
 	<div>
 	<h4>Predefined queries: <span>
-		<button class="btn btn-xs btn-default" data-ng-click="DBList.getAll()">Get
+		<button class="btn btn-xs btn-primary" data-ng-click="DBList.getAll()">Get
 			all</button>
-		<button class="btn btn-xs btn-default"
+		<button class="btn btn-xs btn-primary"
 			data-ng-click="DBList.countAll()">Count all</button>
 	</span>
 	</div>
@@ -25,6 +25,11 @@
 						ng-class="{'true':'btn btn-sm btn-warning','false':'btn btn-sm btn-default'}[ns.checked]"
 						ng-click="ns.checked = !ns.checked" data-ng-repeat="ns in DBList.modelContainer">{{ns.item.prefix}}</button>
 				</div>
+				<button type="button"
+						class="btn btn-sm btn-primary"
+						ng-click="DBList.addAllPrefix()" ng-show="DBList.modelContainer.length != 0">Add all</button>
+						<a href="/app/namespaces.html"><button type="button"
+						class="btn btn-sm btn-primary">Add new</button></a>
 			</div>
 			<hr>
 			<div
