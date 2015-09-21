@@ -8,25 +8,38 @@
 <!-- /.row -->
 <div class="row">
 
-	<form class="form-inline well" name="manageTriples">
-		<div class="col-md-3">
-			<input type="text" class="form-control" placeholder="Subject"
-				data-ng-model="$parent.formSubject" required>
+	<form class="form-horizontal" role="form" name="manageTriples">
+		<div class="form-group">
+			<label for="inputType" class="col-md-2 control-label">Subject</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control"
+					placeholder="Subject" data-ng-model="$parent.formSubject" required>
+			</div>
 		</div>
-		<div class="col-md-3">
-			<input type="text" class="form-control" placeholder="Predicate"
-				data-ng-model="$parent.formPredicate" required>
+		<div class="form-group">
+			<label for="inputType" class="col-md-2 control-label">Predicate</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" placeholder="Predicate"
+					data-ng-model="$parent.formPredicate" required>
+			</div>
 		</div>
-		<div class="col-md-3">
-			<input type="text" class="form-control" placeholder="Object"
-				data-ng-model="$parent.formObject" required>
+		<div class="form-group">
+			<label for="inputType" class="col-md-2 control-label">Object</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" placeholder="Object"
+					data-ng-model="$parent.formObject" required>
+			</div>
 		</div>
-		<button class="btn btn-success"
-			data-ng-click="DBList.addTriple($parent.selectedDB)">Add
-			triple</button>
-		<button class="btn btn-danger"
-			data-ng-click="DBList.removeTriple($parent.selectedDB)">Remove
-			triple</button>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button class="btn btn-default"
+					data-ng-click="DBList.addTriple($parent.selectedDB)"><i class="fa fa-plus-square-o"></i>  Add
+					</button>
+				<button class="btn btn-default"
+					data-ng-click="DBList.removeTriple($parent.selectedDB)"><i class="fa fa-trash-o"></i>  Remove
+					</button>
+			</div>
+		</div>
 	</form>
 
 </div>

@@ -1,0 +1,20 @@
+h1 {
+    color: #3B6A8A;
+    font-weight: 550px;
+    line-height: 70px;
+    font-size: 45px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h2, h3, h4 {
+    color: #1A4664;
+    font-family: 'Open Sans', sans-serif;
+}
+
+table thead {
+	color: #1A4664;
+}
+
+.control-label {
+	color: #1A4664;
+}

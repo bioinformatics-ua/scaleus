@@ -1,3 +1,5 @@
+
+<script src="/js/directives.js"></script>
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Manage namespaces</h1>
@@ -8,29 +10,41 @@
 <!-- /.row -->
 <div class="row">
 
-	<div>
-		<ul>
-			<li data-ng-repeat="ns in DBList.modelContainer">
-				<div>
-					<span>{{ns.item.prefix}}</span>
-					<button class="btn btn-danger"
-						data-ng-click="DBList.removeNamespace(ns.item.prefix)">Remove</button>
-				</div>
-			</li>
-		</ul>
-		<form class="form-inline well" name="putNamespace">
-			<div class="col-md-3">
-				<input type="text" class="form-control" placeholder="Prefix"
-					data-ng-model="$parent.formPrefix" required>
-			</div>
-			<div class="col-md-3">
-				<input type="text" class="form-control" placeholder="Namespace"
-					data-ng-model="$parent.formNamespace" required>
-			</div>
-			<button class="btn btn-success" data-ng-click="DBList.putNamespace()">Add
-				Namespace</button>
-		</form>
+<form class="form-inline well" name="putNamespace">
+	<div class="table-responsive">
+		<table class="table table-striped"
+			data-ng-show="DBList.modelContainer.length != 0">
+			<thead>
+				<tr>
+					<th>PREFIX</th>
+					<th>URI</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="ns in DBList.modelContainer">
+					<td>{{ns.item.prefix}}</td>
+					<td>{{ns.item.namespace}}</td>
+					<td><button class="btn btn-default"
+							data-ng-click="DBList.removeNamespace(ns.item.prefix)"
+							ng-confirm-click="Are you sure you want to delete '{{ns.item.prefix}}'?">
+							<i class="fa fa-trash-o"></i>  Remove  </button></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>	<input type="text" class="form-control" placeholder="Prefix"
+							data-ng-model="$parent.formPrefix" required></td>
+					
+					<td>	<input type="text" class="form-control" placeholder="Namespace"
+							data-ng-model="$parent.formNamespace" required></td>
+					
+					<td><button class="btn btn-default"
+						data-ng-click="DBList.putNamespace()"><i class="fa fa-plus-square-o"></i>  Add  </button></td>
+				</tr>
+			</tfoot>
+		</table>
 	</div>
+</form>
 
 </div>
 <!-- /.row -->

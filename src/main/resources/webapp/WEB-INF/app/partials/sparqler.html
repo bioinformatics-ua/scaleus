@@ -7,30 +7,34 @@
 
 <!-- /.row -->
 <div class="row">
-
-	<h4>Select prefix</h4>
 	<div>
-		<div class="btn-group" data-ng-repeat="ns in DBList.modelContainer">
-	    	<button type="button" class="btn btn-sm btn-default" ng-click="ns.checked = !ns.checked">{{ns.item.prefix}}</button>
-	    </div>
-	</div>
-
-	<h3>Predefined queries</h3>
-	<div>
+	<h4>Predefined queries: <span>
 		<button class="btn btn-xs btn-default" data-ng-click="DBList.getAll()">Get
 			all</button>
 		<button class="btn btn-xs btn-default"
 			data-ng-click="DBList.countAll()">Count all</button>
+	</span>
 	</div>
 	<br>
 	<div>
-		<div
-			data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
-			PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</div>
 		<form class="form-horizontal well" name="sparqler">
+			<h4>Select prefix</h4>
+			<div>
+				<div class="btn-group">
+					<button type="button"
+						ng-class="{'true':'btn btn-sm btn-warning','false':'btn btn-sm btn-default'}[ns.checked]"
+						ng-click="ns.checked = !ns.checked" data-ng-repeat="ns in DBList.modelContainer">{{ns.item.prefix}}</button>
+				</div>
+			</div>
+			<hr>
+			<div
+				data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
+				<samp>PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</samp></div>
+			<div class="form-group">
 			<textarea class="form-control input-xlarge"
 				placeholder="Write your SPARQL query here"
-				data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
+				data-ng-model="formSPARQL" rows="16" cols="60" required><samp></samp></textarea>
+				</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
 					data</button>

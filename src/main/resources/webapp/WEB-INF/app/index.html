@@ -19,6 +19,7 @@
 
 <!-- Custom CSS -->
 <link href="/css/sb-admin-2.css" rel="stylesheet">
+<link href="/css/styles.css" rel="stylesheet">
 
 <!-- Custom Fonts -->
 <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -67,7 +68,7 @@
 									</select> <span class="input-group-btn">
 										<button class="btn btn-default"
 											data-ng-click="DBList.removeDatabase()"
-											ng-confirm-click="Are you sure you want to delete {{selectedDB}}">
+											ng-confirm-click="Are you sure you want to delete '{{selectedDB}}'?">
 											<i class="fa fa-trash-o"></i>
 										</button>
 										<button class="btn btn-default"
@@ -85,7 +86,7 @@
 										<input type="text" class="form-control" placeholder="DB name"
 											data-ng-model="formDatabase" required> <span
 											class="input-group-btn">
-											<button class="btn btn-success"
+											<button class="btn btn-primary"
 												data-ng-click="DBList.addDatabase()">Add</button>
 										</span>
 									</div>
@@ -93,7 +94,7 @@
 								</form>
 							</div>
 						</li>
-						<li><a href="/app/index.html" target="_self"><i
+						<li><a href="/app/index.html"><i
 								class="fa fa-search fa-fw"></i> Sparqler</a></li>
 						<!--
                             <li>
