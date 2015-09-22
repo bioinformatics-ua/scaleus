@@ -42,7 +42,7 @@ DELETE /api/v1/dataset/{dataset} HTTP/1.1
 **SPARQL endpoint:**
 
 ```
-GET /api/v1/sparqler/{dataset}/sparql?query={query} HTTP/1.1
+GET /api/v1/sparqler/{dataset}/sparql?query={query}&inference={false} HTTP/1.1
 Content-Type: application/json
 ```
 

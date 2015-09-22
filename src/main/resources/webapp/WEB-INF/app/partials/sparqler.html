@@ -41,7 +41,7 @@
 			<div class="form-group">
 			<textarea class="form-control input-xlarge"
 				placeholder="Write your SPARQL query here"
-				data-ng-model="formSPARQL" rows="16" cols="60" required><samp></samp></textarea>
+				data-ng-model="$parent.formSPARQL" rows="16" cols="60"></textarea>
 				</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
@@ -49,10 +49,10 @@
 			</div>
 		</form>
 		<h2 class="sub-header" data-ng-show="DBList.queryResults.length != 0">Query
-			results</h2>
-		<div class="table-responsive">
+			results:</h2>
+		<div class="table-responsive" data-ng-show="DBList.queryResults.length != 0">
 			<table class="table table-striped"
-				data-ng-show="DBList.queryResults.length != 0">
+				>
 				<thead>
 					<tr>
 						<th data-ng-repeat="(key, val) in DBList.queryResults[0]">
@@ -69,6 +69,7 @@
 					</tr>
 				</tbody>
 			</table>
+                    <a data-ng-href="{{sparqlRequest}}" target="_blank" class="pull-right">As JSON</a>
 		</div>
 	</div>
 

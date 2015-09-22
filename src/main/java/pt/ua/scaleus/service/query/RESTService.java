@@ -40,7 +40,7 @@ public class RESTService implements IService {
     @GET
     @Path("/sparqler/{dataset}/sparql")
     @Override
-    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @QueryParam("inf") Boolean inf) {
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @QueryParam("inference") Boolean inf) {
         return Response.status(200).entity(api.select(dataset, query, inf)).build();
     }
 
