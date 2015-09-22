@@ -9,7 +9,7 @@ package pt.ua.scaleus.service.data;
  *
  * @author Pedro Sernadela <sernadela at ua.pt>
  */
-public class Triple {
+public class NTriple {
 
     String s;
     String p;
@@ -43,5 +43,4 @@ public class Triple {
     public String toString() {
         return "Triple [" + s + " " + p + " " + o + "]";
     }
-
 }

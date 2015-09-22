@@ -11,7 +11,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node_URI;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ReadWrite;
@@ -27,10 +32,13 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.sparql.core.DatasetGraph;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
-import pt.ua.scaleus.service.data.Triple;
+import pt.ua.scaleus.service.data.NQuad;
+import pt.ua.scaleus.service.data.NTriple;
 
 /**
  *
@@ -155,16 +163,23 @@ public class API {
      *
      * @param database
      * @param query the SPARQL query (no prefixes).
+     * @param inf
      * @return
      */
-    public String select(String database, String query) {
+    public String select(String database, String query, Boolean inf) {
         String response = "";
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
         try {
             Model model = dataset.getDefaultModel();
-            InfModel inf = ModelFactory.createRDFSModel(model);
-            QueryExecution qe = QueryExecutionFactory.create(query, model);
+            QueryExecution qe;
+            if(inf!=null && inf) {
+                InfModel inference = ModelFactory.createRDFSModel(model);
+                qe = QueryExecutionFactory.create(query, inference);
+            }else{
+                qe = QueryExecutionFactory.create(query, model);
+            }
+            
             ResultSet rs = qe.execSelect();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ResultSetFormatter.outputAsJSON(os, rs);
@@ -172,7 +187,7 @@ public class API {
             //qe.close();
             //model.close();
             //inf.close();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             dataset.end();
@@ -189,7 +204,7 @@ public class API {
      * @return
      */
     public String describeResource(String database, String prefix, String id) {
-        String response ="";
+        String response = "";
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
         try {
@@ -197,15 +212,17 @@ public class API {
             String namespace = model.getNsPrefixMap().get(prefix);
             Resource resource = model.getResource(namespace + id);
             StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
-            
+
             while (stat.hasNext()) {
                 Statement next = stat.next();
-                if(next.getObject().isResource())
-                response+= "<h2><a href='../resource/"+database+"/"+prefix+"/"+next.getSubject().getLocalName()+"'>"+ next.getSubject().toString()+"</a> "+ next.getPredicate().toString()+" <a href='/resource/"+database+"/"+prefix+"/"+next.getObject().asResource().getLocalName()+"'>"+ next.getObject().toString()+"</a></h2>";
-                else response+= "<h2><a href='../resource/"+database+"/"+prefix+"/"+next.getSubject().getLocalName()+"'>"+ next.getSubject().toString()+"</a> "+ next.getPredicate().toString()+" "+ next.getObject().toString()+"</a></h2>";
+                if (next.getObject().isResource()) {
+                    response += "<h2><a href='../resource/" + database + "/" + prefix + "/" + next.getSubject().getLocalName() + "'>" + next.getSubject().toString() + "</a> " + next.getPredicate().toString() + " <a href='/resource/" + database + "/" + prefix + "/" + next.getObject().asResource().getLocalName() + "'>" + next.getObject().toString() + "</a></h2>";
+                } else {
+                    response += "<h2><a href='../resource/" + database + "/" + prefix + "/" + next.getSubject().getLocalName() + "'>" + next.getSubject().toString() + "</a> " + next.getPredicate().toString() + " " + next.getObject().toString() + "</a></h2>";
+                }
             }
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             dataset.end();
@@ -278,7 +295,7 @@ public class API {
      * @param database
      * @param triple
      */
-    public void removeStatement(String database, Triple triple) {
+    public void removeStatement(String database, NTriple triple) {
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {
@@ -307,18 +324,55 @@ public class API {
     }
 
     /**
+     * Adds the given quad statement to the database.
+     *
+     * @param database
+     * @param quad
+     * @return success of the operation.
+     */
+    public boolean addStatement(String database, NQuad quad) {
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.WRITE);
+
+        try {
+            
+            DatasetGraph ds = dataset.asDatasetGraph();
+            Node c = NodeFactory.createURI(quad.getC());
+            Node s = NodeFactory.createURI(quad.getS());
+            Node p = NodeFactory.createURI(quad.getP());
+
+            UrlValidator urlValidator = new UrlValidator();
+            if (urlValidator.isValid(quad.getO())) {
+                Node o = NodeFactory.createURI(quad.getO());
+                ds.add(c, s, p, o);
+            } else {
+                Node o = NodeFactory.createLiteral(quad.getO());
+                ds.add(c, s, p, o);
+            }
+
+            dataset.commit();
+            //model.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            dataset.end();
+        }
+        return true;
+    }
+
+    /**
      * Adds the given triple statement to the database.
      *
      * @param database
      * @param triple
      * @return success of the operation.
      */
-    public boolean addStatement(String database, Triple triple) {
+    public boolean addStatement(String database, NTriple triple) {
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
+
         try {
             Model model = dataset.getDefaultModel();
-
             Resource s = model.createResource(triple.getS());
             Property p = model.createProperty(triple.getP());
 
@@ -332,6 +386,8 @@ public class API {
 
             dataset.commit();
             //model.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             dataset.end();
         }

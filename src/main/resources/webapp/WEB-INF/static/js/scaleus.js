@@ -97,6 +97,7 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 
 	DBList.getData = function () {
 		if ($scope.formSPARQL) {
+                    console.log($scope.inference);
 			var query = DBList.checkedPrefix()+$scope.formSPARQL;
 			scaleusAPIservice.getSparqler($scope.selectedDB, query)
 			.then(function (response) {

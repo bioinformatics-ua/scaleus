@@ -1,183 +1,183 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="scaleusApp">
 
-<head>
+    <head>
 
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-<title>Scaleus - High performance triple store</title>
+        <title>Scaleus - High performance triple store</title>
 
-<!-- Bootstrap Core CSS -->
-<link href="/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap Core CSS -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- MetisMenu CSS -->
-<link href="/css/metisMenu.min.css" rel="stylesheet">
+        <!-- MetisMenu CSS -->
+        <link href="/css/metisMenu.min.css" rel="stylesheet">
 
-<!-- Custom CSS -->
-<link href="/css/sb-admin-2.css" rel="stylesheet">
-<link href="/css/styles.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link href="/css/sb-admin-2.css" rel="stylesheet">
+        <link href="/css/styles.css" rel="stylesheet">
 
-<!-- Custom Fonts -->
-<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <!-- Custom Fonts -->
+        <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-</head>
+    </head>
 
-<body data-ng-controller="queriesController as DBList">
+    <body data-ng-controller="queriesController as DBList">
 
-	<div id="wrapper">
+        <div id="wrapper">
 
 
-		<!-- Navigation -->
-		<nav class="navbar navbar-default navbar-fixed-top" role="navigation"
-			style="margin-bottom: 0">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="/app/index.html">Scaleus</a>
-			</div>
-			<!-- /.navbar-header -->
+            <!-- Navigation -->
+            <nav class="navbar navbar-default navbar-fixed-top" role="navigation"
+                 style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/app/index.html">Scaleus</a>
+                </div>
+                <!-- /.navbar-header -->
 
-			<ul class="nav navbar-top-links navbar-right">
+                <ul class="nav navbar-top-links navbar-right">
 
-			</ul>
+                </ul>
 
-			<div class="navbar-default sidebar" role="navigation">
-				<div class="sidebar-nav navbar-collapse">
-					<ul class="nav" id="side-menu">
-						<!--   
-						<li class="sidebar-search">
-							<div class="input-group custom-search-form">
-								<input type="text" class="form-control" placeholder="Search...">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button">
-										<i class="fa fa-search"></i>
-									</button>
-								</span>
-							</div> 
-						</li>
-						-->
-						<li class="sidebar-search">
-							<form name="removeDatabase">
-								<div class="input-group custom-search-form">
-									<select class="form-control"
-										data-ng-click="DBList.changeDB()"
-										data-ng-model="selectedDB"
-										data-ng-options="opt for opt in DBList.dataset" required>
-									</select> <span class="input-group-btn">
-										<button class="btn btn-default"
-											data-ng-click="DBList.removeDatabase()"
-											ng-confirm-click="Are you sure you want to delete '{{selectedDB}}'?">
-											<i class="fa fa-trash-o"></i>
-										</button>
-										<button class="btn btn-default"
-											data-ng-click="DBList.showAddDatabase()">
-											<i class="fa fa-plus-square-o"></i>
-										</button>
-									</span>
-
-								</div>
-							</form>
-							<div ng-show="showFormDatabase">
-								<br>
-								<form name="addDatabase">
-									<div class="input-group ">
-										<input type="text" class="form-control" placeholder="DB name"
-											data-ng-model="formDatabase" required> <span
-											class="input-group-btn">
-											<button class="btn btn-primary"
-												data-ng-click="DBList.addDatabase()">Add</button>
-										</span>
-									</div>
-
-								</form>
-							</div>
-						</li>
-						<li><a href="/app/index.html"><i
-								class="fa fa-search fa-fw"></i> Sparqler</a></li>
-						<!--
-                            <li>
-                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
-                                    <li>
-                                        <a href="#">Second Level Item</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level <span class="fa arrow"></span></a>
-                                        <ul class="nav nav-third-level">
-                                            <li>
-                                                <a href="#">Third Level Item</a>
-                                            </li>
-                                        </ul>
-
-                                    </li>
-                                </ul>
+                <div class="navbar-default sidebar" role="navigation">
+                    <div class="sidebar-nav navbar-collapse">
+                        <ul class="nav" id="side-menu">
+                            <!--   
+                            <li class="sidebar-search">
+                                    <div class="input-group custom-search-form">
+                                            <input type="text" class="form-control" placeholder="Search...">
+                                            <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="button">
+                                                            <i class="fa fa-search"></i>
+                                                    </button>
+                                            </span>
+                                    </div> 
                             </li>
                             -->
-						<li><a href="/app/namespaces.html"><i
-								class="fa fa-tags fa-fw"></i> Namespaces</a> <!-- /.nav-second-level --></li>
-						<li><a href="/app/triples.html"><i
-								class="fa fa-cubes fa-fw"></i> Triples</a> <!-- /.nav-second-level --></li>
-					</ul>
-				</div>
-				<!-- /.sidebar-collapse -->
-			</div>
-			<!-- /.navbar-static-side -->
-		</nav>
+                            <li class="sidebar-search">
+                                <form name="removeDatabase">
+                                    <div class="input-group custom-search-form">
+                                        <select class="form-control"
+                                                data-ng-click="DBList.changeDB()"
+                                                data-ng-model="selectedDB"
+                                                data-ng-options="opt for opt in DBList.dataset" required>
+                                        </select> <span class="input-group-btn">
+                                            <button class="btn btn-default"
+                                                    data-ng-click="DBList.removeDatabase()"
+                                                    ng-confirm-click="Are you sure you want to delete '{{selectedDB}}'?">
+                                                <i class="fa fa-trash-o"></i>
+                                            </button>
+                                            <button class="btn btn-default"
+                                                    data-ng-click="DBList.showAddDatabase()">
+                                                <i class="fa fa-plus-square-o"></i>
+                                            </button>
+                                        </span>
 
-		<div id="page-wrapper">
-			<div data-ng-show="selectedDB">
-			
-				<div data-ng-view></div>
+                                    </div>
+                                </form>
+                                <div ng-show="showFormDatabase">
+                                    <br>
+                                    <form name="addDatabase">
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" placeholder="DB name"
+                                                   data-ng-model="formDatabase" required> <span
+                                                   class="input-group-btn">
+                                                <button class="btn btn-primary"
+                                                        data-ng-click="DBList.addDatabase()">Add</button>
+                                            </span>
+                                        </div>
 
-				<footer>
-					<p>&nbsp;</p>
-					<p class="text-muted credit pull-right">
-						&copy; <a target="_blank" title="UA.PT Bioinformatics"
-							href="http://bioinformatics.ua.pt/">University of Aveiro</a>
-						<script>
-							document.write(new Date().getFullYear());
-						</script>
-						- Support provided by <a href="http://bmd-software.com"
-							target="_blank">BMD Software, LDA</a>
-					</p>
-				</footer>
+                                    </form>
+                                </div>
+                            </li>
+                            <li><a href="/app/index.html"><i
+                                        class="fa fa-search fa-fw"></i> Sparqler</a></li>
+                            <!--
+        <li>
+            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="#">Second Level Item</a>
+                </li>
+                <li>
+                    <a href="#">Third Level <span class="fa arrow"></span></a>
+                    <ul class="nav nav-third-level">
+                        <li>
+                            <a href="#">Third Level Item</a>
+                        </li>
+                    </ul>
 
-			</div>
-			<!-- /#page-wrapper -->
+                </li>
+            </ul>
+        </li>
+                            -->
+                            <li><a href="/app/namespaces.html"><i
+                                        class="fa fa-tags fa-fw"></i> Namespaces</a> <!-- /.nav-second-level --></li>
+                            <li><a href="/app/triples.html"><i
+                                        class="fa fa-cubes fa-fw"></i> Triples</a> <!-- /.nav-second-level --></li>
+                        </ul>
+                    </div>
+                    <!-- /.sidebar-collapse -->
+                </div>
+                <!-- /.navbar-static-side -->
+            </nav>
+
+            <div id="page-wrapper">
+                <div data-ng-show="selectedDB">
+
+                    <div data-ng-view></div>
+
+                    <footer>
+                        <p>&nbsp;</p>
+                        <p class="text-muted credit pull-right">
+                            &copy; <a target="_blank" title="UA.PT Bioinformatics"
+                                      href="http://bioinformatics.ua.pt/">University of Aveiro</a>
+                            <script>
+                                        document.write(new Date().getFullYear());</script>
+                            - Support provided by <a href="http://bmd-software.com"
+                                                     target="_blank">BMD Software, LDA</a>
+                        </p>
+                    </footer>
+
+                </div>
+            </div>
+            <!-- /#page-wrapper -->
 
 
-		</div>
-		<!--/#wrapper-->
+        </div>
+        <!--/#wrapper-->
 
-		<!-- script references -->
+        <!-- script references -->
 
-		<!-- jQuery -->
-		<script
-			src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+        <!-- jQuery -->
+        <script
+        src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 
-		<!-- Angular JS -->
-		<script
-			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-		<script
-			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+        <!-- Angular JS -->
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
 
 
-		<!-- APP -->
-		<script src="/js/app.js"></script>
-		<script src="/js/scaleus.js"></script>
-		<script src="/js/resource.js"></script>
-		<script src="/js/services.js"></script>
-		<script src="/js/directives.js"></script>
+        <!-- APP -->
+        <script src="/js/app.js"></script>
+        <script src="/js/scaleus.js"></script>
+        <script src="/js/resource.js"></script>
+        <script src="/js/services.js"></script>
+        <script src="/js/directives.js"></script>
 
-		<!-- Bootstrap Core JavaScript -->
-		<script src="/js/bootstrap.min.js"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script src="/js/bootstrap.min.js"></script>
 
-		<!-- Metis Menu Plugin JavaScript -->
-		<script src="/js/metisMenu.min.js"></script>
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="/js/metisMenu.min.js"></script>
 
-		<!-- Custom Theme JavaScript -->
-		<script src="/js/sb-admin-2.js"></script>
-</body>
+        <!-- Custom Theme JavaScript -->
+        <script src="/js/sb-admin-2.js"></script>
+    </body>
 </html>

@@ -35,6 +35,9 @@
 			<div
 				data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
 				<samp>PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</samp></div>
+                        <div class="checkbox pull-right">
+                            <label><input type="checkbox" value="" data-ng-model="$parent.inference">Inference</label>
+                        </div>
 			<div class="form-group">
 			<textarea class="form-control input-xlarge"
 				placeholder="Write your SPARQL query here"

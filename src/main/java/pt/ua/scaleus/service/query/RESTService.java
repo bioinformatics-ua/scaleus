@@ -25,7 +25,8 @@ import org.json.simple.JSONObject;
 import pt.ua.scaleus.api.API;
 import pt.ua.scaleus.api.Init;
 import pt.ua.scaleus.service.data.Namespace;
-import pt.ua.scaleus.service.data.Triple;
+import pt.ua.scaleus.service.data.NQuad;
+import pt.ua.scaleus.service.data.NTriple;
 
 /**
  *
@@ -39,8 +40,8 @@ public class RESTService implements IService {
     @GET
     @Path("/sparqler/{dataset}/sparql")
     @Override
-    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query) {
-        return Response.status(200).entity(api.select(dataset, query)).build();
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @QueryParam("inf") Boolean inf) {
+        return Response.status(200).entity(api.select(dataset, query, inf)).build();
     }
 
     @POST
@@ -124,8 +125,9 @@ public class RESTService implements IService {
     @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response storeTriple(@PathParam("database") String database, Triple triple) {
+    public Response storeTriple(@PathParam("database") String database, NTriple triple) {
         System.out.println(triple);
+        System.out.println(database);
         try {
             api.addStatement(database, triple);
         } catch (Exception ex) {
@@ -138,7 +140,7 @@ public class RESTService implements IService {
     @Path("/remove/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response removeTriple(@PathParam("database") String database, Triple triple) {
+    public Response removeTriple(@PathParam("database") String database, NTriple triple) {
         System.out.println(triple);
         try {
             api.removeStatement(database, triple);
