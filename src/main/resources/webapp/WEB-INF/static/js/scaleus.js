@@ -97,11 +97,16 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 
 	DBList.getData = function () {
 		if ($scope.formSPARQL) {
+			DBList.queryResults = [];
 			var query = DBList.checkedPrefix()+$scope.formSPARQL;
 			scaleusAPIservice.getSparqler($scope.selectedDB, query)
 			.then(function (response) {
+				if (response.data.results.bindings){
 				DBList.queryResults = response.data.results.bindings;
 				console.log(DBList.queryResults);
+				} else {
+					$scope.noResults = true;
+				}
 			}, function (response) {
 				// an error occured
 				alert (response.status + " " + response.statusText);
@@ -158,7 +163,7 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 				$scope.showSuccessAlert = false;
 			});
 		} else {
-			alert("Incomplete triple");
+			alert("Invalid triple");
 		};
 	};
 
