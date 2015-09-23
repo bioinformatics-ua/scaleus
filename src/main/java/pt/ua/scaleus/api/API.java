@@ -166,7 +166,7 @@ public class API {
      * @param inf
      * @return
      */
-    public String select(String database, String query, Boolean inf) {
+    public String select(String database, String query, Boolean inf, String format) {
         String response = "";
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
@@ -179,11 +179,11 @@ public class API {
             }else{
                 qe = QueryExecutionFactory.create(query, model);
             }
-            
-            ResultSet rs = qe.execSelect();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ResultSetFormatter.outputAsJSON(os, rs);
-            response = os.toString();
+            response = execute(qe, format);
+            //ResultSet rs = qe.execSelect();
+            //ByteArrayOutputStream os = new ByteArrayOutputStream();
+            //ResultSetFormatter.outputAsJSON(os, rs);
+            //response = os.toString();
             //qe.close();
             //model.close();
             //inf.close();
@@ -263,15 +263,27 @@ public class API {
                     response = os.toString();
                     break;
                 }
+                case "ttl": {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_TTL);
+                    response = os.toString();
+                    break;
+                }
                 case "csv": {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     ResultSetFormatter.outputAsCSV(os, rs);
                     response = os.toString();
                     break;
                 }
+                default:{
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ResultSetFormatter.outputAsJSON(os, rs);
+                    response = os.toString();
+                    break;
+                }
             }
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
         return response;
     }

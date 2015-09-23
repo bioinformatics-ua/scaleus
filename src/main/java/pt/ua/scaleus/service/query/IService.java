@@ -18,7 +18,7 @@ import pt.ua.scaleus.service.data.NTriple;
  */
 public interface IService {
 
-    public abstract Response sparqler(String dataset, String query, Boolean inf);
+    public abstract Response sparqler(String dataset, String query, Boolean inf, String format);
 
     public abstract Response addDataset(String name);
 

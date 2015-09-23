@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,9 +40,11 @@ public class RESTService implements IService {
 
     @GET
     @Path("/sparqler/{dataset}/sparql")
+    @Produces(MediaType.TEXT_PLAIN)
     @Override
-    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @QueryParam("inference") Boolean inf) {
-        return Response.status(200).entity(api.select(dataset, query, inf)).build();
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @DefaultValue("false") @QueryParam("inference") Boolean inf, @DefaultValue("json") @QueryParam("format") String format) {
+        String resp = api.select(dataset, query, inf, format);
+        return Response.status(200).entity(resp).build();
     }
 
     @POST

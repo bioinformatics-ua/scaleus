@@ -69,7 +69,14 @@
 					</tr>
 				</tbody>
 			</table>
-                    <a data-ng-href="{{sparqlRequest}}" target="_blank" class="pull-right">As JSON</a>
+                    <div class="pull-right">View as: 
+                        <a data-ng-href="{{sparqlRequest}}&format=json" target="_blank">JSON</a> | 
+                        <a data-ng-href="{{sparqlRequest}}&format=rdf" target="_blank">RDF</a> | 
+                        <a data-ng-href="{{sparqlRequest}}&format=ttl" target="_blank">TTL</a> | 
+                        <a data-ng-href="{{sparqlRequest}}&format=csv" target="_blank">CSV</a> | 
+                        <a data-ng-href="{{sparqlRequest}}&format=text" target="_blank">TEXT</a>
+                    </div>
+
 		</div>
 	</div>
 
