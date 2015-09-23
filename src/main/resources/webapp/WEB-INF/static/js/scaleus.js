@@ -99,8 +99,10 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 		if ($scope.formSPARQL) {
 			DBList.queryResults = [];
 			var query = DBList.checkedPrefix()+$scope.formSPARQL;
-			scaleusAPIservice.getSparqler($scope.selectedDB, query)
+			scaleusAPIservice.getSparqler($scope.selectedDB, query, $scope.inference)
 			.then(function (response) {
+                                $scope.sparqlRequest = response.config.url;
+                                console.log(response.config.url);
 				if (response.data.results.bindings){
 				DBList.queryResults = response.data.results.bindings;
 				console.log(DBList.queryResults);
@@ -205,5 +207,6 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 
 	DBList.getDatasets();
 	DBList.queryResults = [];
+        $scope.inference = false;
 
 });

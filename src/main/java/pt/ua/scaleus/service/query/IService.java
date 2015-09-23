@@ -9,7 +9,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import pt.ua.scaleus.service.data.Namespace;
-import pt.ua.scaleus.service.data.Triple;
+import pt.ua.scaleus.service.data.NQuad;
+import pt.ua.scaleus.service.data.NTriple;
 
 /**
  *
@@ -17,7 +18,7 @@ import pt.ua.scaleus.service.data.Triple;
  */
 public interface IService {
 
-    public abstract Response sparqler(String dataset, String query);
+    public abstract Response sparqler(String dataset, String query, Boolean inf, String format);
 
     public abstract Response addDataset(String name);
 
@@ -31,7 +32,7 @@ public interface IService {
 
     public abstract Response removeNamespace(String database, String prefix);
 
-    public abstract Response storeTriple(String database, Triple triple);
+    public abstract Response storeTriple(String database, NTriple triple);
     
-    public abstract Response removeTriple(String database, Triple triple);
+    public abstract Response removeTriple(String database, NTriple triple);
 }

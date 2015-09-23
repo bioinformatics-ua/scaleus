@@ -38,8 +38,8 @@ factory('scaleusAPIservice', function($http) {
 	}
 
 	// GET query sparql
-	scaleusAPI.getSparqler = function (database, query) {
-		return $http.get("../api/v1/sparqler/"+database+"/sparql?query="+encodeURIComponent(query));
+	scaleusAPI.getSparqler = function (database, query, inf) {
+		return $http.get("../api/v1/sparqler/"+database+"/sparql?query="+encodeURIComponent(query)+"&inference="+inf);
 	}
 
 	// POST new triple

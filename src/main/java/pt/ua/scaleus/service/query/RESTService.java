@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,7 +26,8 @@ import org.json.simple.JSONObject;
 import pt.ua.scaleus.api.API;
 import pt.ua.scaleus.api.Init;
 import pt.ua.scaleus.service.data.Namespace;
-import pt.ua.scaleus.service.data.Triple;
+import pt.ua.scaleus.service.data.NQuad;
+import pt.ua.scaleus.service.data.NTriple;
 
 /**
  *
@@ -38,9 +40,11 @@ public class RESTService implements IService {
 
     @GET
     @Path("/sparqler/{dataset}/sparql")
+    @Produces(MediaType.TEXT_PLAIN)
     @Override
-    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query) {
-        return Response.status(200).entity(api.select(dataset, query)).build();
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @DefaultValue("false") @QueryParam("inference") Boolean inf, @DefaultValue("json") @QueryParam("format") String format) {
+        String resp = api.select(dataset, query, inf, format);
+        return Response.status(200).entity(resp).build();
     }
 
     @POST
@@ -124,8 +128,9 @@ public class RESTService implements IService {
     @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response storeTriple(@PathParam("database") String database, Triple triple) {
+    public Response storeTriple(@PathParam("database") String database, NTriple triple) {
         System.out.println(triple);
+        System.out.println(database);
         try {
             api.addStatement(database, triple);
         } catch (Exception ex) {
@@ -138,7 +143,7 @@ public class RESTService implements IService {
     @Path("/remove/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
-    public Response removeTriple(@PathParam("database") String database, Triple triple) {
+    public Response removeTriple(@PathParam("database") String database, NTriple triple) {
         System.out.println(triple);
         try {
             api.removeStatement(database, triple);
