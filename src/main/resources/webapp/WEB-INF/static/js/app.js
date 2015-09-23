@@ -31,5 +31,8 @@ app.config(['$routeProvider', function($routeProvider) {
 	  when("/app/triples.html", {
 		  templateUrl: "partials/triples_manager.html"
 	  }).
+	  when("/resource.html", {
+		  templateUrl: "app/partials/resource.html"
+	  }).
 	  otherwise({redirectTo: '/app/index.html'});
 	}]);
