@@ -28,7 +28,7 @@
 				<button type="button"
 						class="btn btn-sm btn-primary"
 						ng-click="DBList.addAllPrefix()" ng-show="DBList.modelContainer.length != 0">Add all</button>
-						<a href="/app/namespaces.html"><button type="button"
+						<a href="../app/namespaces"><button type="button"
 						class="btn btn-sm btn-primary">Add new</button></a>
 			</div>
 			<hr>
@@ -63,8 +63,8 @@
 					<tr data-ng-repeat="result in DBList.queryResults">
 						<td data-ng-repeat="obj in result"
 							data-ng-switch="obj.type == 'uri'">
-							<a ng-check-local-route="{{obj.value}}" data-ng-href="{{obj.value}}" 
-							data-ng-switch-when="true">{{obj.value}}</a> <!-- "/resource.html" -->
+							<a data-ng-href="{{obj.value}}" 
+							data-ng-switch-when="true">{{obj.value}}</a> 
 							<span data-ng-switch-when="false">{{obj.value}}</span>
 						</td>
 					</tr>

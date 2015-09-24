@@ -83,16 +83,16 @@ public class JettyServer {
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
         
-        ServletContextHandler servletContextHandlerLD = new ServletContextHandler(jettyServer, "/resource/", true, false);
-        ServletHolder jerseyServletLD = servletContextHandlerLD.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-        jerseyServletLD.setInitOrder(0);
-        // Tells the Jersey Servlet which REST service/class to load.
-        jerseyServletLD.setInitParameter("jersey.config.server.provider.classnames", ResourceService.class.getCanonicalName());
+//        ServletContextHandler servletContextHandlerLD = new ServletContextHandler(jettyServer, "/resource/", true, false);
+//        ServletHolder jerseyServletLD = servletContextHandlerLD.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+//        jerseyServletLD.setInitOrder(0);
+//        // Tells the Jersey Servlet which REST service/class to load.
+//        jerseyServletLD.setInitParameter("jersey.config.server.provider.classnames", ResourceService.class.getCanonicalName());
 
         Handler[] sh = jettyServer.getHandlers();
-        Handler[] h = new Handler[sh.length + 3];
+        Handler[] h = new Handler[sh.length + 2];
         System.arraycopy(sh, 0, h, 0, sh.length);
-        h[h.length - 3] = servletContextHandler;
+//        h[h.length - 3] = servletContextHandler;
         h[h.length - 2] = resource_handler;
         h[h.length - 1] = appContext;
         

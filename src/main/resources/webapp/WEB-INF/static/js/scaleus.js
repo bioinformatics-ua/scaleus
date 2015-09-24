@@ -207,6 +207,6 @@ app.controller('queriesController', function($scope, scaleusAPIservice) {
 
 	DBList.getDatasets();
 	DBList.queryResults = [];
-        $scope.inference = false;
+    $scope.inference = false;
 
 });

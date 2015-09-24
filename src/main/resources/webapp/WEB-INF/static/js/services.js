@@ -66,8 +66,8 @@ factory('scaleusAPIservice', function($http) {
 
 	// GET describe resources
 	scaleusAPI.getResources = function (database, prefix, resource) {
-		return $http.get("../api/v1/resource/"+database+"/"+prefix+"/"+resource+"/js");
+		return $http.get("../../../api/v1/resource/"+database+"/"+prefix+"/"+resource+"/js");
 	}
-
+	
 	return scaleusAPI;
 });

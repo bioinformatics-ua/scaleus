@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -21,13 +22,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 import pt.ua.scaleus.api.API;
 import pt.ua.scaleus.api.Init;
-import pt.ua.scaleus.service.data.Namespace;
-import pt.ua.scaleus.service.data.NQuad;
 import pt.ua.scaleus.service.data.NTriple;
+import pt.ua.scaleus.service.data.Namespace;
 
 /**
  *
@@ -151,5 +153,19 @@ public class RESTService implements IService {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(200).build();
+    }
+    
+    @GET
+    @Path("/resource/{database}/{prefix}/{id}/{format}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Override
+    public Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("id") String id, @PathParam("format") String format) {
+    	String response="";
+        try {
+        	response = api.describeResource(database, prefix, id, format);
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return Response.status(200).entity(response).build();
     }
 }

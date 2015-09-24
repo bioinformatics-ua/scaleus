@@ -35,4 +35,6 @@ public interface IService {
     public abstract Response storeTriple(String database, NTriple triple);
     
     public abstract Response removeTriple(String database, NTriple triple);
+
+    public abstract Response resource(String database, String prefix, String id, String format);
 }

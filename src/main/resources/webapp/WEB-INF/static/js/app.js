@@ -25,14 +25,21 @@ app.config(['$routeProvider', function($routeProvider) {
 	  when("/app/index.html", {
 		  templateUrl: "partials/sparqler.html"
 	  }).
-	  when("/app/namespaces.html", {
+	  when("/app/namespaces", {
 		  templateUrl: "partials/namespaces.html"
 	  }).
-	  when("/app/triples.html", {
+	  when("/app/triples", {
 		  templateUrl: "partials/triples_manager.html"
 	  }).
-	  when("/resource.html", {
-		  templateUrl: "app/partials/resource.html"
+//	  when("/app/resource/:database/:prefix/:resource", {
+//		  templateUrl: "../../../partials/resource.html",
+//		  controller: "resourcesController",
+//		  controllerAs: "Resource"
+//	  }).
+	  when("/resource/:database/:prefix/:resource", {
+		  templateUrl: "../../../app/partials/resource.html",
+		  controller: "resourcesController",
+		  controllerAs: "Resource"
 	  }).
 	  otherwise({redirectTo: '/app/index.html'});
 	}]);
