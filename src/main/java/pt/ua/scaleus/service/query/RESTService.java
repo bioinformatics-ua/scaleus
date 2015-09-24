@@ -96,7 +96,7 @@ public class RESTService implements IService {
     }
 
     @POST
-    @Path("/namespace/{database}")
+    @Path("/namespaces/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response putNamespace(@PathParam("database") String database, Namespace namespace) {
@@ -112,7 +112,7 @@ public class RESTService implements IService {
     }
 
     @DELETE
-    @Path("/namespace/{database}/{prefix}")
+    @Path("/namespaces/{database}/{prefix}")
     @Override
     public Response removeNamespace(@PathParam("database") String database, @PathParam("prefix") String prefix) {
         try {

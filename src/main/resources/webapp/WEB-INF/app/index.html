@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-ng-app="scaleusApp">
+<html lang="en" data-ng-app="restapp">
 
     <head>
 
@@ -26,7 +26,7 @@
 
     </head>
 
-    <body data-ng-controller="queriesController as DBList">
+    <body>
 
         <div id="wrapper">
 
@@ -58,21 +58,21 @@
                                     </div> 
                             </li>
                             -->
-                            <li class="sidebar-search">
+                            <li class="sidebar-search" ng-controller="DatasetsCtrl">
                                 <form name="removeDatabase">
                                     <div class="input-group custom-search-form">
                                         <select class="form-control"
-                                                data-ng-click="DBList.changeDB()"
-                                                data-ng-model="selectedDB"
-                                                data-ng-options="opt for opt in DBList.dataset" required>
+                                                data-ng-click="changeDataset()"
+                                                data-ng-model="selectedDataset"
+                                                data-ng-options="opt for opt in datasets" required>
                                         </select> <span class="input-group-btn">
                                             <button class="btn btn-default"
-                                                    data-ng-click="DBList.removeDatabase()"
-                                                    ng-confirm-click="Are you sure you want to delete '{{selectedDB}}'?">
+                                                    data-ng-click="deleteDataset()"
+                                                    ng-confirm-click="Are you sure you want to delete '{{selectedDataset}}'?">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                             <button class="btn btn-default"
-                                                    data-ng-click="DBList.showAddDatabase()">
+                                                    data-ng-click="showAddDatabase()">
                                                 <i class="fa fa-plus-square-o"></i>
                                             </button>
                                         </span>
@@ -87,7 +87,7 @@
                                                    data-ng-model="formDatabase" required> <span
                                                    class="input-group-btn">
                                                 <button class="btn btn-primary"
-                                                        data-ng-click="DBList.addDatabase()">Add</button>
+                                                        data-ng-click="saveDataset()">Add</button>
                                             </span>
                                         </div>
 
@@ -95,7 +95,7 @@
                                 </div>
                             </li>
                             <li><a href="/app/index.html"><i
-                                        class="fa fa-search fa-fw"></i> Sparqler</a></li>
+                                        class="fa fa-search fa-fw"></i> SPARQL</a></li>
                             <!--
         <li>
             <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
@@ -127,7 +127,7 @@
             </nav>
 
             <div id="page-wrapper">
-                <div data-ng-show="selectedDB">
+                <div>
 
                     <div data-ng-view></div>
 
@@ -161,12 +161,14 @@
         <script
         src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
         <script
-        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-resource.min.js"></script>
 
 
         <!-- APP -->
         <script src="/js/app.js"></script>
-        <script src="/js/scaleus.js"></script>
+        <script src="/js/controllers.js"></script>
         <script src="/js/resource.js"></script>
         <script src="/js/services.js"></script>
         <script src="/js/directives.js"></script>

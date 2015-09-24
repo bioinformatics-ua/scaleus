@@ -2,12 +2,12 @@
  * @lgonzalez
  */
 
-var app = angular.module('scaleusApp', [
+var app = angular.module('restapp', [
   'ngRoute',
-  'scaleusApp.queries',
-  'scaleusApp.resources',
-  'scaleusApp.services',
-  'scaleusApp.directives'
+  'ngResource',
+  'restapp.controllers',
+  'restapp.services',
+  'restapp.directives'
 ]);
 
 app.config(function ($locationProvider) {

@@ -1,7 +1,7 @@
 /**
  * @lgonzalez
  */
-var app = angular.module('scaleusApp.resources', []);
+var app = angular.module('restapp.resources', []);
 
 app.controller('resourcesController', function($scope, $rootElement, $location, scaleusAPIservice) {
 

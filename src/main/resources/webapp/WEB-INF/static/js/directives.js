@@ -1,7 +1,7 @@
 /**
  * @lgonzalez
  */
-angular.module('scaleusApp.directives', []).
+angular.module('restapp.directives', []).
 directive('ngConfirmClick', [
   function(){
     return {

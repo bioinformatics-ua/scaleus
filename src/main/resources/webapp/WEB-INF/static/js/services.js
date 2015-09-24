@@ -2,8 +2,31 @@
  * @lgonzalez
  */
 
-angular.module('scaleusApp.services', []).
-factory('scaleusAPIservice', function($http) {
+var services = angular.module('restapp.services', []);
+
+
+services.factory('SharedService', function() {
+    var selectedDataset = {};
+    return selectedDataset;
+});
+
+services.factory('DatasetsService', function($resource) {
+    return $resource('../api/v1/dataset/:id', {id: '@id'}, {
+      query: {method:'GET', isArray:true},
+      save: {method:'POST'},
+      delete: {method:'DELETE'}
+    });
+    
+});
+
+services.factory('NamespacesService', function($resource) {
+    return $resource('../api/v1/namespace/:dataset', {dataset: '@dataset'}, {
+      get: {method:'GET'}
+    });
+    
+});
+
+services.factory('APIservice', function($http) {
 
 	var scaleusAPI = {};
 

@@ -76,7 +76,7 @@ Content-Type: application/json
 
 ```
 
-POST /api/v1/namespace/{dataset} HTTP/1.1
+POST /api/v1/namespaces/{dataset} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -89,7 +89,7 @@ Content-Type: application/json
 
 ```
 
-DELETE /api/v1/namespace/{dataset}/coeus HTTP/1.1
+DELETE /api/v1/namespaces/{dataset}/coeus HTTP/1.1
 Content-Type: application/json
 
 {
