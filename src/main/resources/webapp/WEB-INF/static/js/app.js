@@ -31,13 +31,13 @@ app.config(['$routeProvider', function($routeProvider) {
 	  when("/app/triples", {
 		  templateUrl: "partials/triples_manager.html"
 	  }).
-//	  when("/app/resource/:database/:prefix/:resource", {
-//		  templateUrl: "../../../partials/resource.html",
-//		  controller: "resourcesController",
-//		  controllerAs: "Resource"
-//	  }).
 	  when("/resource/:database/:prefix/:resource", {
 		  templateUrl: "../../../app/partials/resource.html",
+		  controller: "resourcesController",
+		  controllerAs: "Resource"
+	  }).
+	  when("/resource.html", {
+		  templateUrl: "/app/partials/resource.html",
 		  controller: "resourcesController",
 		  controllerAs: "Resource"
 	  }).

@@ -22,6 +22,4 @@ app.controller('resourcesController', function($scope, $routeParams, scaleusAPIs
 	};
 
 	Resource.getResources();
-	console.log('Loaded scaleusApp --> appTest');
-
 });

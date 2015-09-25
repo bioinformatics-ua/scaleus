@@ -26,9 +26,9 @@
 			</thead>
 			<tbody>
 				<tr data-ng-repeat="(key,val) in obj">
-					<td><a href="{{key}}" target="_self">{{key}}</a></td>
+					<td><a href="{{key}}">{{key}}</a></td>
 					<td data-ng-repeat="(k,v) in val" data-ng-switch="v.type == 'uri'"><a
-						data-ng-href="{{v.value}}" 
+						data-ng-href="/resource.html" 
 						data-ng-switch-when="true">{{v.value}}</a> <span
 						data-ng-switch-when="false">{{v.value}}</span></td>
 				</tr>
