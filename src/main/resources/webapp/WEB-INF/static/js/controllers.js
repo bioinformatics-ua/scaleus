@@ -53,8 +53,10 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
 
     };
     
-    $scope.changeDataset = function () {
+    $scope.changeDataset = function (selectedDataset) {
+        $scope.selectedDataset = selectedDataset;
         SharedService.selectedDataset = $scope.selectedDataset;
+        console.log($scope);
         console.log('changeDataset '+ $scope.selectedDataset);
     };
     

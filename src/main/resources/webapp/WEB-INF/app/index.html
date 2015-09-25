@@ -60,12 +60,17 @@
                             -->
                             <li class="sidebar-search" ng-controller="DatasetsCtrl">
                                 <form name="removeDatabase">
-                                    <div class="input-group custom-search-form">
-                                        <select class="form-control"
+                                    {{selectedDataset}}
+                                    
+                                    <div class="input-group custom-search-form" >
+                                        <select class="form-control" data-ng-model="selectedDataset" ng-change="changeDataset(selectedDataset)">
+                                            <option ng-repeat="dataset in datasets">{{dataset}}</option>
+                                        </select>
+                                        <!--<select class="form-control"
                                                 data-ng-click="changeDataset()"
                                                 data-ng-model="selectedDataset"
                                                 data-ng-options="opt for opt in datasets" required>
-                                        </select> <span class="input-group-btn">
+                                        </select>--> <span class="input-group-btn">
                                             <button class="btn btn-default"
                                                     data-ng-click="deleteDataset()"
                                                     ng-confirm-click="Are you sure you want to delete '{{selectedDataset}}'?">
@@ -83,7 +88,7 @@
                                     <br>
                                     <form name="addDatabase">
                                         <div class="input-group ">
-                                            <input type="text" class="form-control" placeholder="DB name"
+                                            <input type="text" class="form-control" maxlength="7" placeholder="DB name"
                                                    data-ng-model="formDatabase" required> <span
                                                    class="input-group-btn">
                                                 <button class="btn btn-primary"
@@ -95,6 +100,8 @@
                                 </div>
                             </li>
                             <li><a href="/app/index.html"><i
+                                        class="fa fa-home fa-fw"></i> Dashboard</a> <!-- /.nav-second-level --></li>
+                            <li><a href="/app/sparqler.html"><i
                                         class="fa fa-search fa-fw"></i> SPARQL</a></li>
                             <!--
         <li>
