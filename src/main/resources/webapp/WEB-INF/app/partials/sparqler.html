@@ -6,13 +6,13 @@
 </div>
 
 <!-- /.row -->
-<div class="row">
+<div class="row" ng-controller="QueriesCtrl">
 	<div>
 	<h4>Predefined queries: <span>
-		<button class="btn btn-xs btn-primary" data-ng-click="DBList.getAll()">Get
+		<button class="btn btn-xs btn-primary" data-ng-click="getAll()">Get
 			all</button>
 		<button class="btn btn-xs btn-primary"
-			data-ng-click="DBList.countAll()">Count all</button>
+			data-ng-click="countAll()">Count all</button>
 	</span>
 	</div>
 	<br>
@@ -23,44 +23,44 @@
 				<div class="btn-group">
 					<button type="button"
 						ng-class="{'true':'btn btn-sm btn-warning','false':'btn btn-sm btn-default'}[ns.checked]"
-						ng-click="ns.checked = !ns.checked" data-ng-repeat="ns in DBList.modelContainer">{{ns.item.prefix}}</button>
+						ng-click="ns.checked = !ns.checked" data-ng-repeat="ns in modelContainer">{{ns.item.prefix}}</button>
 				</div>
 				<button type="button"
 						class="btn btn-sm btn-primary"
-						ng-click="DBList.addAllPrefix()" ng-show="DBList.modelContainer.length != 0">Add all</button>
+						ng-click="addAllPrefix()" ng-show="modelContainer.length != 0">Add all</button>
 						<a href="/app/namespaces.html"><button type="button"
 						class="btn btn-sm btn-primary">Add new</button></a>
 			</div>
 			<hr>
 			<div
-				data-ng-repeat="ns in DBList.modelContainer| filter:{checked:true}">
+				data-ng-repeat="ns in modelContainer| filter:{checked:true}">
 				<samp>PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</samp></div>
                         <div class="checkbox pull-right">
-                            <label><input type="checkbox" value="" data-ng-model="$parent.inference">Inference</label>
+                            <label><input type="checkbox" value="" data-ng-model="inference">Inference</label>
                         </div>
 			<div class="form-group">
 			<textarea class="form-control input-xlarge"
 				placeholder="Write your SPARQL query here"
-				data-ng-model="$parent.formSPARQL" rows="16" cols="60" required></textarea>
+				data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
 				</div>
 			<div class="form-actions">
-				<button class="btn btn-primary" data-ng-click="DBList.getData()">Get
+				<button class="btn btn-primary" data-ng-click="getData()">Get
 					data</button>
 			</div>
 		</form>
-		<h2 class="sub-header" data-ng-show="DBList.queryResults.length != 0">Query
+		<h2 class="sub-header" data-ng-show="queryResults.length != 0">Query
 			results:</h2>
-		<div class="table-responsive" data-ng-show="DBList.queryResults.length != 0">
+		<div class="table-responsive" data-ng-show="queryResults.length != 0">
 			<table class="table table-striped"
 				>
 				<thead>
 					<tr>
-						<th data-ng-repeat="(key, val) in DBList.queryResults[0]">
+						<th data-ng-repeat="(key, val) in queryResults[0]">
 							{{key}}</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr data-ng-repeat="result in DBList.queryResults">
+					<tr data-ng-repeat="result in queryResults">
 						<td data-ng-repeat="obj in result"
 							data-ng-switch="obj.type == 'uri'">
 							<a ng-check-local-route="{{obj.value}}" data-ng-href="{{obj.value}}" 

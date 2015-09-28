@@ -19,11 +19,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-ng-repeat="ns in DBList.modelContainer">
+				<tr data-ng-repeat="ns in modelContainer">
 					<td>{{ns.item.prefix}}</td>
 					<td>{{ns.item.namespace}}</td>
 					<td><button class="btn btn-sm btn-primary"
-							data-ng-click="DBList.removeNamespace(ns.item.prefix)"
+							data-ng-click="removeNamespace(ns.item.prefix)"
 							ng-confirm-click="Are you sure you want to delete '{{ns.item.prefix}}'?">
 							<i class="fa fa-trash-o"></i>  Remove  </button></td>
 				</tr>
@@ -31,13 +31,13 @@
 			<tfoot>
 				<tr>
 					<td>	<input type="text" class="form-control" placeholder="Prefix"
-							data-ng-model="$parent.formPrefix" required></td>
+							data-ng-model="formPrefix" required></td>
 					
 					<td>	<input type="url" class="form-control" placeholder="Namespace"
-							data-ng-model="$parent.formNamespace" required></td>
+							data-ng-model="formNamespace" required></td>
 					
-					<td><button class="btn btn-sm btn-primary"
-						data-ng-click="DBList.putNamespace()"><i class="fa fa-plus-square-o"></i>  Add  </button></td>
+					<td>	<button class="btn btn-sm btn-primary"
+						data-ng-click="addNamespace()"><i class="fa fa-plus-square-o"></i>  Add  </button></td>
 				</tr>
 			</tfoot>
 		</table>
