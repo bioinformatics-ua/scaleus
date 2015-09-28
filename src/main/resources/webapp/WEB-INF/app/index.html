@@ -59,9 +59,7 @@
                             </li>
                             -->
                             <li class="sidebar-search" ng-controller="DatasetsCtrl">
-                                <form name="removeDatabase">
-                                    {{selectedDataset}}
-                                    
+                                <form name="removeDatabase">                                
                                     <div class="input-group custom-search-form" >
                                         <select class="form-control" data-ng-model="selectedDataset" ng-change="changeDataset(selectedDataset)">
                                             <option ng-repeat="dataset in datasets">{{dataset}}</option>

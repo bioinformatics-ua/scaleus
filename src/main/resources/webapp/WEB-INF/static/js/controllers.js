@@ -6,6 +6,20 @@ var app = angular.module('restapp.controllers', []);
 
 app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService) {
 
+    /* event to manage the selected dataset */
+    $scope.selectedDataset = SharedService.selectedDataset;
+
+    $scope.$on('datasetChanged', function (event, dataset) {
+        $scope.selectedDataset = dataset;
+        //console.log($scope.selectedDataset);
+    });
+
+    $scope.changeDataset = function (selectedDataset) {
+        SharedService.update(selectedDataset);
+    };
+    /* end of event to manage the selected dataset */
+
+
     $scope.showAddDatabase = function () {
         $scope.showFormDatabase = $scope.showFormDatabase ? false : true;
     };
@@ -14,12 +28,7 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
     $scope.queryDatasets = function () {
         DatasetsService.query(function (response) {
             $scope.datasets = response;
-            var defaultIndex = response.indexOf("default"); //change this to work with cookies
-            if (defaultIndex !== -1)
-                $scope.selectedDataset = response[defaultIndex];
-            else
-                $scope.selectedDataset = response[0];
-            SharedService.selectedDataset = $scope.selectedDataset;
+            SharedService.update($scope.selectedDataset);
         });
     };
 
@@ -30,7 +39,8 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
                 $scope.queryDatasets();
                 $scope.showFormDatabase = false;
                 var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
-                if(savedDatasetIndex !== -1) $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
+                if (savedDatasetIndex !== -1)
+                    $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
 
             });
         } else {
@@ -39,7 +49,7 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
         ;
 
     };
-    
+
     $scope.deleteDataset = function () {
 
         if ($scope.selectedDataset) {
@@ -52,14 +62,8 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
         ;
 
     };
-    
-    $scope.changeDataset = function (selectedDataset) {
-        $scope.selectedDataset = selectedDataset;
-        SharedService.selectedDataset = $scope.selectedDataset;
-        console.log($scope);
-        console.log('changeDataset '+ $scope.selectedDataset);
-    };
-    
+
+
 
     //init
     $scope.queryDatasets();
@@ -68,9 +72,9 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
 
 
 app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedService) {
-    
+
     console.log(SharedService.selectedDataset);
-    
+
 
 });
 
