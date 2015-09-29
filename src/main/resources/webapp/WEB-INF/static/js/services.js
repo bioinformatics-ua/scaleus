@@ -5,10 +5,15 @@
 var services = angular.module('restapp.services', []);
 
 
-services.factory('SharedService', function() {
-	var selectedDataset = {};
-	return selectedDataset;
-});
+services.factory('SharedService', [ '$rootScope', function( $rootScope ) {
+    return {
+      selectedDataset: 'default',
+      update: function( item ) {
+        this.selectedDataset = item ;
+        $rootScope.$broadcast('datasetChanged', item);
+      }
+   };
+}]);
 
 services.factory('DatasetsService', function($resource) {
 	return $resource('../api/v1/dataset/:id', {id: '@id'}, {

@@ -6,60 +6,66 @@ var app = angular.module('restapp.controllers', []);
 
 app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService) {
 
-	$scope.showAddDatabase = function () {
-		$scope.showFormDatabase = $scope.showFormDatabase ? false : true;
-	};
+    /* event to manage the selected dataset */
+    $scope.selectedDataset = SharedService.selectedDataset;
+
+    $scope.$on('datasetChanged', function (event, dataset) {
+        $scope.selectedDataset = dataset;
+        //console.log($scope.selectedDataset);
+    });
+
+    $scope.changeDataset = function (selectedDataset) {
+        SharedService.update(selectedDataset);
+    };
+    /* end of event to manage the selected dataset */
 
 
-	$scope.queryDatasets = function () {
-		DatasetsService.query(function (response) {
-			$scope.datasets = response;
-			var defaultIndex = response.indexOf("default"); //change this to work with cookies
-			if (defaultIndex !== -1)
-				$scope.selectedDataset = response[defaultIndex];
-			else
-				$scope.selectedDataset = response[0];
-			SharedService.selectedDataset = $scope.selectedDataset;
-		});
-	};
-
-	$scope.saveDataset = function () {
-
-		if ($scope.formDatabase) {
-			DatasetsService.save({id: $scope.formDatabase}, function (response) {
-				$scope.queryDatasets();
-				$scope.showFormDatabase = false;
-				var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
-				if(savedDatasetIndex !== -1) $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
-
-			});
-		} else {
-			alert("No database name was introduced");
-		}
-		;
-
-	};
-
-	$scope.deleteDataset = function () {
-
-		if ($scope.selectedDataset) {
-			DatasetsService.delete({id: $scope.selectedDataset}, function (response) {
-				$scope.queryDatasets();
-			});
-		} else {
-			alert("No database name to remove");
-		};
-
-	};
-
-	$scope.changeDataset = function () {
-		SharedService.selectedDataset = $scope.selectedDataset;
-		console.log('changeDataset '+ $scope.selectedDataset);
-	};
+    $scope.showAddDatabase = function () {
+        $scope.showFormDatabase = $scope.showFormDatabase ? false : true;
+    };
 
 
-	//init
-	$scope.queryDatasets();
+    $scope.queryDatasets = function () {
+        DatasetsService.query(function (response) {
+            $scope.datasets = response;
+            SharedService.update($scope.selectedDataset);
+        });
+    };
+
+    $scope.saveDataset = function () {
+
+        if ($scope.formDatabase) {
+            DatasetsService.save({id: $scope.formDatabase}, function (response) {
+                $scope.queryDatasets();
+                $scope.showFormDatabase = false;
+                var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
+                if (savedDatasetIndex !== -1)
+                    $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
+
+            });
+        } else {
+            alert("No database name was introduced");
+        };
+
+    };
+
+    $scope.deleteDataset = function () {
+
+        if ($scope.selectedDataset) {
+            DatasetsService.delete({id: $scope.selectedDataset}, function (response) {
+                $scope.queryDatasets();
+            });
+        } else {
+            alert("No database name to remove");
+        }
+        ;
+
+    };
+
+
+
+    //init
+    $scope.queryDatasets();
 
 });
 
