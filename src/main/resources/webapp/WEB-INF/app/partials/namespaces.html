@@ -19,12 +19,12 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-ng-repeat="ns in modelContainer">
-					<td>{{ns.item.prefix}}</td>
-					<td>{{ns.item.namespace}}</td>
+				<tr data-ng-repeat="ns in namespaces">
+					<td>{{ns.prefix}}</td>
+					<td>{{ns.uri}}</td>
 					<td><button class="btn btn-sm btn-primary"
-							data-ng-click="removeNamespace(ns.item.prefix)"
-							ng-confirm-click="Are you sure you want to delete '{{ns.item.prefix}}'?">
+							data-ng-click="removeNamespace(ns.prefix)"
+							ng-confirm-click="Are you sure you want to delete '{{ns.prefix}}'?">
 							<i class="fa fa-trash-o"></i>  Remove  </button></td>
 				</tr>
 			</tbody>

@@ -62,7 +62,7 @@ Content-Type: application/json
 **Remove triple:**
 
 ```
-DELETE /api/v1/remove/{dataset} HTTP/1.1
+DELETE /api/v1/store/{dataset} HTTP/1.1
 Content-Type: application/json
 
 {

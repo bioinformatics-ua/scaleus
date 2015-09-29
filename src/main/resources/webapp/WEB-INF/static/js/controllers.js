@@ -48,8 +48,7 @@ app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService)
 			});
 		} else {
 			alert("No database name to remove");
-		}
-		;
+		};
 
 	};
 
@@ -72,12 +71,11 @@ app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedServ
 	$scope.getNamespaces = function () {
 		if (SharedService.selectedDataset) {
 			NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
-				console.log(response);
-				$scope.namespaces = response;
-				$scope.modelContainer = [];
-				angular.forEach($scope.namespaces, function (val, key) {
-					$scope.modelContainer.push({item: {prefix: key, namespace: val}, checked: false});
-				});
+//				var results = response.namespaces;
+				$scope.namespaces = response.namespaces;
+//				angular.forEach(results, function (val, key) {
+//				$scope.namespaces.push({item: {prefix: key, namespace: val}, checked: false});
+//				});
 			}, function (response) {
 				// an error occured
 				alert(response.status + " " + response.statusText);
@@ -86,12 +84,10 @@ app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedServ
 	};
 
 	$scope.addNamespace = function () {
-		console.log('Put namespace');
 		if ($scope.formPrefix && $scope.formNamespace) {
 			var ns = {'prefix': $scope.formPrefix, 
-					  'namespace': $scope.formNamespace}
-			NamespacesService.add({dataset: SharedService.selectedDataset}, ns, function (response) {
-				console.log(response);
+					'namespace': $scope.formNamespace}
+			NamespacesService.save({dataset: SharedService.selectedDataset}, ns, function (response) {
 				$scope.getNamespaces();
 				$scope.formPrefix = "";
 				$scope.formNamespace = "";
@@ -123,15 +119,12 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService) {
 	console.log('on TriplesCtrl ' + SharedService.selectedDataset);
 
 	$scope.addTriple = function () {
-		console.log('Adding triple ');
 		if ($scope.formSubject && $scope.formPredicate && $scope.formObject) {
-			
+
 			var triple = {'s': $scope.formSubject, 
-						  'p': $scope.formPredicate,
-						  'o': $scope.formObject};
-			console.log(triple);
-			TriplesService.add({dataset: SharedService.selectedDataset}, triple, function (response) {
-				console.log(response);
+					'p': $scope.formPredicate,
+					'o': $scope.formObject};
+			TriplesService().save({dataset: SharedService.selectedDataset}, triple, function (response) {
 				$scope.formSubject = "";
 				$scope.formPredicate = "";
 				$scope.formObject = "";
@@ -152,18 +145,15 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService) {
 			alert("Invalid triple");
 		};
 	};
-	
-	
+
+
 	$scope.removeTriple = function () {
-		console.log('Removing triple ');
 		if ($scope.formSubject && $scope.formPredicate && $scope.formObject) {
 
 			var triple = {'s': $scope.formSubject, 
-					  'p': $scope.formPredicate,
-					  'o': $scope.formObject};
-			
-			TriplesService.delete({dataset: SharedService.selectedDataset, triple: triple}, function (response) {
-				console.log('STATUS ' + response.status);
+					'p': $scope.formPredicate,
+					'o': $scope.formObject};
+			TriplesService(triple).delete({dataset: SharedService.selectedDataset}, function (response) {
 				$scope.formSubject = "";
 				$scope.formPredicate = "";
 				$scope.formObject = "";
@@ -199,7 +189,6 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, SharedService) {
 			QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference}, function (response) {
 				if (response.results.bindings) {
 					$scope.queryResults = response.results.bindings;
-					console.log($scope.queryResults);
 				} else {
 					$scope.noResults = true;
 				}
@@ -211,14 +200,14 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, SharedService) {
 			alert("Write your query");
 		};
 	};
-	
+
 	$scope.checkedPrefix = function () {
 		var prefix = "";
 //		angular.forEach(DBList.modelContainer, function (ns) { //TODO modelContainer is from other scope
-//			if (ns.checked) {
-//				prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
-//			}
-//			;
+//		if (ns.checked) {
+//		prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
+//		}
+//		;
 //		});
 		return prefix;
 	};
@@ -237,223 +226,97 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, SharedService) {
 	$scope.countAll = function () {
 		$scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
 	};
-	
+
 	$scope.inference = false;
 	$scope.queryResults = [];
 
 });
 
-app.controller('queriesController', function ($scope, APIservice) {
 
-	var DBList = this;
+app.controller('ResourceCtrl', function ($scope, $rootElement, $location, ResourceService, SharedService) {
 
-//	DBList.getDatasets = function () {
-//	APIservice.getDatasets()
-//	.then(function (response) {
-//	DBList.dataset = response.data;
-//	$scope.selectedDB = DBList.dataset[0];
-//	DBList.getNamespaces();
-//	}, function (response) {
-//	// an error occured
-//	alert(response.status + " " + response.statusText);
-//	});
-//	};
+	$scope.dataset = $location.search().dataset;
+	$scope.prefix = $location.search().prefix;
+	$scope.resource = $location.search().resource;
 
-//	DBList.addDatabase = function () {
-//	if ($scope.formDatabase) {
-//	APIservice.addDatabase($scope.formDatabase)
-//	.then(function (response) {
-//	DBList.getDatasets();
-//	$scope.formDatabase = "";
-//	}, function (response) {
-//	// an error occured
-//	alert(response.status + " " + response.statusText);
-//	});
-//	} else {
-//	alert("No database name was introduced");
-//	}
-//	;
-//	};
+	ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
+			console.log(response.data);
+			$scope.description = response.data;
+		}, function (response) {
+			// an error occured
+			alert (response.status + " " + response.statusText);
+		});
 
-//	DBList.removeDatabase = function () {
-//	if ($scope.selectedDB) {
-//	APIservice.deleteDatabase($scope.selectedDB)
-//	.then(function (response) {
-//	console.log(response);
-//	DBList.getDatasets();
-//	}, function (response) {
-//	// an error occured
-//	alert(response.status + " " + response.statusText);
-//	});
-//	} else {
-//	alert("Select a database to remove");
-//	}
-//	;
-//	};
+	$scope.getResources();
+
+});
+
+
+//app.controller('queriesController', function ($scope, APIservice) {
+//
+//	var DBList = this;
+//
+
 
 //	// GET namespaces
 //	DBList.getNamespaces = function () {
-//		if ($scope.selectedDB) {
-//			APIservice.getNamespaces($scope.selectedDB)
-//			.then(function (response) {
-//				DBList.namespaces = response.data;
-//				DBList.modelContainer = [];
-//				angular.forEach(DBList.namespaces, function (val, key) {
-//					DBList.modelContainer.push({item: {prefix: key, namespace: val}, checked: false});
-//				});
-//			}, function (response) {
-//				// an error occured
-//				alert(response.status + " " + response.statusText);
-//			});
-//		}
-//		;
+//	if ($scope.selectedDB) {
+//	APIservice.getNamespaces($scope.selectedDB)
+//	.then(function (response) {
+//	DBList.namespaces = response.data;
+//	DBList.modelContainer = [];
+//	angular.forEach(DBList.namespaces, function (val, key) {
+//	DBList.modelContainer.push({item: {prefix: key, namespace: val}, checked: false});
+//	});
+//	}, function (response) {
+//	// an error occured
+//	alert(response.status + " " + response.statusText);
+//	});
+//	}
+//	;
 //	};
-//
-//	DBList.putNamespace = function () {
-//		if ($scope.formPrefix && $scope.formNamespace) {
-//			APIservice.addNamespace($scope.selectedDB, $scope.formPrefix, $scope.formNamespace)
+
+
+//	DBList.getData = function () {
+//		if ($scope.formSPARQL) {
+//			DBList.queryResults = [];
+//			var query = DBList.checkedPrefix() + $scope.formSPARQL;
+//			APIservice.getSparqler($scope.selectedDB, query, $scope.inference)
 //			.then(function (response) {
-//				console.log(response);
-//				DBList.getNamespaces();
-//				$scope.formPrefix = "";
-//				$scope.formNamespace = "";
+//				$scope.sparqlRequest = response.config.url;
+//				console.log(response.config.url);
+//				if (response.data.results.bindings) {
+//					DBList.queryResults = response.data.results.bindings;
+//					console.log(DBList.queryResults);
+//				} else {
+//					$scope.noResults = true;
+//				}
 //			}, function (response) {
 //				// an error occured
 //				alert(response.status + " " + response.statusText);
 //			});
 //		} else {
-//			alert("Invalid namespace");
+//			alert("Write your query");
 //		}
 //		;
 //	};
 //
-//	DBList.removeNamespace = function (prefix) {
-//		APIservice.deleteNamespace($scope.selectedDB, prefix)
-//		.then(function (response) {
-//			DBList.getNamespaces();
-//		}, function (response) {
-//			// an error occured
-//			alert(response.status + " " + response.statusText);
+//	DBList.checkedPrefix = function () {
+//		var prefix = "";
+//		angular.forEach(DBList.modelContainer, function (ns) {
+//			if (ns.checked) {
+//				prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
+//			}
+//			;
+//		});
+//		return prefix;
+//	};
+//
+//	DBList.addAllPrefix = function () {
+//		angular.forEach(DBList.modelContainer, function (ns) {
+//			console.log(ns);
+//			ns.checked = true;
 //		});
 //	};
-
-
-	DBList.getData = function () {
-		if ($scope.formSPARQL) {
-			DBList.queryResults = [];
-			var query = DBList.checkedPrefix() + $scope.formSPARQL;
-			APIservice.getSparqler($scope.selectedDB, query, $scope.inference)
-			.then(function (response) {
-				$scope.sparqlRequest = response.config.url;
-				console.log(response.config.url);
-				if (response.data.results.bindings) {
-					DBList.queryResults = response.data.results.bindings;
-					console.log(DBList.queryResults);
-				} else {
-					$scope.noResults = true;
-				}
-			}, function (response) {
-				// an error occured
-				alert(response.status + " " + response.statusText);
-			});
-		} else {
-			alert("Write your query");
-		}
-		;
-	};
-
-//	DBList.addTriple = function (database) {
-//		console.log('Adding on database ' + database);
-//		if ($scope.formSubject && $scope.formPredicate && $scope.formObject) {
-//			APIservice.addTriple($scope.selectedDB, $scope.formSubject, $scope.formPredicate, $scope.formObject)
-//			.then(function (response) {
-//				console.log(response);
-//				$scope.formSubject = "";
-//				$scope.formPredicate = "";
-//				$scope.formObject = "";
-//				// show alert: successful
-//				$scope.successTextAlert = "Triple added successfully!";
-//				$scope.showSuccessAlert = true;
-//				$scope.showErrorAlert = false;
-//			}, function (response) {
-//				// an error occured
-//				alert(response.status + " " + response.statusText);
-//				// show alert: failed
-//				$scope.errorTextAlert = "Couldn't add triple";
-//				$scope.showErrorAlert = true;
-//				$scope.showSuccessAlert = false;
-//			});
-//		} else {
-//			alert("Invalid triple");
-//		}
-//		;
-//	};
-
-//	DBList.removeTriple = function (database) {
-//		if ($scope.formSubject && $scope.formPredicate && $scope.formObject) {
-//			APIservice.deleteTriple(database, $scope.formSubject, $scope.formPredicate, $scope.formObject)
-//			.then(function (response) {
-//				console.log('STATUS ' + response.status);
-//				$scope.formSubject = "";
-//				$scope.formPredicate = "";
-//				$scope.formObject = "";
-//				// show alert: successful
-//				$scope.successTextAlert = "Triple removed successfully!";
-//				$scope.showSuccessAlert = true;
-//				$scope.showErrorAlert = false;
-//			}, function (response) {
-//				// an error occured
-//				alert(response.status + " " + response.statusText);
-//				// show alert: failed
-//				$scope.errorTextAlert = "Couldn't remove triple";
-//				$scope.showErrorAlert = true;
-//				$scope.showSuccessAlert = false;
-//			});
-//		} else {
-//			alert("Invalid triple");
-//		}
-//		;
-//	};
-
-	DBList.checkedPrefix = function () {
-		var prefix = "";
-		angular.forEach(DBList.modelContainer, function (ns) {
-			if (ns.checked) {
-				prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
-			}
-			;
-		});
-		return prefix;
-	};
-
-	DBList.changeDB = function () {
-		DBList.getNamespaces();
-		// Clear results
-		DBList.queryResults = [];
-		$scope.formSPARQL = "";
-	}
-
-	DBList.addAllPrefix = function () {
-		angular.forEach(DBList.modelContainer, function (ns) {
-			console.log(ns);
-			ns.checked = true;
-		});
-	}
-
-//	DBList.getAll = function () {
-//		$scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n} LIMIT 1000';
-//	};
 //
-//	DBList.countAll = function () {
-//		$scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
-//	};
-
-//	DBList.showAddDatabase = function () {
-//		$scope.showFormDatabase = $scope.showFormDatabase ? false : true;
-//	};
-
-//	DBList.getDatasets();
-//	DBList.queryResults = [];
-//	$scope.inference = false;
-
-});
+//});
