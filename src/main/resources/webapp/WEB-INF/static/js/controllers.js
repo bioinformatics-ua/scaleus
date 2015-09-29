@@ -230,6 +230,9 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
 			QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference}, function (response) {
 				if (response.results.bindings) {
 					$scope.queryResults = response.results.bindings;
+					$scope.sparqlRequest = '../api/v1/sparqler/'+SharedService.selectedDataset
+										+'/sparql?query='+encodeURIComponent(query)
+										+'&inference='+encodeURIComponent($scope.inference);
 				} else {
 					$scope.noResults = true;
 				}
