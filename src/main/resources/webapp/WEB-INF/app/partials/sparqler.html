@@ -23,18 +23,18 @@
 				<div class="btn-group">
 					<button type="button"
 						ng-class="{'true':'btn btn-sm btn-warning','false':'btn btn-sm btn-default'}[ns.checked]"
-						ng-click="ns.checked = !ns.checked" data-ng-repeat="ns in modelContainer">{{ns.item.prefix}}</button>
+						ng-click="ns.checked = !ns.checked" data-ng-repeat="ns in namespacesContainer">{{ns.prefix}}</button>
 				</div>
 				<button type="button"
 						class="btn btn-sm btn-primary"
-						ng-click="addAllPrefix()" ng-show="modelContainer.length != 0">Add all</button>
+						ng-click="addAllPrefix()" ng-show="namespacesContainer.length != 0">Add all</button>
 						<a href="/app/namespaces.html"><button type="button"
 						class="btn btn-sm btn-primary">Add new</button></a>
 			</div>
 			<hr>
 			<div
-				data-ng-repeat="ns in modelContainer| filter:{checked:true}">
-				<samp>PREFIX {{ns.item.prefix}}: &lt;{{ns.item.namespace}}&gt;</samp></div>
+				data-ng-repeat="ns in namespacesContainer| filter:{checked:true}">
+				<samp>PREFIX {{ns.prefix}}: &lt;{{ns.uri}}&gt;</samp></div>
                         <div class="checkbox pull-right">
                             <label><input type="checkbox" value="" data-ng-model="inference">Inference</label>
                         </div>

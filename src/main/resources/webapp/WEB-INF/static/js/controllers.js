@@ -6,66 +6,66 @@ var app = angular.module('restapp.controllers', []);
 
 app.controller('DatasetsCtrl', function ($scope, DatasetsService, SharedService) {
 
-    /* event to manage the selected dataset */
-    $scope.selectedDataset = SharedService.selectedDataset;
+	/* event to manage the selected dataset */
+	$scope.selectedDataset = SharedService.selectedDataset;
 
-    $scope.$on('datasetChanged', function (event, dataset) {
-        $scope.selectedDataset = dataset;
-        //console.log($scope.selectedDataset);
-    });
+	$scope.$on('datasetChanged', function (event, dataset) {
+		$scope.selectedDataset = dataset;
+		//console.log($scope.selectedDataset);
+	});
 
-    $scope.changeDataset = function (selectedDataset) {
-        SharedService.update(selectedDataset);
-    };
-    /* end of event to manage the selected dataset */
-
-
-    $scope.showAddDatabase = function () {
-        $scope.showFormDatabase = $scope.showFormDatabase ? false : true;
-    };
+	$scope.changeDataset = function (selectedDataset) {
+		SharedService.update(selectedDataset);
+	};
+	/* end of event to manage the selected dataset */
 
 
-    $scope.queryDatasets = function () {
-        DatasetsService.query(function (response) {
-            $scope.datasets = response;
-            SharedService.update($scope.selectedDataset);
-        });
-    };
-
-    $scope.saveDataset = function () {
-
-        if ($scope.formDatabase) {
-            DatasetsService.save({id: $scope.formDatabase}, function (response) {
-                $scope.queryDatasets();
-                $scope.showFormDatabase = false;
-                var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
-                if (savedDatasetIndex !== -1)
-                    $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
-
-            });
-        } else {
-            alert("No database name was introduced");
-        };
-
-    };
-
-    $scope.deleteDataset = function () {
-
-        if ($scope.selectedDataset) {
-            DatasetsService.delete({id: $scope.selectedDataset}, function (response) {
-                $scope.queryDatasets();
-            });
-        } else {
-            alert("No database name to remove");
-        }
-        ;
-
-    };
+	$scope.showAddDatabase = function () {
+		$scope.showFormDatabase = $scope.showFormDatabase ? false : true;
+	};
 
 
+	$scope.queryDatasets = function () {
+		DatasetsService.query(function (response) {
+			$scope.datasets = response;
+			SharedService.update($scope.selectedDataset);
+		});
+	};
 
-    //init
-    $scope.queryDatasets();
+	$scope.saveDataset = function () {
+
+		if ($scope.formDatabase) {
+			DatasetsService.save({id: $scope.formDatabase}, function (response) {
+				$scope.queryDatasets();
+				$scope.showFormDatabase = false;
+				var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
+				if (savedDatasetIndex !== -1)
+					$scope.selectedDataset = $scope.datasets[savedDatasetIndex];
+
+			});
+		} else {
+			alert("No database name was introduced");
+		};
+
+	};
+
+	$scope.deleteDataset = function () {
+
+		if ($scope.selectedDataset) {
+			DatasetsService.delete({id: $scope.selectedDataset}, function (response) {
+				$scope.queryDatasets();
+			});
+		} else {
+			alert("No database name to remove");
+		}
+		;
+
+	};
+
+
+
+	//init
+	$scope.queryDatasets();
 
 });
 
@@ -74,14 +74,15 @@ app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedServ
 
 	console.log('on NamespacesCtrl ' + SharedService.selectedDataset);
 
+	$scope.$on('datasetChanged', function (event, dataset) {
+		$scope.getNamespaces();
+		//console.log($scope.selectedDataset);
+	});
+
 	$scope.getNamespaces = function () {
 		if (SharedService.selectedDataset) {
 			NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
-//				var results = response.namespaces;
 				$scope.namespaces = response.namespaces;
-//				angular.forEach(results, function (val, key) {
-//				$scope.namespaces.push({item: {prefix: key, namespace: val}, checked: false});
-//				});
 			}, function (response) {
 				// an error occured
 				alert(response.status + " " + response.statusText);
@@ -184,9 +185,14 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService) {
 });
 
 
-app.controller('QueriesCtrl', function ($scope, QueriesService, SharedService) {
+app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesService, SharedService) {
 
 	console.log('on QueriesCtrl ' + SharedService.selectedDataset);
+
+	$scope.$on('datasetChanged', function (event, dataset) {
+		$scope.getNamespaces();
+		//console.log($scope.selectedDataset);
+	});
 
 	$scope.getData = function () {
 		if ($scope.formSPARQL) {
@@ -207,20 +213,32 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, SharedService) {
 		};
 	};
 
+	$scope.getNamespaces = function () {
+		if (SharedService.selectedDataset) {
+			NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
+				angular.forEach(response.namespaces, function (val, key, obj) {
+					val.checked = false;
+				});
+				$scope.namespacesContainer = response.namespaces;
+			}, function (response) {
+				// an error occured
+				alert(response.status + " " + response.statusText);
+			});
+		};
+	};
+
 	$scope.checkedPrefix = function () {
 		var prefix = "";
-//		angular.forEach(DBList.modelContainer, function (ns) { //TODO modelContainer is from other scope
-//		if (ns.checked) {
-//		prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
-//		}
-//		;
-//		});
+		angular.forEach($scope.namespacesContainer, function (ns) { //TODO modelContainer is from other scope
+			if (ns.checked) {
+				prefix += 'PREFIX ' + ns.prefix + ': <' + ns.uri + '> ';
+			};
+		});
 		return prefix;
 	};
 
 	$scope.addAllPrefix = function () {
-		angular.forEach($scope.modelContainer, function (ns) { //TODO: modelContainer is from other scope
-			console.log(ns);
+		angular.forEach($scope.namespacesContainer, function (ns) {
 			ns.checked = true;
 		});
 	};
@@ -233,8 +251,10 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, SharedService) {
 		$scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
 	};
 
+	// init
 	$scope.inference = false;
 	$scope.queryResults = [];
+	$scope.getNamespaces();
 
 });
 
@@ -246,83 +266,13 @@ app.controller('ResourceCtrl', function ($scope, $rootElement, $location, Resour
 	$scope.resource = $location.search().resource;
 
 	ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
-			console.log(response.data);
-			$scope.description = response.data;
-		}, function (response) {
-			// an error occured
-			alert (response.status + " " + response.statusText);
-		});
+		console.log(response.data);
+		$scope.description = response.data;
+	}, function (response) {
+		// an error occured
+		alert (response.status + " " + response.statusText);
+	});
 
 	$scope.getResources();
 
 });
-
-
-//app.controller('queriesController', function ($scope, APIservice) {
-//
-//	var DBList = this;
-//
-
-
-//	// GET namespaces
-//	DBList.getNamespaces = function () {
-//	if ($scope.selectedDB) {
-//	APIservice.getNamespaces($scope.selectedDB)
-//	.then(function (response) {
-//	DBList.namespaces = response.data;
-//	DBList.modelContainer = [];
-//	angular.forEach(DBList.namespaces, function (val, key) {
-//	DBList.modelContainer.push({item: {prefix: key, namespace: val}, checked: false});
-//	});
-//	}, function (response) {
-//	// an error occured
-//	alert(response.status + " " + response.statusText);
-//	});
-//	}
-//	;
-//	};
-
-
-//	DBList.getData = function () {
-//		if ($scope.formSPARQL) {
-//			DBList.queryResults = [];
-//			var query = DBList.checkedPrefix() + $scope.formSPARQL;
-//			APIservice.getSparqler($scope.selectedDB, query, $scope.inference)
-//			.then(function (response) {
-//				$scope.sparqlRequest = response.config.url;
-//				console.log(response.config.url);
-//				if (response.data.results.bindings) {
-//					DBList.queryResults = response.data.results.bindings;
-//					console.log(DBList.queryResults);
-//				} else {
-//					$scope.noResults = true;
-//				}
-//			}, function (response) {
-//				// an error occured
-//				alert(response.status + " " + response.statusText);
-//			});
-//		} else {
-//			alert("Write your query");
-//		}
-//		;
-//	};
-//
-//	DBList.checkedPrefix = function () {
-//		var prefix = "";
-//		angular.forEach(DBList.modelContainer, function (ns) {
-//			if (ns.checked) {
-//				prefix += 'PREFIX ' + ns.item.prefix + ': <' + ns.item.namespace + '> ';
-//			}
-//			;
-//		});
-//		return prefix;
-//	};
-//
-//	DBList.addAllPrefix = function () {
-//		angular.forEach(DBList.modelContainer, function (ns) {
-//			console.log(ns);
-//			ns.checked = true;
-//		});
-//	};
-//
-//});
