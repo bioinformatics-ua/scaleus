@@ -90,15 +90,15 @@ public class RESTService implements IService {
     public Response getNamespaces(@PathParam("database") String database) {
         JSONObject json = null;
         try {
-            Map<String,String> namespaces = api.getNsPrefixMap(database);
+            Map<String, String> namespaces = api.getNsPrefixMap(database);
             JSONArray ja = new JSONArray();
-            for (Map.Entry<String, String> entry : namespaces.entrySet()) {       	
-            	JSONObject mapJo = new JSONObject();
-            	mapJo.put("prefix", entry.getKey());
-            	mapJo.put("uri", entry.getValue());
-            	ja.add(mapJo);
+            for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+                JSONObject mapJo = new JSONObject();
+                mapJo.put("prefix", entry.getKey());
+                mapJo.put("uri", entry.getValue());
+                ja.add(mapJo);
             }
-            json =  new JSONObject();
+            json = new JSONObject();
             json.put("namespaces", ja);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
@@ -163,7 +163,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-    
+
     @GET
     @Path("/data/{database}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -177,7 +177,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(response).build();
     }
-    
+
     @POST
     @Path("/data/{database}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -206,6 +206,46 @@ public class RESTService implements IService {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         } 
         return Response.status(200).entity(response).build();
+    }
+
+    @GET
+    @Path("/properties/{database}/{match}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Override
+    public Response getProperties(@PathParam("database") String database, @PathParam("match") String match) {
+        JSONArray ja = new JSONArray();
+        try {
+            Set<String> prop = api.getProperties(database);
+            for (String prop1 : prop) {
+                if (prop1.contains(match)) {
+                    ja.add(prop1);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
+        }
+        return Response.status(200).entity(ja.toJSONString()).build();
+    }
+
+    @GET
+    @Path("/resources/{database}/{match}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Override
+    public Response getResources(@PathParam("database") String database, @PathParam("match") String match) {
+        JSONArray ja = new JSONArray();
+        try {
+            Set<String> prop = api.getResources(database);
+            for (String prop1 : prop) {
+                if (prop1.contains(match)) {
+                    ja.add(prop1);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
+        }
+        return Response.status(200).entity(ja.toJSONString()).build();
     }
 
 }
