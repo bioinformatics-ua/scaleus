@@ -12,11 +12,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.validator.routines.UrlValidator;
+import static org.apache.jena.assembler.JA.OntModel;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -28,6 +34,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
@@ -36,6 +43,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import pt.ua.scaleus.service.data.NQuad;
@@ -439,6 +447,46 @@ public class API {
         } finally {
             dataset.end();
         }
+    }
+
+    public Set<String> getProperties(String database) {
+        Set<String> set = new HashSet<>();
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.READ);
+        try {
+            //auxiliar model
+            OntModel auxModel = ModelFactory.createOntologyModel();
+            auxModel.add(dataset.getDefaultModel());
+            ExtendedIterator<OntProperty> op = auxModel.listOntProperties();
+
+            while (op.hasNext()) {
+                OntProperty prop = op.next();
+                //if (prop.toString().startsWith(location)) {
+                set.add(prop.toString());
+                //}
+            }
+        } finally {
+            dataset.end();
+        }
+        return set;
+    }
+
+    public Set<String> getResources(String database) {
+        Set<String> set = new HashSet<>();
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.READ);
+        try {
+            //auxiliar model
+            Model model = dataset.getDefaultModel();
+            ResIterator it = model.listResourcesWithProperty(null);
+            for (Iterator iterator = it; it.hasNext();) {
+                Object next = iterator.next();
+                set.add(next.toString());
+            }
+        } finally {
+            dataset.end();
+        }
+        return set;
     }
 
 }

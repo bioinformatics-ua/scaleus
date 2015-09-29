@@ -104,3 +104,36 @@ Content-Type: application/json
 GET /api/v1/namespaces/{dataset} HTTP/1.1
 Content-Type: application/json
 ```
+
+**Get resources matching:**
+
+```
+GET /api/v1/resources/{dataset}/{match} HTTP/1.1
+Content-Type: application/json
+```
+
+**Get properties matching:**
+
+```
+GET /api/v1/properties/{dataset}/{match} HTTP/1.1
+Content-Type: application/json
+```
+
+**Get TTL data:**
+
+```
+GET /api/v1/data/{dataset} HTTP/1.1
+Content-Type: text/plain
+```
+
+**Replace TTL data:**
+
+```
+POST /api/v1/data/{dataset} HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+@prefix coeus: <http://bioinformatics.ua.pt/coeus/> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+coeus:ieeta dc:title "University of Aveiro" .
+```
