@@ -26,8 +26,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import pt.ua.scaleus.api.API;
 import pt.ua.scaleus.api.Init;
-import pt.ua.scaleus.service.data.Namespace;
 import pt.ua.scaleus.service.data.NTriple;
+import pt.ua.scaleus.service.data.Namespace;
 
 /**
  *
@@ -87,8 +87,16 @@ public class RESTService implements IService {
     public Response getNamespaces(@PathParam("database") String database) {
         JSONObject json = null;
         try {
-            Map namespaces = api.getNsPrefixMap(database);
-            json = new JSONObject(namespaces);
+            Map<String,String> namespaces = api.getNsPrefixMap(database);
+            JSONArray ja = new JSONArray();
+            for (Map.Entry<String, String> entry : namespaces.entrySet()) {       	
+            	JSONObject mapJo = new JSONObject();
+            	mapJo.put("prefix", entry.getKey());
+            	mapJo.put("uri", entry.getValue());
+            	ja.add(mapJo);
+            }
+            json =  new JSONObject();
+            json.put("namespaces", ja);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -140,7 +148,7 @@ public class RESTService implements IService {
     }
 
     @DELETE
-    @Path("/remove/{database}")
+    @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public Response removeTriple(@PathParam("database") String database, NTriple triple) {
