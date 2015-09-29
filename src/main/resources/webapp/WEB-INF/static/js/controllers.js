@@ -291,20 +291,22 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
 });
 
 
-app.controller('ResourceCtrl', function ($scope, $rootElement, $location, ResourceService, SharedService) {
+app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, SharedService) {
 
-	$scope.dataset = $location.search().dataset;
-	$scope.prefix = $location.search().prefix;
-	$scope.resource = $location.search().resource;
+	$scope.dataset = $routeParams.database;
+	$scope.prefix = $routeParams.prefix;
+	$scope.resource = $routeParams.resource;
 
-	ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
-		console.log(response.data);
-		$scope.description = response.data;
-	}, function (response) {
-		// an error occured
-		alert (response.status + " " + response.statusText);
-	});
+	$scope.getResource = function () {
+		ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
+			console.log(response);
+			$scope.description = response;
+		}, function (response) {
+			// an error occured
+			alert (response.status + " " + response.statusText);
+		});
+	};
 
-	$scope.getResources();
+	$scope.getResource();
 
 });
