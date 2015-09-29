@@ -5,18 +5,19 @@
  */
 package pt.ua.scaleus.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Node_URI;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
-import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ReadWrite;
@@ -30,13 +31,13 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.DatasetGraph;
-import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import pt.ua.scaleus.service.data.NQuad;
 import pt.ua.scaleus.service.data.NTriple;
 
@@ -173,10 +174,10 @@ public class API {
         try {
             Model model = dataset.getDefaultModel();
             QueryExecution qe;
-            if(inf!=null && inf) {
+            if (inf != null && inf) {
                 InfModel inference = ModelFactory.createRDFSModel(model);
                 qe = QueryExecutionFactory.create(query, inference);
-            }else{
+            } else {
                 qe = QueryExecutionFactory.create(query, model);
             }
             response = execute(qe, format);
@@ -275,7 +276,7 @@ public class API {
                     response = os.toString();
                     break;
                 }
-                default:{
+                default: {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     ResultSetFormatter.outputAsJSON(os, rs);
                     response = os.toString();
@@ -347,7 +348,7 @@ public class API {
         dataset.begin(ReadWrite.WRITE);
 
         try {
-            
+
             DatasetGraph ds = dataset.asDatasetGraph();
             Node c = NodeFactory.createURI(quad.getC());
             Node s = NodeFactory.createURI(quad.getS());
@@ -404,6 +405,40 @@ public class API {
             dataset.end();
         }
         return true;
+    }
+
+    public String getRDF(String database) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.READ);
+        try {
+            if (dataset.getDefaultModel().size() < 2000) {
+                RDFDataMgr.write(out, dataset.getDefaultModel(), Lang.TTL);
+            } else {
+                return "Data is too long to show!";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            dataset.end();
+        }
+        return out.toString();
+    }
+
+    public void storeData(String database, String data) throws Exception {
+        Model m = ModelFactory.createDefaultModel();
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.WRITE);
+        try {
+            InputStream is = new ByteArrayInputStream(data.getBytes());
+            m.read(is, null, "TTL");
+            Model model = dataset.getDefaultModel();
+            model.removeAll();
+            model.add(m);
+            dataset.commit();
+        } finally {
+            dataset.end();
+        }
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -26,7 +27,6 @@ import org.json.simple.JSONObject;
 import pt.ua.scaleus.api.API;
 import pt.ua.scaleus.api.Init;
 import pt.ua.scaleus.service.data.Namespace;
-import pt.ua.scaleus.service.data.NQuad;
 import pt.ua.scaleus.service.data.NTriple;
 
 /**
@@ -149,6 +149,36 @@ public class RESTService implements IService {
             api.removeStatement(database, triple);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Response.status(200).build();
+    }
+    
+    @GET
+    @Path("/data/{database}")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Override
+    public Response getData(@PathParam("database") String database) {
+        String response = "";
+        try {
+            response = api.getRDF(database);
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Response.status(200).entity(response).build();
+    }
+    
+    @POST
+    @Path("/data/{database}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Override
+    public Response storeData(@PathParam("database") String database, @FormParam("data") String data) {
+        try {
+            api.storeData(database, data);
+            //System.out.println(data);
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("failed");
+            return Response.serverError().build();
         }
         return Response.status(200).build();
     }

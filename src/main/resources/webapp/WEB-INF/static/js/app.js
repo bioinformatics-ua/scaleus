@@ -37,5 +37,8 @@ app.config(['$routeProvider', function ($routeProvider) {
                 when("/resource.html", {
                     templateUrl: "app/partials/resource.html"
                 }).
+                when("/app/data.html", {
+                    templateUrl: "partials/data.html"
+                }).
                 otherwise({redirectTo: '/app/index.html'});
     }]);
