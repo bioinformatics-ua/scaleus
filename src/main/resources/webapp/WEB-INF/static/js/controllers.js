@@ -16,7 +16,7 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
 
     $scope.changeDataset = function (selectedDataset) {
         SharedService.update(selectedDataset);
-        $location.path("/app/");
+//        $location.path("/app/");
     };
     /* end of event to manage the selected dataset */
 
@@ -73,6 +73,10 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
 
 app.controller('RDFDataCtrl', function ($scope, RDFDataService, SharedService) {
 
+    $scope.$on('datasetChanged', function (event, dataset) {
+    	$scope.getRDFData();
+    });
+    
     $scope.getRDFData = function () {
         RDFDataService.get({id: SharedService.selectedDataset},function (response) {
             $scope.data = response.content;
@@ -105,7 +109,6 @@ app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedServ
 
 	$scope.$on('datasetChanged', function (event, dataset) {
 		$scope.getNamespaces();
-		//console.log($scope.selectedDataset);
 	});
 
 	$scope.getNamespaces = function () {
@@ -220,7 +223,6 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
 
 	$scope.$on('datasetChanged', function (event, dataset) {
 		$scope.getNamespaces();
-		//console.log($scope.selectedDataset);
 	});
 
 	$scope.getData = function () {

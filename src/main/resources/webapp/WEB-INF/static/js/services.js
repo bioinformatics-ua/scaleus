@@ -68,7 +68,7 @@ services.factory('QueriesService', function($resource) {
 
 services.factory('ResourceService', function($resource) {
 	return $resource('../../../api/v1/resource/:dataset/:prefix/:resource/js', {}, {
-		get: {method:'GET'}	// TODO - check this
+		get: {method:'GET'}	
 	});   
 });
 
