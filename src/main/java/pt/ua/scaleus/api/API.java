@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,12 +39,13 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+
 import pt.ua.scaleus.service.data.NQuad;
 import pt.ua.scaleus.service.data.NTriple;
 
@@ -204,41 +204,46 @@ public class API {
         return response;
     }
 
-    /**
-     * DESCRIBES a resource in the TDB.
-     *
-     * @param database
-     * @param prefix
-     * @param id
-     * @return
-     */
-    public String describeResource(String database, String prefix, String id) {
-        String response = "";
-        Dataset dataset = getDataset(database);
-        dataset.begin(ReadWrite.READ);
-        try {
-            Model model = dataset.getDefaultModel();
-            String namespace = model.getNsPrefixMap().get(prefix);
-            Resource resource = model.getResource(namespace + id);
-            StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
+	/**
+	 * DESCRIBES a resource in the TDB.
+	 *
+	 * @param database
+	 * @param prefix
+	 * @param id
+	 * @param format
+	 * @return
+	 */
+	public String describeResource(String database, String prefix, String id, String format) {
+		Model describedModel = ModelFactory.createDefaultModel();
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Dataset dataset = getDataset(database);
+		dataset.begin(ReadWrite.READ);
 
-            while (stat.hasNext()) {
-                Statement next = stat.next();
-                if (next.getObject().isResource()) {
-                    response += "<h2><a href='../resource/" + database + "/" + prefix + "/" + next.getSubject().getLocalName() + "'>" + next.getSubject().toString() + "</a> " + next.getPredicate().toString() + " <a href='/resource/" + database + "/" + prefix + "/" + next.getObject().asResource().getLocalName() + "'>" + next.getObject().toString() + "</a></h2>";
-                } else {
-                    response += "<h2><a href='../resource/" + database + "/" + prefix + "/" + next.getSubject().getLocalName() + "'>" + next.getSubject().toString() + "</a> " + next.getPredicate().toString() + " " + next.getObject().toString() + "</a></h2>";
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            dataset.end();
-        }
-
-        return response;
-    }
+		try {
+			Model model = dataset.getDefaultModel();
+			String namespace = model.getNsPrefixMap().get(prefix);
+			Resource resource = model.getResource(namespace + id);
+			StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
+			describedModel.add(stat);
+			describedModel.setNsPrefixes(model.getNsPrefixMap());
+			switch (format) {
+			case "js":
+				RDFDataMgr.write(os, describedModel, RDFFormat.RDFJSON);
+				break;
+			case "rdf":
+				RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+				break;
+			case "ttl":
+				RDFDataMgr.write(os, describedModel, RDFFormat.TTL);
+				break;
+			default:
+				RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+			}
+		} finally {
+			dataset.end();
+		}
+		return os.toString();
+	}
 
     /**
      * Executes SPARQL queries.

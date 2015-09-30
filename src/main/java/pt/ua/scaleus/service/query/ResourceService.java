@@ -9,6 +9,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+
+import org.apache.jena.riot.RDFFormat;
+
 import pt.ua.scaleus.api.Init;
 
 /**
@@ -20,6 +23,6 @@ public class ResourceService {
     @GET
     @Path("/{dataset}/{prefix}/{resource}")
     public Response sparqler(@PathParam("dataset") String database, @PathParam("prefix") String prefix,@PathParam("resource") String id) {
-        return Response.status(200).entity(Init.getAPI().describeResource(database, prefix, id)).build();
+        return Response.status(200).entity(Init.getAPI().describeResource(database, prefix, id, "js")).build();
     }
 }

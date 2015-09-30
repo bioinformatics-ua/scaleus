@@ -30,6 +30,7 @@
 						ng-click="addAllPrefix()" ng-show="namespacesContainer.length != 0">Add all</button>
 						<a href="/app/namespaces.html"><button type="button"
 						class="btn btn-sm btn-primary">Add new</button></a>
+						<!-- <a href="../app/namespaces"> -->
 			</div>
 			<hr>
 			<div
@@ -63,8 +64,8 @@
 					<tr data-ng-repeat="result in queryResults">
 						<td data-ng-repeat="obj in result"
 							data-ng-switch="obj.type == 'uri'">
-							<a ng-check-local-route="{{obj.value}}" data-ng-href="{{obj.value}}" 
-							data-ng-switch-when="true">{{obj.value}}</a> <!-- "/resource.html" -->
+							<a data-ng-href="{{obj.value}}" 
+							data-ng-switch-when="true">{{obj.value}}</a> 
 							<span data-ng-switch-when="false">{{obj.value}}</span>
 						</td>
 					</tr>
