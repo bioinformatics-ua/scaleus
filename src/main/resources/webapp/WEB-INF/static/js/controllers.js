@@ -109,56 +109,58 @@ app.controller('RDFDataCtrl', function ($scope, RDFDataService, SharedService) {
 
 app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedService) {
 
-	console.log('on NamespacesCtrl ' + SharedService.selectedDataset);
+    console.log('on NamespacesCtrl ' + SharedService.selectedDataset);
 
-	$scope.$on('datasetChanged', function (event, dataset) {
-		$scope.getNamespaces();
-	});
+    $scope.$on('datasetChanged', function (event, dataset) {
+        $scope.getNamespaces();
+    });
 
-	$scope.getNamespaces = function () {
-		if (SharedService.selectedDataset) {
-			NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
-				$scope.namespaces = response.namespaces;
-			}, function (response) {
-				// an error occured
-				alert(response.status + " " + response.statusText);
-			});
-		};
-	};
+    $scope.getNamespaces = function () {
+        if (SharedService.selectedDataset) {
+            NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
+                $scope.namespaces = response.namespaces;
+            }, function (response) {
+                // an error occured
+                alert(response.status + " " + response.statusText);
+            });
+        }
+        ;
+    };
 
-	$scope.addNamespace = function () {
-		if ($scope.formPrefix && $scope.formNamespace) {
-			var ns = {'prefix': $scope.formPrefix, 
-					'namespace': $scope.formNamespace}
-			NamespacesService.save({dataset: SharedService.selectedDataset}, ns, function (response) {
-				$scope.getNamespaces();
-				$scope.formPrefix = "";
-				$scope.formNamespace = "";
-			}, function (response) {
-				// an error occured
-				alert(response.status + " " + response.statusText);
-			});
-		} else {
-			alert("Invalid namespace");
-		};
-	};
+    $scope.addNamespace = function () {
+        if ($scope.formPrefix && $scope.formNamespace) {
+            var ns = {'prefix': $scope.formPrefix,
+                'namespace': $scope.formNamespace}
+            NamespacesService.save({dataset: SharedService.selectedDataset}, ns, function (response) {
+                $scope.getNamespaces();
+                $scope.formPrefix = "";
+                $scope.formNamespace = "";
+            }, function (response) {
+                // an error occured
+                alert(response.status + " " + response.statusText);
+            });
+        } else {
+            alert("Invalid namespace");
+        }
+        ;
+    };
 
-	$scope.removeNamespace = function (prefix) {
-		NamespacesService.delete({dataset: SharedService.selectedDataset, prefix: prefix}, function (response) {
-			$scope.getNamespaces();
-		}, function (response) {
-			// an error occured
-			alert(response.status + " " + response.statusText);
-		});
-	};
+    $scope.removeNamespace = function (prefix) {
+        NamespacesService.delete({dataset: SharedService.selectedDataset, prefix: prefix}, function (response) {
+            $scope.getNamespaces();
+        }, function (response) {
+            // an error occured
+            alert(response.status + " " + response.statusText);
+        });
+    };
 
-	//init
-	$scope.getNamespaces();
+    //init
+    $scope.getNamespaces();
 
 });
 
 
-app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService) {
+app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService, PropAutoCompleteService, ResAutoCompleteService) {
 
     console.log('on TriplesCtrl ' + SharedService.selectedDataset);
 
@@ -220,102 +222,116 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService) {
         }
         ;
     };
+    
+    
+    $scope.getProperties = function (val) {
+        var property = PropAutoCompleteService.get({dataset: SharedService.selectedDataset, match: val});
+        return property.$promise;
+    };
+    
+    $scope.getResources = function (val) {
+        var property = ResAutoCompleteService.get({dataset: SharedService.selectedDataset, match: val});
+        return property.$promise;
+    };
 
 });
 
 
 app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesService, SharedService) {
 
-	console.log('on QueriesCtrl ' + SharedService.selectedDataset);
+    console.log('on QueriesCtrl ' + SharedService.selectedDataset);
 
-	$scope.$on('datasetChanged', function (event, dataset) {
-		$scope.getNamespaces();
-	});
+    $scope.$on('datasetChanged', function (event, dataset) {
+        $scope.getNamespaces();
+    });
 
-	$scope.getData = function () {
-		if ($scope.formSPARQL) {
-			queryResults = [];
-			var query = $scope.checkedPrefix() + $scope.formSPARQL;
-			QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference}, function (response) {
-				if (response.results.bindings) {
-					$scope.queryResults = response.results.bindings;
-					$scope.sparqlRequest = '../api/v1/sparqler/'+SharedService.selectedDataset
-										+'/sparql?query='+encodeURIComponent(query)
-										+'&inference='+encodeURIComponent($scope.inference);
-				} else {
-					$scope.noResults = true;
-				}
-			}, function (response) {
-				// an error occured
-				alert(response.status + " " + response.statusText);
-			});
-		} else {
-			alert("Write your query");
-		};
-	};
+    $scope.getData = function () {
+        if ($scope.formSPARQL) {
+            queryResults = [];
+            var query = $scope.checkedPrefix() + $scope.formSPARQL;
+            QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference}, function (response) {
+                if (response.results.bindings) {
+                    $scope.queryResults = response.results.bindings;
+                    $scope.sparqlRequest = '../api/v1/sparqler/' + SharedService.selectedDataset
+                            + '/sparql?query=' + encodeURIComponent(query)
+                            + '&inference=' + encodeURIComponent($scope.inference);
+                } else {
+                    $scope.noResults = true;
+                }
+            }, function (response) {
+                // an error occured
+                alert(response.status + " " + response.statusText);
+            });
+        } else {
+            alert("Write your query");
+        }
+        ;
+    };
 
-	$scope.getNamespaces = function () {
-		if (SharedService.selectedDataset) {
-			NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
-				angular.forEach(response.namespaces, function (val, key, obj) {
-					val.checked = false;
-				});
-				$scope.namespacesContainer = response.namespaces;
-			}, function (response) {
-				// an error occured
-				alert(response.status + " " + response.statusText);
-			});
-		};
-	};
+    $scope.getNamespaces = function () {
+        if (SharedService.selectedDataset) {
+            NamespacesService.get({dataset: SharedService.selectedDataset}, function (response) {
+                angular.forEach(response.namespaces, function (val, key, obj) {
+                    val.checked = false;
+                });
+                $scope.namespacesContainer = response.namespaces;
+            }, function (response) {
+                // an error occured
+                alert(response.status + " " + response.statusText);
+            });
+        }
+        ;
+    };
 
-	$scope.checkedPrefix = function () {
-		var prefix = "";
-		angular.forEach($scope.namespacesContainer, function (ns) { //TODO modelContainer is from other scope
-			if (ns.checked) {
-				prefix += 'PREFIX ' + ns.prefix + ': <' + ns.uri + '> ';
-			};
-		});
-		return prefix;
-	};
+    $scope.checkedPrefix = function () {
+        var prefix = "";
+        angular.forEach($scope.namespacesContainer, function (ns) { //TODO modelContainer is from other scope
+            if (ns.checked) {
+                prefix += 'PREFIX ' + ns.prefix + ': <' + ns.uri + '> ';
+            }
+            ;
+        });
+        return prefix;
+    };
 
-	$scope.addAllPrefix = function () {
-		angular.forEach($scope.namespacesContainer, function (ns) {
-			ns.checked = true;
-		});
-	};
+    $scope.addAllPrefix = function () {
+        angular.forEach($scope.namespacesContainer, function (ns) {
+            ns.checked = true;
+        });
+    };
 
-	$scope.getAll = function () {
-		$scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n} LIMIT 1000';
-	};
+    $scope.getAll = function () {
+        $scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n} LIMIT 1000';
+    };
 
-	$scope.countAll = function () {
-		$scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
-	};
+    $scope.countAll = function () {
+        $scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
+    };
 
-	// init
-	$scope.inference = false;
-	$scope.queryResults = [];
-	$scope.getNamespaces();
+    // init
+    $scope.inference = false;
+    $scope.queryResults = [];
+    $scope.getNamespaces();
 
 });
 
 
 app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, SharedService) {
 
-	$scope.dataset = $routeParams.database;
-	$scope.prefix = $routeParams.prefix;
-	$scope.resource = $routeParams.resource;
+    $scope.dataset = $routeParams.database;
+    $scope.prefix = $routeParams.prefix;
+    $scope.resource = $routeParams.resource;
 
-	$scope.getResource = function () {
-		ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
-			console.log(response);
-			$scope.description = response;
-		}, function (response) {
-			// an error occured
-			alert (response.status + " " + response.statusText);
-		});
-	};
+    $scope.getResource = function () {
+        ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
+            console.log(response);
+            $scope.description = response;
+        }, function (response) {
+            // an error occured
+            alert(response.status + " " + response.statusText);
+        });
+    };
 
-	$scope.getResource();
+    $scope.getResource();
 
 });

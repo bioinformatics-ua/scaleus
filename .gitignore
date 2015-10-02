@@ -8,3 +8,4 @@ logging.properties
 .project
 .classpath
 .settings/*
+nbactions.xml

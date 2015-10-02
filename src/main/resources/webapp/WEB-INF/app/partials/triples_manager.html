@@ -1,61 +1,61 @@
 <div class="row">
-	<div class="col-lg-12">
-		<h1 class="page-header">Manage triples</h1>
-	</div>
-	<!-- /.col-lg-12 -->
+    <div class="col-lg-12">
+        <h1 class="page-header">Manage triples</h1>
+    </div>
+    <!-- /.col-lg-12 -->
 </div>
 
 <!-- /.row -->
 <div class="row" ng-controller="TriplesCtrl">
 
-	<form class="form-horizontal" role="form" name="manageTriples">
-		<div class="form-group">
-			<label for="inputType" class="col-md-2 control-label">Subject</label>
-			<div class="col-sm-10">
-				<input type="url" class="form-control" placeholder="Subject"
-					data-ng-model="formSubject" required>
-			</div>
-		</div>
-		<div class="form-group">
-			<label for="inputType" class="col-md-2 control-label">Predicate</label>
-			<div class="col-sm-10">
-				<input type="text" class="form-control" placeholder="Predicate"
-					data-ng-model="formPredicate" required>
-			</div>
-		</div>
-		<div class="form-group">
-			<label for="inputType" class="col-md-2 control-label">Object</label>
-			<div class="col-sm-10">
-				<input type="text" class="form-control" placeholder="Object"
-					data-ng-model="formObject" required>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-sm-offset-2 col-sm-10">
-				<button class="btn btn-primary"
-					data-ng-click="addTriple()">
-					<i class="fa fa-plus-square-o"></i> Add
-				</button>
-				<button class="btn btn-primary"
-					data-ng-click="removeTriple()">
-					<i class="fa fa-trash-o"></i> Remove
-				</button>
-			</div>
-		</div>
-	</form>
+    <form class="form-horizontal" role="form" name="manageTriples">
+        <div class="form-group">
+            <label for="inputType" class="col-md-2 control-label">Subject</label>
+            <div class="col-sm-10">
+                <input type="url" class="form-control" placeholder="Subject" typeahead="resource for resource in getResources($viewValue)"
+                       data-ng-model="formSubject" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputType" class="col-md-2 control-label">Predicate</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Predicate" typeahead="property for property in getProperties($viewValue)"
+                       data-ng-model="formPredicate" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputType" class="col-md-2 control-label">Object</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="Object" typeahead="resource for resource in getResources($viewValue)"
+                       data-ng-model="formObject" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-primary"
+                        data-ng-click="addTriple()">
+                    <i class="fa fa-plus-square-o"></i> Add
+                </button>
+                <button class="btn btn-primary"
+                        data-ng-click="removeTriple()">
+                    <i class="fa fa-trash-o"></i> Remove
+                </button>
+            </div>
+        </div>
+    </form>
 
-	<div class="col-sm-offset-2 col-sm-10">
-		<div class="alert alert-success" ng-show="showSuccessAlert">
-			<button type="button" class="close"
-				data-ng-click="showSuccessAlert = !showSuccessAlert">×</button>
-			{{successTextAlert}}
-		</div>
-		<div class="alert alert-danger" ng-show="showErrorAlert">
-			<button type="button" class="close"
-				data-ng-click="showErrorAlert = !showErrorAlert">×</button>
-			{{errorTextAlert}}
-		</div>
-	</div>
+    <div class="col-sm-offset-2 col-sm-10">
+        <div class="alert alert-success" ng-show="showSuccessAlert">
+            <button type="button" class="close"
+                    data-ng-click="showSuccessAlert = !showSuccessAlert">×</button>
+            {{successTextAlert}}
+        </div>
+        <div class="alert alert-danger" ng-show="showErrorAlert">
+            <button type="button" class="close"
+                    data-ng-click="showErrorAlert = !showErrorAlert">×</button>
+            {{errorTextAlert}}
+        </div>
+    </div>
 
 
 </div>

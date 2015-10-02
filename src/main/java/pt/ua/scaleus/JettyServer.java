@@ -22,7 +22,6 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import pt.ua.scaleus.api.Init;
-import pt.ua.scaleus.service.query.ResourceService;
 
 /**
  *
