@@ -40,14 +40,19 @@ import pt.ua.scaleus.service.data.Namespace;
 public class RESTService implements IService {
 
     API api = Init.getAPI();
-
+    
     @GET
     @Path("/sparqler/{dataset}/sparql")
     @Produces(MediaType.TEXT_PLAIN)
     @Override
-    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @DefaultValue("false") @QueryParam("inference") Boolean inf, @DefaultValue("json") @QueryParam("format") String format) {
-        String resp = api.select(dataset, query, inf, format);
-        return Response.status(200).entity(resp).build();
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @DefaultValue("false") @QueryParam("inference") Boolean inf, @DefaultValue("") @QueryParam("rules") String rules, @DefaultValue("json") @QueryParam("format") String format) {
+        try {
+            String resp = api.select(dataset, query, inf, rules, format);
+            return Response.status(Response.Status.OK).entity(resp).build();
+        } catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+        }
     }
 
     @POST

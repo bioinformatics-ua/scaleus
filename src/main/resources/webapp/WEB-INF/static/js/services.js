@@ -24,14 +24,6 @@ services.factory('RDFDataService', function ($resource) {
     });
 });
 
-services.factory('DatasetsService', function ($resource) {
-    return $resource('../api/v1/dataset/:id', {id: '@id'}, {
-        query: {method: 'GET', isArray: true},
-        save: {method: 'POST'},
-        delete: {method: 'DELETE'}
-    });
-
-});
 
 services.factory('DatasetsService', function ($resource) {
     return $resource('../api/v1/dataset/:id', {id: '@id'}, {

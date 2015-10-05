@@ -37,12 +37,16 @@ import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.util.PrintUtil;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.log4j.Logger;
 
@@ -173,77 +177,85 @@ public class API {
      * @param database
      * @param query the SPARQL query (no prefixes).
      * @param inf
+     * @param rules
+     * @param format
      * @return
+     * @throws java.lang.Exception
      */
-    public String select(String database, String query, Boolean inf, String format) {
+    public String select(String database, String query, Boolean inf, String rules, String format) throws Exception{
         String response = "";
+        //System.out.println(rules);
+        // initiate prefixes only if rules are used
+        Map<String, String> prefixes = new HashMap<>();
+        if(!rules.isEmpty()) prefixes = getNsPrefixMap(database);
+        
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
         try {
             Model model = dataset.getDefaultModel();
             QueryExecution qe;
+            // test if inference are used
             if (inf != null && inf) {
-                InfModel inference = ModelFactory.createRDFSModel(model);
-                qe = QueryExecutionFactory.create(query, inference);
+                InfModel inference;
+                // if rules are not used use only RDFS inference 
+                if(rules.isEmpty()){
+                    inference = ModelFactory.createRDFSModel(model);
+                }else{
+                    PrintUtil.registerPrefixMap(prefixes);
+                    Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(rules));
+                    inference = ModelFactory.createInfModel(reasoner, model);
+                }
+                qe = QueryExecutionFactory.create(query, inference);     
             } else {
                 qe = QueryExecutionFactory.create(query, model);
             }
             response = execute(qe, format);
-            //ResultSet rs = qe.execSelect();
-            //ByteArrayOutputStream os = new ByteArrayOutputStream();
-            //ResultSetFormatter.outputAsJSON(os, rs);
-            //response = os.toString();
-            //qe.close();
-            //model.close();
-            //inf.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+        }finally {
             dataset.end();
         }
         return response;
     }
 
-	/**
-	 * DESCRIBES a resource in the TDB.
-	 *
-	 * @param database
-	 * @param prefix
-	 * @param id
-	 * @param format
-	 * @return
-	 */
-	public String describeResource(String database, String prefix, String id, String format) {
-		Model describedModel = ModelFactory.createDefaultModel();
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		Dataset dataset = getDataset(database);
-		dataset.begin(ReadWrite.READ);
+    /**
+     * DESCRIBES a resource in the TDB.
+     *
+     * @param database
+     * @param prefix
+     * @param id
+     * @param format
+     * @return
+     */
+    public String describeResource(String database, String prefix, String id, String format) {
+        Model describedModel = ModelFactory.createDefaultModel();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.READ);
 
-		try {
-			Model model = dataset.getDefaultModel();
-			String namespace = model.getNsPrefixMap().get(prefix);
-			Resource resource = model.getResource(namespace + id);
-			StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
-			describedModel.add(stat);
-			describedModel.setNsPrefixes(model.getNsPrefixMap());
-			switch (format) {
-			case "js":
-				RDFDataMgr.write(os, describedModel, RDFFormat.RDFJSON);
-				break;
-			case "rdf":
-				RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
-				break;
-			case "ttl":
-				RDFDataMgr.write(os, describedModel, RDFFormat.TTL);
-				break;
-			default:
-				RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
-			}
-		} finally {
-			dataset.end();
-		}
-		return os.toString();
-	}
+        try {
+            Model model = dataset.getDefaultModel();
+            String namespace = model.getNsPrefixMap().get(prefix);
+            Resource resource = model.getResource(namespace + id);
+            StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
+            describedModel.add(stat);
+            describedModel.setNsPrefixes(model.getNsPrefixMap());
+            switch (format) {
+                case "js":
+                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFJSON);
+                    break;
+                case "rdf":
+                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+                    break;
+                case "ttl":
+                    RDFDataMgr.write(os, describedModel, RDFFormat.TTL);
+                    break;
+                default:
+                    RDFDataMgr.write(os, describedModel, RDFFormat.RDFXML);
+            }
+        } finally {
+            dataset.end();
+        }
+        return os.toString();
+    }
 
     /**
      * Executes SPARQL queries.
@@ -492,6 +504,31 @@ public class API {
             dataset.end();
         }
         return set;
+    }
+
+    public String selectWithRules(String database) {
+        String response = "";
+        Map<String, String> prefixes=getNsPrefixMap(database);
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.READ);
+        try {
+            Model model = dataset.getDefaultModel();
+            String query = "SELECT * { ?S ?P ?O } LIMIT 100";
+            PrintUtil.registerPrefixMap(prefixes);
+            String rules = "[r1: (?a dc:related ?b), (?b dc:related ?c) -> (?a dc:related ?c) ] [r2: (?a dc:related ?b) -> (?a dc:title 'has relation') ]";
+            Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(rules));
+            InfModel inf = ModelFactory.createInfModel(reasoner, model);
+
+            QueryExecution qe = QueryExecutionFactory.create(query, inf);
+
+            response = execute(qe, "json");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            dataset.end();
+        }
+        return response;
     }
 
 }

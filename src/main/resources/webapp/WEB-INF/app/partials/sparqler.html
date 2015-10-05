@@ -33,12 +33,23 @@
 						<!-- <a href="../app/namespaces"> -->
 			</div>
 			<hr>
+                        <div class="form-group">
+
+                          <div class="col-sm-9">
+                            <div class="input-group" ng-show="inference">
+                              <span class="input-group-addon">Inference Rules (optional)</span>
+                              <input type="text" class="form-control" data-ng-model="rules" placeholder="[rule1:  (?x rdfs:subClassOf ?y), (?a rdf:type ?x) -> (?a rdf:type ?y)] [rule2: ... ]">
+                            </div>
+                          </div>
+                            <span class="control-label col-sm-3"><input type="checkbox" value="" data-ng-model="inference"> Inference</span>
+                        </div>
 			<div
 				data-ng-repeat="ns in namespacesContainer| filter:{checked:true}">
-				<samp>PREFIX {{ns.prefix}}: &lt;{{ns.uri}}&gt;</samp></div>
-                        <div class="checkbox pull-right">
-                            <label><input type="checkbox" value="" data-ng-model="inference">Inference</label>
+				<samp>PREFIX {{ns.prefix}}: &lt;{{ns.uri}}&gt;</samp>
                         </div>
+                        
+                        
+
 			<div class="form-group">
 			<textarea class="form-control input-xlarge"
 				placeholder="Write your SPARQL query here"

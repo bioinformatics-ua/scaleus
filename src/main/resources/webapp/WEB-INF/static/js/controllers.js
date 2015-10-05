@@ -94,6 +94,7 @@ app.controller('RDFDataCtrl', function ($scope, RDFDataService, SharedService) {
                 $scope.getRDFData();
             }, function (error) {
                 console.log(error.statusText);
+                alert("Ups! An error has occurred!");
             });
         } else {
             alert("No data was introduced");
@@ -247,14 +248,14 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
 
     $scope.getData = function () {
         if ($scope.formSPARQL) {
-            queryResults = [];
             var query = $scope.checkedPrefix() + $scope.formSPARQL;
-            QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference}, function (response) {
+            QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference, rules: $scope.rules}, function (response) {
                 if (response.results.bindings) {
                     $scope.queryResults = response.results.bindings;
                     $scope.sparqlRequest = '../api/v1/sparqler/' + SharedService.selectedDataset
                             + '/sparql?query=' + encodeURIComponent(query)
-                            + '&inference=' + encodeURIComponent($scope.inference);
+                            + '&inference=' + encodeURIComponent($scope.inference)
+                            + '&rules=' + encodeURIComponent($scope.rules);
                 } else {
                     $scope.noResults = true;
                 }
@@ -301,7 +302,7 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
     };
 
     $scope.getAll = function () {
-        $scope.formSPARQL = 'SELECT * { \n?S ?P ?O \n} LIMIT 1000';
+        $scope.formSPARQL = 'SELECT * { \n?s ?p ?o \n} LIMIT 1000';
     };
 
     $scope.countAll = function () {

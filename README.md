@@ -42,8 +42,16 @@ DELETE /api/v1/dataset/{dataset} HTTP/1.1
 **SPARQL endpoint:**
 
 ```
-GET /api/v1/sparqler/{dataset}/sparql?query={query}&inference={false|true}&format={json|rdf|ttl|rdf|text|csv} HTTP/1.1
+GET /api/v1/sparqler/{dataset}/sparql?query={query}&inference={inference}&rules={rules}&format={format} HTTP/1.1
 Content-Type: application/json
+
+Sample parameters:
+
+query = SELECT * { ?s ?p ?o } LIMIT 100
+inference = true | false
+rules = [rule1:  (?x rdfs:subClassOf ?y), (?a rdf:type ?x) -> (?a rdf:type ?y)] [rule2: ... ]
+format = json | rdf | ttl | rdf | text | csv
+
 ```
 
 **Store triple:**
