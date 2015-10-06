@@ -106,13 +106,9 @@ Content-Type: application/json
 
 ```
 
-DELETE /api/v1/namespaces/{dataset}/coeus HTTP/1.1
+DELETE /api/v1/namespaces/{dataset}/{prefix} HTTP/1.1
 Content-Type: application/json
 
-{
-  "prefix": "coeus",
-  "namespace": "http://bioinformatics.ua.pt/coeus/"
-}
 ```
 
 **Get namespaces:**
