@@ -150,3 +150,7 @@ Content-Type: application/x-www-form-urlencoded
 
 coeus:ieeta dc:title "University of Aveiro" .
 ```
+
+## Python API
+
+[scaleus-python](https://github.com/bioinformatics-ua/scaleus-python)
