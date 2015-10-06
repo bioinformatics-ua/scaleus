@@ -1,5 +1,14 @@
-# scaleus
-A high performance and transactional triple store 
+# SCALEUS
+RESTfull services over an easy, high performance and transactional triple store.
+
+[AngularJS](https://angularjs.org/) + [Jetty Embedded](http://www.eclipse.org/jetty/) (RESTfull API) + [Apache Jena Framework](https://jena.apache.org/)
+
+## Main Features:
+
+- Easy to deploy.
+- Simple RESTfull API for data management.
+- RDFS Inference support over SPARQL queries. Inference rules are also supported.
+- Multiple datasets support.
 
 ## Run 
 
