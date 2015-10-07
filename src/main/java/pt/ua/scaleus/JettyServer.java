@@ -37,6 +37,7 @@ public class JettyServer {
         int port = 80;
         String database = "default";
         String data_import = "resources/";
+        boolean hasDataImport = false;
 
         try {
             Options options = new Options();
@@ -52,6 +53,7 @@ public class JettyServer {
             if (cmd.hasOption("d") && cmd.hasOption("i")) {
                 database = cmd.getOptionValue("d");
                 data_import = cmd.getOptionValue("i");
+                hasDataImport = true;
             }
 
         } catch (ParseException ex) {
@@ -101,7 +103,7 @@ public class JettyServer {
 
         try {
             Init.getAPI();
-            Init.dataImport(database, data_import);
+            if(hasDataImport) Init.dataImport(database, data_import);
             jettyServer.start();
             jettyServer.join();
         } catch (Exception e) {

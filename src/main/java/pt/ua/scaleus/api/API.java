@@ -449,7 +449,7 @@ public class API {
         }
         return out.toString();
     }
-
+    
     public void storeData(String database, String data) throws Exception {
         Model m = ModelFactory.createDefaultModel();
         Dataset dataset = getDataset(database);

@@ -11,6 +11,9 @@ services.factory('SharedService', ['$rootScope', function ($rootScope) {
             update: function (item) {
                 this.selectedDataset = item;
                 $rootScope.$broadcast('datasetChanged', item);
+            },
+            updateView: function (response) {
+                $rootScope.$broadcast('datasetUpdateView', response);
             }
         };
     }]);

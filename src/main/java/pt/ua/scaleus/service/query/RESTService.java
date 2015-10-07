@@ -189,12 +189,11 @@ public class RESTService implements IService {
     @Override
     public Response storeData(@PathParam("database") String database, @FormParam("data") String data) {
         try {
-            api.storeData(database, data);
             //System.out.println(data);
+            api.storeData(database, data);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("failed");
-            return Response.serverError().build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.status(200).build();
     }

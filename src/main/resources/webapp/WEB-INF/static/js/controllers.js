@@ -13,6 +13,11 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
         $scope.selectedDataset = dataset;
         //console.log($scope.selectedDataset);
     });
+    
+    $scope.$on('datasetUpdateView', function (event, datasets) {
+        $scope.datasets = datasets;
+        //console.log('datasetUpdateView');
+    });
 
     $scope.changeDataset = function (selectedDataset) {
         //console.log(selectedDataset);
@@ -30,7 +35,8 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
     $scope.queryDatasets = function () {
         DatasetsService.query(function (response) {
             //console.log("querydatasets");
-            $scope.datasets = response;
+            //$scope.datasets = response;
+            SharedService.updateView(response);
             $scope.changeDataset(response[0]);
             //SharedService.selectedDataset=(response[0]);
             //$scope.selectedDataset = response[0];
@@ -41,11 +47,11 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
 
         if ($scope.formDatabase) {
             DatasetsService.save({id: $scope.formDatabase}, function (response) {
-                $scope.queryDatasets();
                 $scope.showFormDatabase = false;
-                var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
-                if (savedDatasetIndex !== -1)
-                    $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
+                $scope.queryDatasets();
+                //var savedDatasetIndex = $scope.datasets.indexOf($scope.formDatabase);
+                //if (savedDatasetIndex !== -1)
+                //    $scope.selectedDataset = $scope.datasets[savedDatasetIndex];
 
             });
         } else {
