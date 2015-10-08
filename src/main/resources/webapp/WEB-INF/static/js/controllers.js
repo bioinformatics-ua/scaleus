@@ -254,9 +254,16 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
 
     $scope.getData = function () {
         if ($scope.formSPARQL) {
+            $scope.spinner = true;
+            $scope.showQueryTime = false;
             var query = $scope.checkedPrefix() + $scope.formSPARQL;
+            var startQuery = new Date().getTime();
+            
             QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference, rules: $scope.rules}, function (response) {
-                if (response.results.bindings) {
+                if (response.results.bindings && response.results.bindings.length!==0) {
+                    $scope.queryTime = new Date().getTime() - startQuery;
+                    $scope.showQueryTime = true;
+                    $scope.noResults = false;
                     $scope.queryResults = response.results.bindings;
                     $scope.sparqlRequest = '../api/v1/sparqler/' + SharedService.selectedDataset
                             + '/sparql?query=' + encodeURIComponent(query)
@@ -264,9 +271,16 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
                             + '&rules=' + encodeURIComponent($scope.rules);
                 } else {
                     $scope.noResults = true;
+                    $scope.showQueryTime = false;
+                    $scope.queryResults = [];
                 }
+                $scope.spinner = false;
             }, function (response) {
                 // an error occured
+                $scope.showQueryTime = false;
+                $scope.noResults = true;
+                $scope.queryResults = [];
+                $scope.spinner = false;
                 alert(response.status + " " + response.statusText);
             });
         } else {
@@ -316,8 +330,11 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
     };
 
     // init
+    $scope.showQueryTime = false;
+    $scope.spinner = false;
     $scope.inference = false;
     $scope.queryResults = [];
+    $scope.noResults = false;
     $scope.getNamespaces();
 
 });

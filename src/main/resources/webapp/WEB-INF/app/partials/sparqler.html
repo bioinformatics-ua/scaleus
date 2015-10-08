@@ -56,12 +56,15 @@
 				data-ng-model="formSPARQL" rows="16" cols="60" required></textarea>
 				</div>
 			<div class="form-actions">
-				<button class="btn btn-primary" data-ng-click="getData()">Get
-					data</button>
+				<button class="btn btn-primary" data-ng-click="getData()" ng-disabled="spinner">Get data</button> 
+                                <i class="fa fa-refresh fa-spin" ng-show="spinner"></i>
+                                <span ng-show="showQueryTime">(in {{queryTime}} ms)</span>
 			</div>
 		</form>
 		<h2 class="sub-header" data-ng-show="queryResults.length != 0">Query
-			results:</h2>
+			results: </h2>
+                <h2 class="sub-header" data-ng-show="noResults">No
+			results.</h2>
 		<div class="table-responsive" data-ng-show="queryResults.length != 0">
 			<table class="table table-striped"
 				>

@@ -506,29 +506,4 @@ public class API {
         return set;
     }
 
-    public String selectWithRules(String database) {
-        String response = "";
-        Map<String, String> prefixes=getNsPrefixMap(database);
-        Dataset dataset = getDataset(database);
-        dataset.begin(ReadWrite.READ);
-        try {
-            Model model = dataset.getDefaultModel();
-            String query = "SELECT * { ?S ?P ?O } LIMIT 100";
-            PrintUtil.registerPrefixMap(prefixes);
-            String rules = "[r1: (?a dc:related ?b), (?b dc:related ?c) -> (?a dc:related ?c) ] [r2: (?a dc:related ?b) -> (?a dc:title 'has relation') ]";
-            Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(rules));
-            InfModel inf = ModelFactory.createInfModel(reasoner, model);
-
-            QueryExecution qe = QueryExecutionFactory.create(query, inf);
-
-            response = execute(qe, "json");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            dataset.end();
-        }
-        return response;
-    }
-
 }
