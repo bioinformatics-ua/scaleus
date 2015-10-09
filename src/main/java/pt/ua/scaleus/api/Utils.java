@@ -41,14 +41,14 @@ public class Utils {
      */
     public static void deleteDirectory(File file)
             throws IOException {
-
+        
         if (file.isDirectory()) {
 
             //directory is empty, then delete it
             if (file.list().length == 0) {
-
-                file.delete();
-                //logger.debug("Directory is deleted : "+ file.getAbsolutePath());
+                file.setWritable(true);
+                boolean b = file.delete();
+                if(!b) System.out.println("Directory cannot be deleted : "+ file.getAbsolutePath());
 
             } else {
 
@@ -66,15 +66,17 @@ public class Utils {
 
                 //check the directory again, if empty then delete it
                 if (file.list().length == 0) {
-                    file.delete();
-                    //logger.debug("Directory is deleted : "+ file.getAbsolutePath());
+                    file.setWritable(true);
+                    boolean b = file.delete();
+                    if(!b) System.out.println("Directory cannot be deleted : "+ file.getAbsolutePath());
                 }
             }
 
         } else {
             //if file, then delete it
-            file.delete();
-            //logger.debug("File is deleted : " + file.getAbsolutePath());
+            file.setWritable(true);
+            boolean b = file.delete();
+            if(!b) System.out.println("File cannot be deleted : " + file.getAbsolutePath());
         }
     }
     

@@ -102,7 +102,7 @@ public class JettyServer {
         jettyServer.setHandler(handlers);
 
         try {
-            Init.getAPI();
+            Init.getAPI().getDataset(database);
             if(hasDataImport) Init.dataImport(database, data_import);
             jettyServer.start();
             jettyServer.join();

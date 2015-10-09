@@ -71,6 +71,8 @@ public class RESTService implements IService {
             api.removeDataset(name);
         } catch (IOException ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (Exception ex) {
+            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(200).build();
     }
