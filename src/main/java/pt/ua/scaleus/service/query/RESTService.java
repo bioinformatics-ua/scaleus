@@ -81,7 +81,7 @@ public class RESTService implements IService {
     @Path("/dataset")
     @Produces(MediaType.APPLICATION_JSON)
     @Override
-    public Response listDataset(@PathParam("name") String name) {
+    public Response listDataset() {
         Set<String> datasets = api.getDatasets().keySet();
         JSONArray json = new JSONArray();
         for (String dataset : datasets) {

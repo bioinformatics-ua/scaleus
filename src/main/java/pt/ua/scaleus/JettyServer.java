@@ -6,6 +6,8 @@
 package pt.ua.scaleus;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
@@ -14,13 +16,15 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.glassfish.jersey.servlet.ServletContainer;
+import pt.ua.scaleus.service.JettyUtils;
 import pt.ua.scaleus.service.query.RESTService;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import pt.ua.scaleus.api.Init;
 
 /**
@@ -29,12 +33,12 @@ import pt.ua.scaleus.api.Init;
  */
 public class JettyServer {
 
-    static final String WEBAPPDIR_STATIC = "webapp/WEB-INF/static";
-    static final String WEBAPPDIR_APP = "webapp/WEB-INF/app";
+    static final String WEBAPPDIR = "webapp/WEB-INF/";
 
     public static void main(String[] args) {
 
         int port = 80;
+        String baseWebPath = "/";
         String database = "default";
         String data_import = "resources/";
         boolean hasDataImport = false;
@@ -60,56 +64,42 @@ public class JettyServer {
             Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Server jettyServer = new Server(port);
+        Server server = new Server(port);
 
-        URL warURL = JettyServer.class.getClassLoader().getResource(WEBAPPDIR_STATIC);
-        //System.err.println(warURL);
-        final String warURLString_statics = warURL.toExternalForm();
-        warURL = JettyServer.class.getClassLoader().getResource(WEBAPPDIR_APP);
-        final String warURLString_app = warURL.toExternalForm();
+        // setup the web pages/scripts app
+        final URL warUrl = JettyServer.class.getClassLoader().getResource(WEBAPPDIR);
+        final String warUrlString = warUrl.toExternalForm();
+        final WebAppContext webpages = new WebAppContext(warUrlString, baseWebPath);
+        webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
+        webpages.setInitParameter("useFileMappedBuffer", "false");
+        webpages.setInitParameter("cacheControl", "max-age=0, public");
 
-        ResourceHandler resource_handler = new ResourceHandler();
-        resource_handler.setResourceBase(warURLString_statics);
-        HandlerList handlers = new HandlerList();
-//        ServletContextHandler servletContextHandler = new ServletContextHandler(server, ServerConfigurations.getInstance().getBaseurl() + BASEURL, true, true);
 
-        ServletContextHandler appContext = new ServletContextHandler();
-        appContext.setContextPath("/app/");
-        appContext.setResourceBase(warURLString_app);
-        appContext.addServlet(DefaultServlet.class, "/");
+        //API init parameters
+        Map<String, String> apiInit = new HashMap<>();
+        apiInit.put("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
 
-        ServletContextHandler servletContextHandler = new ServletContextHandler(jettyServer, "/api/", true, false);
-        ServletHolder jerseyServlet = servletContextHandler.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-        jerseyServlet.setInitOrder(0);
-        // Tells the Jersey Servlet which REST service/class to load.
-        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
-        
-//        ServletContextHandler servletContextHandlerLD = new ServletContextHandler(jettyServer, "/resource/", true, false);
-//        ServletHolder jerseyServletLD = servletContextHandlerLD.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-//        jerseyServletLD.setInitOrder(0);
-//        // Tells the Jersey Servlet which REST service/class to load.
-//        jerseyServletLD.setInitParameter("jersey.config.server.provider.classnames", ResourceService.class.getCanonicalName());
+        Handler[] handlers = new Handler[]{
+                JettyUtils.createServletHandler(ServletContainer.class, baseWebPath, "/api/*", apiInit).getHandler(), // API
+                webpages, //Web static content
+        };
 
-        Handler[] sh = jettyServer.getHandlers();
-        Handler[] h = new Handler[sh.length + 2];
-        System.arraycopy(sh, 0, h, 0, sh.length);
-//        h[h.length - 3] = servletContextHandler;
-        h[h.length - 2] = resource_handler;
-        h[h.length - 1] = appContext;
-        
-        handlers.setHandlers(h);
-
-        jettyServer.setHandler(handlers);
+        // register the handlers on the server
+        ContextHandlerCollection contextHandlers = new ContextHandlerCollection();
+        contextHandlers.setHandlers(handlers);
+        server.setHandler(contextHandlers);
 
         try {
             Init.getAPI().getDataset(database);
             if(hasDataImport) Init.dataImport(database, data_import);
-            jettyServer.start();
-            jettyServer.join();
+            server.start();
+            server.join();
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, e);
         } finally {
-            jettyServer.destroy();
+            if(server.isStarted())
+                server.destroy();
         }
     }
 

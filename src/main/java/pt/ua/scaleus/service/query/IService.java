@@ -24,7 +24,7 @@ public interface IService {
 
     public abstract Response removeDataset(String name);
 
-    public abstract Response listDataset(String name);
+    public abstract Response listDataset();
 
     public abstract Response getNamespaces(String database);
 
