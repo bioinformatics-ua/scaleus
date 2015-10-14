@@ -17,10 +17,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.glassfish.jersey.servlet.ServletContainer;
-import pt.ua.scaleus.service.query.RESTService;
+import pt.ua.scaleus.service.RESTService;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import pt.ua.scaleus.api.Init;
 
 /**
@@ -65,15 +66,15 @@ public class JettyServer {
         // setup the web pages/scripts app
         final URL warUrl = JettyServer.class.getClassLoader().getResource(WEBAPPDIR);
         final String warUrlString = warUrl.toExternalForm();
-        final WebAppContext webpages = new WebAppContext(warUrlString, baseWebPath);
-        webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
-        webpages.setInitParameter("useFileMappedBuffer", "false");
-        webpages.setInitParameter("cacheControl", "max-age=0, public");
-
+        ServletContextHandler webpages = new ServletContextHandler();		
+        webpages.setContextPath(baseWebPath);		
+        webpages.setResourceBase(warUrlString);		
+        webpages.addServlet(DefaultServlet.class, "/");
 
         //API init parameters
         Map<String, String> apiInit = new HashMap<>();
         apiInit.put("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
+        //Test init parameters
         //Map<String, String> testInit = new HashMap<>();
         //testInit.put("jersey.config.server.provider.classnames", TestService.class.getCanonicalName());
 
