@@ -1,4 +1,4 @@
-package pt.ua.scaleus.service;
+package pt.ua.scaleus.server;
 
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.FilterHolder;

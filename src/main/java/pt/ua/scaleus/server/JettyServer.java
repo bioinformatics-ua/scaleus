@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pt.ua.scaleus;
+package pt.ua.scaleus.server;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -17,12 +17,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.glassfish.jersey.servlet.ServletContainer;
-import pt.ua.scaleus.service.JettyUtils;
 import pt.ua.scaleus.service.query.RESTService;
 import org.eclipse.jetty.server.Server;
 import pt.ua.scaleus.api.Init;
@@ -38,7 +34,7 @@ public class JettyServer {
     public static void main(String[] args) {
 
         int port = 80;
-        String baseWebPath = "/";
+        String baseWebPath = "/scaleus";
         String database = "default";
         String data_import = "resources/";
         boolean hasDataImport = false;
@@ -78,9 +74,12 @@ public class JettyServer {
         //API init parameters
         Map<String, String> apiInit = new HashMap<>();
         apiInit.put("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
+        //Map<String, String> testInit = new HashMap<>();
+        //testInit.put("jersey.config.server.provider.classnames", TestService.class.getCanonicalName());
 
         Handler[] handlers = new Handler[]{
                 JettyUtils.createServletHandler(ServletContainer.class, baseWebPath, "/api/*", apiInit).getHandler(), // API
+                //JettyUtils.createServletHandler(ServletContainer.class, baseWebPath, "/test/*", testInit).getHandler(), 
                 webpages, //Web static content
         };
 
@@ -95,7 +94,6 @@ public class JettyServer {
             server.start();
             server.join();
         } catch (Exception e) {
-            e.printStackTrace();
             Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             if(server.isStarted())
