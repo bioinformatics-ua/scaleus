@@ -15,10 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import static org.apache.jena.assembler.JA.OntModel;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.ontology.OntModel;
@@ -159,16 +156,15 @@ public class API {
         return dataset;
     }
 
-    public void removeDataset(String name) throws IOException {
+    public void removeDataset(String name) throws IOException, Exception {
         if (datasets.containsKey(name)) {
             //Dataset d = datasets.get(name);
             Dataset d = datasets.remove(name);
-            //TDBFactory.release(d);
-            d.close();
+            TDBFactory.release(d);
+            //d.close();
             File nameFile = new File(directory + name);
             if (nameFile.exists()) {
                 System.out.println("Deleting: " + nameFile.getAbsolutePath());
-                //FileUtils.deleteDirectory(nameFile);
                 Utils.deleteDirectory(nameFile);
             }
         }

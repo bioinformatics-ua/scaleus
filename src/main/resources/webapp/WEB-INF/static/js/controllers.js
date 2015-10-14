@@ -28,6 +28,7 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
 
 
     $scope.showAddDatabase = function () {
+        $scope.formDatabase = "";
         $scope.showFormDatabase = $scope.showFormDatabase ? false : true;
     };
 
@@ -65,9 +66,9 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
 
         DatasetsService.delete({id: $scope.selectedDataset}, function (response) {
             $scope.queryDatasets();
-        }, function (error) {
-            console.log();
-            alert(error.statusText);
+        }, function (response) {
+            console.log(response);
+            alert("Ups! An error has occurred!");
         });
 
     };

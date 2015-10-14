@@ -40,7 +40,7 @@ public class Utils {
      * @throws IOException
      */
     public static void deleteDirectory(File file)
-            throws IOException {
+            throws IOException, Exception {
         
         if (file.isDirectory()) {
 
@@ -48,7 +48,7 @@ public class Utils {
             if (file.list().length == 0) {
                 file.setWritable(true);
                 boolean b = file.delete();
-                if(!b) System.out.println("Directory cannot be deleted : "+ file.getAbsolutePath());
+                if(!b) throw new IOException("Directory cannot be deleted : "+ file.getAbsolutePath()+ "\nCheck permissions.");
 
             } else {
 
@@ -68,7 +68,7 @@ public class Utils {
                 if (file.list().length == 0) {
                     file.setWritable(true);
                     boolean b = file.delete();
-                    if(!b) System.out.println("Directory cannot be deleted : "+ file.getAbsolutePath());
+                    if(!b) throw new IOException("Directory cannot be deleted : "+ file.getAbsolutePath()+ "\nCheck permissions.");
                 }
             }
 
@@ -76,7 +76,7 @@ public class Utils {
             //if file, then delete it
             file.setWritable(true);
             boolean b = file.delete();
-            if(!b) System.out.println("File cannot be deleted : " + file.getAbsolutePath());
+            if(!b) throw new IOException("File cannot be deleted : "+ file.getAbsolutePath()+ "\nCheck permissions.");
         }
     }
     

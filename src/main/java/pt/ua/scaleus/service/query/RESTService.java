@@ -38,7 +38,7 @@ import pt.ua.scaleus.service.data.Namespace;
  */
 @Path("/v1")
 public class RESTService implements IService {
-
+    
     API api = Init.getAPI();
     
     @GET
@@ -54,7 +54,7 @@ public class RESTService implements IService {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
     }
-
+    
     @POST
     @Path("/dataset/{name}")
     @Override
@@ -62,7 +62,7 @@ public class RESTService implements IService {
         api.getDataset(name);
         return Response.status(200).build();
     }
-
+    
     @DELETE
     @Path("/dataset/{name}")
     @Override
@@ -71,12 +71,14 @@ public class RESTService implements IService {
             api.removeDataset(name);
         } catch (IOException ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
-        }catch (Exception ex) {
+            return Response.serverError().build();
+        } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
         }
         return Response.status(200).build();
     }
-
+    
     @GET
     @Path("/dataset")
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,7 +91,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(json.toJSONString()).build();
     }
-
+    
     @GET
     @Path("/namespaces/{database}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -112,7 +114,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(json.toJSONString()).build();
     }
-
+    
     @POST
     @Path("/namespaces/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -125,10 +127,10 @@ public class RESTService implements IService {
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         return Response.status(200).build();
     }
-
+    
     @DELETE
     @Path("/namespaces/{database}/{prefix}")
     @Override
@@ -138,10 +140,10 @@ public class RESTService implements IService {
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         return Response.status(200).build();
     }
-
+    
     @POST
     @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -156,7 +158,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-
+    
     @DELETE
     @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -170,7 +172,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-
+    
     @GET
     @Path("/data/{database}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -184,7 +186,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(response).build();
     }
-
+    
     @POST
     @Path("/data/{database}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -205,15 +207,15 @@ public class RESTService implements IService {
     @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("id") String id, @PathParam("format") String format) {
-    	String response="";
+        String response = "";
         try {
-        	response = api.describeResource(database, prefix, id, format);
+            response = api.describeResource(database, prefix, id, format);
         } catch (Exception ex) {
             Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }        
         return Response.status(200).entity(response).build();
     }
-
+    
     @GET
     @Path("/properties/{database}/{match}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -233,7 +235,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(ja.toJSONString()).build();
     }
-
+    
     @GET
     @Path("/resources/{database}/{match}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -253,5 +255,5 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(ja.toJSONString()).build();
     }
-
+    
 }
