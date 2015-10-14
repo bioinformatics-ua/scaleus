@@ -3,13 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pt.ua.scaleus.service.query;
+package pt.ua.scaleus.service;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import pt.ua.scaleus.service.data.Namespace;
-import pt.ua.scaleus.service.data.NQuad;
 import pt.ua.scaleus.service.data.NTriple;
 
 /**
@@ -24,7 +21,7 @@ public interface IService {
 
     public abstract Response removeDataset(String name);
 
-    public abstract Response listDataset(String name);
+    public abstract Response listDataset();
 
     public abstract Response getNamespaces(String database);
 
