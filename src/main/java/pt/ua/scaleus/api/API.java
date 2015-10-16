@@ -57,7 +57,7 @@ import pt.ua.scaleus.service.data.NTriple;
  */
 public class API {
 
-    private static final Logger logger = Logger.getLogger(API.class.getName());
+    private static final Logger log = Logger.getLogger(API.class);
     //String input = "resources/data/output.rdf";
     String directory = "datasets/";
     HashMap<String, Dataset> datasets = new HashMap<>();
@@ -164,7 +164,7 @@ public class API {
             //d.close();
             File nameFile = new File(directory + name);
             if (nameFile.exists()) {
-                System.out.println("Deleting: " + nameFile.getAbsolutePath());
+                log.debug("Deleting: " + nameFile.getAbsolutePath());
                 Utils.deleteDirectory(nameFile);
             }
         }
@@ -308,7 +308,7 @@ public class API {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("Query execute failed", ex);
         }
         return response;
     }
@@ -390,7 +390,7 @@ public class API {
             dataset.commit();
             //model.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Add statement failed", e);
         } finally {
             dataset.end();
         }
@@ -424,7 +424,7 @@ public class API {
             dataset.commit();
             //model.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Add statement failed", e);
         } finally {
             dataset.end();
         }
@@ -442,7 +442,7 @@ public class API {
                 return "Data is too long to show!";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Get data failed", e);
         } finally {
             dataset.end();
         }

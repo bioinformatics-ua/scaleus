@@ -8,13 +8,12 @@ package pt.ua.scaleus.server;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -30,10 +29,11 @@ import pt.ua.scaleus.api.Init;
  */
 public class JettyServer {
 
-    static final String WEBAPPDIR = "webapp/WEB-INF/";
+    private static final String WEBAPPDIR = "webapp/WEB-INF/";
+    private static final Logger log = Logger.getLogger(JettyServer.class);
 
     public static void main(String[] args) {
-
+        
         int port = 80;
         String baseWebPath = "/scaleus";
         String database = "default";
@@ -58,7 +58,7 @@ public class JettyServer {
             }
 
         } catch (ParseException ex) {
-            Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("CommandLine parse error", ex);
         }
 
         Server server = new Server(port);
@@ -93,9 +93,10 @@ public class JettyServer {
             Init.getAPI().getDataset(database);
             if(hasDataImport) Init.dataImport(database, data_import);
             server.start();
+            log.info("Server started.");
             server.join();
         } catch (Exception e) {
-            Logger.getLogger(JettyServer.class.getName()).log(Level.SEVERE, null, e);
+            log.error("Server cannot start", e);
         } finally {
             if(server.isStarted())
                 server.destroy();

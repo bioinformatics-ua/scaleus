@@ -8,8 +8,7 @@ package pt.ua.scaleus.api;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -18,6 +17,7 @@ import java.util.logging.Logger;
 public class Init {
 
     static API api = null;
+    private static final Logger log = Logger.getLogger(Init.class);
 
     public static API getAPI() {
         if (api == null) {
@@ -33,16 +33,16 @@ public class Init {
                 String[] list = Utils.getFolderContentList(file.getAbsolutePath());
                 for (String l : list) {
                     File f= new File(location + "/" + l);
-                    System.out.println("Importing: " + f.getAbsolutePath());
+                    log.debug("Importing: " + f.getAbsolutePath());
                     Path input = Paths.get(f.getAbsolutePath());
                     getAPI().read(database, input.toUri().toString());
                 }
             } else {
-                System.out.println("Importing: " + file.getAbsolutePath());
+                log.debug("Importing: " + file.getAbsolutePath());
                 getAPI().read(database, file.getAbsolutePath());
             }
         } catch (Exception e) {
-            Logger.getLogger(Init.class.getName()).log(Level.SEVERE, null, e);
+            log.error("Data import failed", e);
         }
 
     }

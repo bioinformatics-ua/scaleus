@@ -1,13 +1,10 @@
 package pt.ua.scaleus.server;
 
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
-import java.util.EnumSet;
 import java.util.Map;
 
 /**

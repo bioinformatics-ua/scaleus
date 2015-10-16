@@ -8,8 +8,6 @@ package pt.ua.scaleus.service;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.log4j.Logger;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -40,6 +39,7 @@ import pt.ua.scaleus.service.data.Namespace;
 public class RESTService implements IService {
     
     API api = Init.getAPI();
+    private static final Logger log = Logger.getLogger(RESTService.class);
     
     @GET
     @Path("/sparqler/{dataset}/sparql")
@@ -50,7 +50,7 @@ public class RESTService implements IService {
             String resp = api.select(dataset, query, inf, rules, format);
             return Response.status(Response.Status.OK).entity(resp).build();
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
     }
@@ -70,10 +70,10 @@ public class RESTService implements IService {
         try {
             api.removeDataset(name);
         } catch (IOException ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
             return Response.serverError().build();
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
             return Response.serverError().build();
         }
         return Response.status(200).build();
@@ -110,7 +110,7 @@ public class RESTService implements IService {
             json = new JSONObject();
             json.put("namespaces", ja);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }
         return Response.status(200).entity(json.toJSONString()).build();
     }
@@ -125,7 +125,7 @@ public class RESTService implements IService {
             String uri = namespace.getNamespace();
             api.setNsPrefix(database, prefix, uri);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }
         
         return Response.status(200).build();
@@ -138,7 +138,7 @@ public class RESTService implements IService {
         try {
             api.removeNsPrefix(database, prefix);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }
         
         return Response.status(200).build();
@@ -154,7 +154,7 @@ public class RESTService implements IService {
         try {
             api.addStatement(database, triple);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }
         return Response.status(200).build();
     }
@@ -168,7 +168,7 @@ public class RESTService implements IService {
         try {
             api.removeStatement(database, triple);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }
         return Response.status(200).build();
     }
@@ -182,7 +182,7 @@ public class RESTService implements IService {
         try {
             response = api.getRDF(database);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }
         return Response.status(200).entity(response).build();
     }
@@ -196,7 +196,7 @@ public class RESTService implements IService {
             //System.out.println(data);
             api.storeData(database, data);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.status(200).build();
@@ -211,7 +211,7 @@ public class RESTService implements IService {
         try {
             response = api.describeResource(database, prefix, id, format);
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
         }        
         return Response.status(200).entity(response).build();
     }
@@ -230,7 +230,7 @@ public class RESTService implements IService {
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
             return Response.serverError().build();
         }
         return Response.status(200).entity(ja.toJSONString()).build();
@@ -250,7 +250,7 @@ public class RESTService implements IService {
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(RESTService.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Service failed", ex);
             return Response.serverError().build();
         }
         return Response.status(200).entity(ja.toJSONString()).build();
