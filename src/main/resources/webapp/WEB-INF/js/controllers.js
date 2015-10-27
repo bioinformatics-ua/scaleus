@@ -266,7 +266,7 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
                     $scope.showQueryTime = true;
                     $scope.noResults = false;
                     $scope.queryResults = response.results.bindings;
-                    $scope.sparqlRequest = '../api/v1/sparqler/' + SharedService.selectedDataset
+                    $scope.sparqlRequest = './api/v1/sparqler/' + SharedService.selectedDataset
                             + '/sparql?query=' + encodeURIComponent(query)
                             + '&inference=' + encodeURIComponent($scope.inference)
                             + '&rules=' + encodeURIComponent($scope.rules);
