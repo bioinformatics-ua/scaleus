@@ -43,10 +43,11 @@ public class RESTService implements IService {
     
     @GET
     @Path("/sparqler/{dataset}/sparql")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces("application/sparql-results+xml")
     @Override
-    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @DefaultValue("false") @QueryParam("inference") Boolean inf, @DefaultValue("") @QueryParam("rules") String rules, @DefaultValue("json") @QueryParam("format") String format) {
+    public Response sparqler(@PathParam("dataset") String dataset, @QueryParam("query") String query, @DefaultValue("false") @QueryParam("inference") Boolean inf, @DefaultValue("") @QueryParam("rules") String rules, @DefaultValue("xml") @QueryParam("format") String format) {
         try {
+            log.info(query);
             String resp = api.select(dataset, query, inf, rules, format);
             return Response.status(Response.Status.OK).entity(resp).build();
         } catch (Exception ex) {

@@ -23,6 +23,7 @@ import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
@@ -181,13 +182,15 @@ public class API {
      * @return
      * @throws java.lang.Exception
      */
-    public String select(String database, String query, Boolean inf, String rules, String format) throws Exception{
+    public String select(String database, String query, Boolean inf, String rules, String format) throws Exception {
         String response = "";
         //System.out.println(rules);
         // initiate prefixes only if rules are used
         Map<String, String> prefixes = new HashMap<>();
-        if(!rules.isEmpty()) prefixes = getNsPrefixMap(database);
-        
+        if (!rules.isEmpty()) {
+            prefixes = getNsPrefixMap(database);
+        }
+
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
         try {
@@ -197,19 +200,19 @@ public class API {
             if (inf != null && inf) {
                 InfModel inference;
                 // if rules are not used use only RDFS inference 
-                if(rules.isEmpty()){
+                if (rules.isEmpty()) {
                     inference = ModelFactory.createRDFSModel(model);
-                }else{
+                } else {
                     PrintUtil.registerPrefixMap(prefixes);
                     Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(rules));
                     inference = ModelFactory.createInfModel(reasoner, model);
                 }
-                qe = QueryExecutionFactory.create(query, inference);     
+                qe = QueryExecutionFactory.create(query, inference);
             } else {
                 qe = QueryExecutionFactory.create(query, model);
             }
             response = execute(qe, format);
-        }finally {
+        } finally {
             dataset.end();
         }
         return response;
@@ -263,52 +266,48 @@ public class API {
      * @param format expected return format.
      * @return
      */
-    private String execute(QueryExecution qe, String format) {
+    private String execute(QueryExecution qe, String format) throws Exception {
         String response = "";
-        try {
-            ResultSet rs = qe.execSelect();
-            switch (format) {
-                case "txt":
-                case "text":
-                    response = ResultSetFormatter.asText(rs);
-                    break;
-                case "json":
-                case "js": {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ResultSetFormatter.outputAsJSON(os, rs);
-                    response = os.toString();
-                    break;
-                }
-                case "xml":
-                    response = ResultSetFormatter.asXMLString(rs);
-                    break;
-                case "rdf": {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_XML);
-                    response = os.toString();
-                    break;
-                }
-                case "ttl": {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_TTL);
-                    response = os.toString();
-                    break;
-                }
-                case "csv": {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ResultSetFormatter.outputAsCSV(os, rs);
-                    response = os.toString();
-                    break;
-                }
-                default: {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ResultSetFormatter.outputAsJSON(os, rs);
-                    response = os.toString();
-                    break;
-                }
+        ResultSet rs = qe.execSelect();     
+        switch (format) {
+            case "txt":
+            case "text":
+                response = ResultSetFormatter.asText(rs);
+                break;
+            case "json":
+            case "js": {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ResultSetFormatter.outputAsJSON(os, rs);
+                response = os.toString();
+                break;
             }
-        } catch (Exception ex) {
-            log.error("Query execute failed", ex);
+            case "xml":
+                response = ResultSetFormatter.asXMLString(rs);
+                break;
+            case "rdf": {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_XML);
+                response = os.toString();
+                break;
+            }
+            case "ttl": {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_TTL);
+                response = os.toString();
+                break;
+            }
+            case "csv": {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ResultSetFormatter.outputAsCSV(os, rs);
+                response = os.toString();
+                break;
+            }
+            default: {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ResultSetFormatter.output(os, rs, ResultsFormat.FMT_RDF_XML);
+                response = os.toString();
+                break;
+            }
         }
         return response;
     }
@@ -448,7 +447,7 @@ public class API {
         }
         return out.toString();
     }
-    
+
     public void storeData(String database, String data) throws Exception {
         Model m = ModelFactory.createDefaultModel();
         Dataset dataset = getDataset(database);

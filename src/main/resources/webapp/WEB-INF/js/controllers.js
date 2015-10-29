@@ -260,7 +260,7 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
             var query = $scope.checkedPrefix() + $scope.formSPARQL;
             var startQuery = new Date().getTime();
             
-            QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference, rules: $scope.rules}, function (response) {
+            QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference, rules: $scope.rules, format: 'json'}, function (response) {
                 if (response.results.bindings && response.results.bindings.length!==0) {
                     $scope.queryTime = new Date().getTime() - startQuery;
                     $scope.showQueryTime = true;
