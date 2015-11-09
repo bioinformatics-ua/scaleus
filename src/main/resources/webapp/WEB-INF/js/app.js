@@ -5,6 +5,7 @@
 var app = angular.module('restapp', [
     'ngRoute',
     'ngResource',
+    'ngCookies',
     'restapp.controllers',
     'restapp.services',
     'restapp.directives',

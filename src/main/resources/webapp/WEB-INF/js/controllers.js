@@ -245,7 +245,7 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService, P
 });
 
 
-app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesService, SharedService) {
+app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, NamespacesService, SharedService) {
 
     console.log('on QueriesCtrl ' + SharedService.selectedDataset);
 
@@ -270,6 +270,8 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
                             + '/sparql?query=' + encodeURIComponent(query)
                             + '&inference=' + encodeURIComponent($scope.inference)
                             + '&rules=' + encodeURIComponent($scope.rules);
+                    $cookies.put(query ,'');
+                    $scope.updateRecentQueries();
                 } else {
                     $scope.noResults = true;
                     $scope.showQueryTime = false;
@@ -321,13 +323,20 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
             ns.checked = true;
         });
     };
-
-    $scope.getAll = function () {
-        $scope.formSPARQL = 'SELECT * { \n?s ?p ?o \n} LIMIT 1000';
+    
+    $scope.updateRecentQueries = function(){ 
+        $scope.recentQueries = Object.keys($cookies.getAll());
     };
-
-    $scope.countAll = function () {
-        $scope.formSPARQL = 'SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}';
+    
+    $scope.clearRecentQueries = function(){ 
+        angular.forEach(Object.keys($cookies.getAll()), function (k) {
+            $cookies.remove(k);
+        });
+        $scope.updateRecentQueries();
+    };
+    
+    $scope.putQuery = function(query){
+        $scope.formSPARQL = query;
     };
 
     // init
@@ -337,6 +346,7 @@ app.controller('QueriesCtrl', function ($scope, QueriesService, NamespacesServic
     $scope.queryResults = [];
     $scope.noResults = false;
     $scope.getNamespaces();
+    $scope.updateRecentQueries();
 
 });
 
