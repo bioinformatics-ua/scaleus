@@ -5,9 +5,14 @@
  */
 package pt.ua.scaleus.service;
 
+import java.io.InputStream;
+
 import javax.ws.rs.core.Response;
-import pt.ua.scaleus.service.data.Namespace;
+
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+
 import pt.ua.scaleus.service.data.NTriple;
+import pt.ua.scaleus.service.data.Namespace;
 
 /**
  *
@@ -42,5 +47,7 @@ public interface IService {
     public abstract Response getProperties(String database, String match);
     
     public abstract Response getResources(String database, String match);
+
+    public abstract Response uploadFile(InputStream uploadedInputStream, FormDataContentDisposition fileDetail);
 
 }
