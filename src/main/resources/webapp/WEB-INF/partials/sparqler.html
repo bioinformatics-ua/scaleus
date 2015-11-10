@@ -7,15 +7,26 @@
 
 <!-- /.row -->
 <div class="row" ng-controller="QueriesCtrl">
-	<div>
-	<h4>Predefined queries: <span>
-		<button class="btn btn-xs btn-primary" data-ng-click="getAll()">Get
-			all</button>
-		<button class="btn btn-xs btn-primary"
-			data-ng-click="countAll()">Count all</button>
-	</span>
-	</div>
-	<br>
+    
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default" data-ng-click="putQuery('SELECT * { \n?s ?p ?o \n} LIMIT 1000')">Get all</button>
+        <button type="button" class="btn btn-default" data-ng-click="putQuery('SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}')">Count</button>
+
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Recent Queries
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" >
+            <li ng-show="recentQueries.length!==0" data-ng-click="clearRecentQueries()"><a>Clear all</a></li>
+            <li ng-show="recentQueries.length!==0" class="divider">Clear all</li>
+            <li ng-show="recentQueries.length===0"><a><i>None</i></a></li>
+            <li data-ng-repeat="query in recentQueries"><a data-ng-click="putQuery(query)" title="{{query}}"><i>- {{query.substring(0,60)}}...</i></a></li>
+          </ul>
+        </div>
+    </div>
+    
+	<br><br>
 	<div>
 		<form class="form-horizontal well" name="sparqler">
 			<h4>Select prefix</h4>
