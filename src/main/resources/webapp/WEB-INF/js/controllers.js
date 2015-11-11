@@ -373,9 +373,15 @@ app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, 
 
 
 app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) {
+    
+	$scope.dataset = SharedService.selectedDataset;
 	
+    $scope.$on('datasetChanged', function (event, dataset) {
+    	$scope.dataset = SharedService.selectedDataset;
+    });
+    
 	var uploader = $scope.uploader = new FileUploader({
-        url: './api/v1/upload'
+        url: './api/v1/upload/' + $scope.dataset
     });
 
     // FILTERS
@@ -400,6 +406,7 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
     };
     uploader.onBeforeUploadItem = function(item) {
         console.info('onBeforeUploadItem', item);
+        item.url =  './api/v1/upload/' + $scope.dataset;
     };
     uploader.onProgressItem = function(fileItem, progress) {
         console.info('onProgressItem', fileItem, progress);

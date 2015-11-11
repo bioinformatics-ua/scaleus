@@ -266,43 +266,16 @@ public class RESTService implements IService {
 	
 
 	@POST
-	@Path("/upload")
+	@Path("/upload/{database}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Override  
-	public Response uploadFile (
+	public Response uploadFile (@PathParam("database") String database, 
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
-		String uploadedFileLocation = "tmp/" + fileDetail.getFileName();
-
-		// save it
-		writeToFile(uploadedInputStream, uploadedFileLocation);
-
-		System.out.println("File uploaded to : " + uploadedFileLocation);
+		
+		api.storeFile(database, uploadedInputStream, fileDetail.getFileName());
 
 		return Response.status(200).build();
 	}
 
-	// save uploaded file to new location
-	private void writeToFile(InputStream uploadedInputStream,
-			String uploadedFileLocation) {
-
-		try {
-			OutputStream out = new FileOutputStream(new File(
-					uploadedFileLocation));
-			int read = 0;
-			byte[] bytes = new byte[1024];
-
-			out = new FileOutputStream(new File(uploadedFileLocation));
-			while ((read = uploadedInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-
-	}
 }

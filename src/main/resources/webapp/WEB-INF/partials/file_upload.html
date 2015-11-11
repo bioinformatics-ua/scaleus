@@ -9,7 +9,7 @@
 <div class="row" ng-controller="FileUploadCtrl" nv-file-drop=""
 	uploader="uploader" filters="queueLimit, customFilter">
 
-	<div class="col-md-3">
+	<div style="margin: 20px">
 
 		<h3>Select files</h3>
 
@@ -23,9 +23,6 @@
 		Browse files <input type="file" nv-file-select="" uploader="uploader"
 			multiple /><br /> 
 
-	</div>
-
-	<div class="col-md-9" style="margin-bottom: 40px">
 
 		<h3>Upload queue</h3>
 		<p>Queue length: {{ uploader.queue.length }}</p>

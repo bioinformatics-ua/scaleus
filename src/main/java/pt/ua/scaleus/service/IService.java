@@ -48,6 +48,6 @@ public interface IService {
     
     public abstract Response getResources(String database, String match);
 
-    public abstract Response uploadFile(InputStream uploadedInputStream, FormDataContentDisposition fileDetail);
+    public abstract Response uploadFile(String database, InputStream uploadedInputStream, FormDataContentDisposition fileDetail);
 
 }
