@@ -37,7 +37,7 @@ public interface IService {
     
     public abstract Response storeData(String database, String data);
 
-    public abstract Response resource(String database, String prefix, String id, String format);
+    public abstract Response resource(String database, String uri, String format);
     
     public abstract Response getProperties(String database, String match);
     

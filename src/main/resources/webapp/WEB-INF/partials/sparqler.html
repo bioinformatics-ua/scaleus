@@ -18,9 +18,9 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" >
-            <li ng-show="recentQueries.length!==0" data-ng-click="clearRecentQueries()"><a>Clear all</a></li>
-            <li ng-show="recentQueries.length!==0" class="divider">Clear all</li>
-            <li ng-show="recentQueries.length===0"><a><i>None</i></a></li>
+            <li ng-show="recentQueries!==undefined" data-ng-click="clearRecentQueries()"><a>Clear all</a></li>
+            <li ng-show="recentQueries!==undefined" class="divider"></li>
+            <li ng-show="recentQueries===undefined"><a><i>None</i></a></li>
             <li data-ng-repeat="query in recentQueries"><a data-ng-click="putQuery(query)" title="{{query}}"><i>- {{query.substring(0,60)}}...</i></a></li>
           </ul>
         </div>
