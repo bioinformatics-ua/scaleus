@@ -8,13 +8,16 @@ package pt.ua.scaleus.api;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -23,7 +26,6 @@ import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
@@ -271,7 +273,7 @@ public class API {
      */
     private String execute(QueryExecution qe, String format) throws Exception {
         String response = "";
-        ResultSet rs = qe.execSelect();     
+        ResultSet rs = qe.execSelect();
         switch (format) {
             case "txt":
             case "text":
@@ -507,4 +509,37 @@ public class API {
         return set;
     }
 
+    public void storeFile(String database, InputStream uploadedInputStream, String fileName) {
+
+        String uploadedFileLocation = "tmp/" + fileName;
+
+        // save it
+        writeToFile(uploadedInputStream, uploadedFileLocation);
+        File file = new File(uploadedFileLocation);
+
+        read(database, file.getAbsolutePath());
+    }
+
+    // save uploaded file to new location
+    private void writeToFile(InputStream uploadedInputStream,
+            String uploadedFileLocation) {
+
+        try {
+            OutputStream out = new FileOutputStream(new File(
+                    uploadedFileLocation));
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            out = new FileOutputStream(new File(uploadedFileLocation));
+            while ((read = uploadedInputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
 }

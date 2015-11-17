@@ -6,6 +6,7 @@
 package pt.ua.scaleus.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +22,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -257,4 +260,18 @@ public class RESTService implements IService {
         return Response.status(200).entity(ja.toJSONString()).build();
     }
     
+
+	@POST
+	@Path("/upload/{database}")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Override  
+	public Response uploadFile (@PathParam("database") String database, 
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+		
+		api.storeFile(database, uploadedInputStream, fileDetail.getFileName());
+
+		return Response.status(200).build();
+	}
+
 }

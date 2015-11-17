@@ -8,6 +8,7 @@ package pt.ua.scaleus.server;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,13 +16,17 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.glassfish.jersey.servlet.ServletContainer;
-import pt.ua.scaleus.service.RESTService;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
+
 import pt.ua.scaleus.api.Init;
+import pt.ua.scaleus.service.RESTService;
 
 /**
  *
@@ -73,11 +78,11 @@ public class JettyServer {
 
         //API init parameters
         Map<String, String> apiInit = new HashMap<>();
-        apiInit.put("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName());
+        apiInit.put("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName()+";org.glassfish.jersey.media.multipart.MultiPartFeature");
         //Test init parameters
         //Map<String, String> testInit = new HashMap<>();
         //testInit.put("jersey.config.server.provider.classnames", TestService.class.getCanonicalName());
-
+        
         Handler[] handlers = new Handler[]{
                 JettyUtils.createServletHandler(ServletContainer.class, baseWebPath, "/api/*", apiInit).getHandler(), // API
                 //JettyUtils.createServletHandler(ServletContainer.class, baseWebPath, "/test/*", testInit).getHandler(), 
@@ -88,7 +93,7 @@ public class JettyServer {
         ContextHandlerCollection contextHandlers = new ContextHandlerCollection();
         contextHandlers.setHandlers(handlers);
         server.setHandler(contextHandlers);
-
+        
         try {
             Init.getAPI().getDataset(database);
             if(hasDataImport) Init.dataImport(database, data_import);

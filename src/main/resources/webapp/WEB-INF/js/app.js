@@ -9,7 +9,8 @@ var app = angular.module('restapp', [
     'restapp.controllers',
     'restapp.services',
     'restapp.directives',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'angularFileUpload'
 ]);
 
 app.config(['$routeProvider', function ($routeProvider) {
@@ -28,6 +29,9 @@ app.config(['$routeProvider', function ($routeProvider) {
                 }).
                 when("/data", {
                     templateUrl: "partials/data.html"
+                }).
+                when("/fileupload", {
+                    templateUrl: "partials/file_upload.html"
                 }).
                 when("/resource/:database/:prefix/:resource", {
                     templateUrl: "partials/resource.html"
