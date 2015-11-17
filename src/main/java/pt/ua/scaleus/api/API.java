@@ -509,7 +509,7 @@ public class API {
         return set;
     }
 
-    public void storeFile(String database, InputStream uploadedInputStream, String fileName) {
+    public void storeFile(String database, InputStream uploadedInputStream, String fileName) throws Exception {
 
         String uploadedFileLocation = "tmp/" + fileName;
 
