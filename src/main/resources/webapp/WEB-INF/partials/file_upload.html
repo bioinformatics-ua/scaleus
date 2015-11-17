@@ -57,15 +57,15 @@
 						<button type="button" class="btn btn-success btn-xs"
 							ng-click="item.upload()"
 							ng-disabled="item.isReady || item.isUploading || item.isSuccess">
-							<span class="glyphicon glyphicon-upload"></span> Upload
+							<span class="fa fa-upload"></span> Upload
 						</button>
 						<button type="button" class="btn btn-warning btn-xs"
 							ng-click="item.cancel()" ng-disabled="!item.isUploading">
-							<span class="glyphicon glyphicon-ban-circle"></span> Cancel
+							<span class="fa fa-ban"></span> Cancel
 						</button>
 						<button type="button" class="btn btn-danger btn-xs"
 							ng-click="item.remove()">
-							<span class="glyphicon glyphicon-trash"></span> Remove
+							<span class="fa fa-trash-o"></span> Remove
 						</button>
 					</td>
 				</tr>
@@ -83,16 +83,16 @@
 			<button type="button" class="btn btn-success btn-s"
 				ng-click="uploader.uploadAll()"
 				ng-disabled="!uploader.getNotUploadedItems().length">
-				<span class="glyphicon glyphicon-upload"></span> Upload all
+				<span class="fa fa-upload"></span> Upload all
 			</button>
 			<button type="button" class="btn btn-warning btn-s"
 				ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
-				<span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+				<span class="fa fa-ban"></span> Cancel all
 			</button>
 			<button type="button" class="btn btn-danger btn-s"
 				ng-click="uploader.clearQueue()"
 				ng-disabled="!uploader.queue.length">
-				<span class="glyphicon glyphicon-trash"></span> Remove all
+				<span class="fa fa-trash-o"></span> Remove all
 			</button>
 		</div>
 

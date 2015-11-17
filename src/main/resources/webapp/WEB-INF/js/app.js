@@ -34,10 +34,7 @@ app.config(['$routeProvider', function ($routeProvider) {
                     templateUrl: "partials/file_upload.html"
                 }).
                 when("/resource/:database/:prefix/:resource", {
-                    templateUrl: "../../../app/partials/resource.html"
-                }).
-                when("/resource", {
-                    templateUrl: "/app/partials/resource.html"
+                    templateUrl: "partials/resource.html"
                 }).
                 otherwise({redirectTo: '/index'});
     }]);

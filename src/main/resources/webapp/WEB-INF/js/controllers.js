@@ -13,7 +13,7 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
         $scope.selectedDataset = dataset;
         //console.log($scope.selectedDataset);
     });
-    
+
     $scope.$on('datasetUpdateView', function (event, datasets) {
         $scope.datasets = datasets;
         //console.log('datasetUpdateView');
@@ -230,13 +230,13 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService, P
         }
         ;
     };
-    
-    
+
+
     $scope.getProperties = function (val) {
         var property = PropAutoCompleteService.get({dataset: SharedService.selectedDataset, match: val});
         return property.$promise;
     };
-    
+
     $scope.getResources = function (val) {
         var property = ResAutoCompleteService.get({dataset: SharedService.selectedDataset, match: val});
         return property.$promise;
@@ -247,6 +247,7 @@ app.controller('TriplesCtrl', function ($scope, TriplesService, SharedService, P
 
 app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, NamespacesService, SharedService) {
 
+    var RECENT_QUERIES_COOKIE = 'RECENT_QUERIES';
     console.log('on QueriesCtrl ' + SharedService.selectedDataset);
 
     $scope.$on('datasetChanged', function (event, dataset) {
@@ -259,9 +260,9 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
             $scope.showQueryTime = false;
             var query = $scope.checkedPrefix() + $scope.formSPARQL;
             var startQuery = new Date().getTime();
-            
+
             QueriesService.query({dataset: SharedService.selectedDataset, query: query, inference: $scope.inference, rules: $scope.rules, format: 'json'}, function (response) {
-                if (response.results.bindings && response.results.bindings.length!==0) {
+                if (response.results.bindings && response.results.bindings.length !== 0) {
                     $scope.queryTime = new Date().getTime() - startQuery;
                     $scope.showQueryTime = true;
                     $scope.noResults = false;
@@ -270,8 +271,26 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
                             + '/sparql?query=' + encodeURIComponent(query)
                             + '&inference=' + encodeURIComponent($scope.inference)
                             + '&rules=' + encodeURIComponent($scope.rules);
-                    $cookies.put(query ,'');
+
+                    // recent queries cookies
+                    var recent_queries = $cookies.get(RECENT_QUERIES_COOKIE);
+                    if (recent_queries === undefined) {
+                        $cookies.put(RECENT_QUERIES_COOKIE, '["' + encodeURIComponent(query) + '"]');
+                    } else {
+                        try {
+                            var array = JSON.parse(recent_queries);
+                            query = encodeURIComponent(query);
+                            if (array.indexOf(query) === -1)
+                                array.push(query);
+                            if (array.length > 20)
+                                array.splice(0, 1);
+                            $cookies.put(RECENT_QUERIES_COOKIE, JSON.stringify(array));
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }
                     $scope.updateRecentQueries();
+                    
                 } else {
                     $scope.noResults = true;
                     $scope.showQueryTime = false;
@@ -323,19 +342,28 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
             ns.checked = true;
         });
     };
-    
-    $scope.updateRecentQueries = function(){ 
-        $scope.recentQueries = Object.keys($cookies.getAll());
+
+    $scope.updateRecentQueries = function () {
+        var recent_queries = $cookies.get(RECENT_QUERIES_COOKIE);
+        if (recent_queries === undefined || recent_queries === '') {
+            $scope.recentQueries = undefined;
+        } else {
+            try {
+                var array = JSON.parse(recent_queries);
+                array = array.map(decodeURIComponent);
+                $scope.recentQueries = array;
+            } catch (error) {
+                console(error);
+            }
+        }
     };
-    
-    $scope.clearRecentQueries = function(){ 
-        angular.forEach(Object.keys($cookies.getAll()), function (k) {
-            $cookies.remove(k);
-        });
+
+    $scope.clearRecentQueries = function () {
+        $cookies.remove(RECENT_QUERIES_COOKIE);
         $scope.updateRecentQueries();
     };
-    
-    $scope.putQuery = function(query){
+
+    $scope.putQuery = function (query) {
         $scope.formSPARQL = query;
     };
 

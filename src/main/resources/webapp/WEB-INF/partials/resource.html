@@ -1,41 +1,40 @@
 
 <div class="row">
-	<div class="col-lg-12">
-		<h1 class="page-header">Resources description</h1>
-	</div>
-	<!-- /.col-lg-12 -->
+    <div class="col-lg-12">
+        <h1 class="page-header">Resources description</h1>
+    </div>
+    <!-- /.col-lg-12 -->
 </div>
 
 <!-- /.row -->
 <div class="row" ng-controller="ResourceCtrl">
 
-	<a href='{{description.key}}'>{{description.key}}</a>
+    <a href='{{description.key}}'>{{description.key}}</a>
 
-	<div class="table-responsive"
-		data-ng-repeat="(res, obj) in description">
-		<h3>
-			<a href="{{res}}">{{res}}</a>
-		</h3>
-		<hr>
-		<table class="table table-striped" data-ng-show="obj.length != 0">
-			<thead>
-				<tr>
-					<th>Property</th>
-					<th>Value</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr data-ng-repeat="(key,val) in obj">
-					<td><a href="{{key}}">{{key}}</a></td>
-					<td data-ng-repeat="(k,v) in val" data-ng-switch="v.type == 'uri'"><a
-						data-ng-href="/resource.html" 
-						data-ng-switch-when="true">{{v.value}}</a> <span
-						data-ng-switch-when="false">{{v.value}}</span></td>
-				</tr>
-			</tbody>
+    <div class="table-responsive"
+         data-ng-repeat="(res, obj) in description">
+        <h3>
+            <a href="{{res}}">{{res}}</a>
+        </h3>
+        <hr>
+        <table class="table table-striped" data-ng-show="obj.length != 0">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="(key,val) in obj">
+                    <td><a href="{{key}}">{{key}}</a></td>
+                    <td data-ng-repeat="(k,v) in val" data-ng-switch="v.type == 'uri'">
+                        <a data-ng-href="../{{v.value}}" data-ng-switch-when="true">{{v.value}}</a> 
+                        <span data-ng-switch-when="false">{{v.value}}</span></td>
+                </tr>
+            </tbody>
 
-		</table>
-	</div>
+        </table>
+    </div>
 
 </div>
 <!-- /.row -->
