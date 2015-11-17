@@ -314,7 +314,7 @@ public class API {
 		return response;
 	}
 
-	public void read(String database, String input) {
+	public void read(String database, String input) throws Exception {
 		Dataset dataset = getDataset(database);
 		dataset.begin(ReadWrite.WRITE);
 		try {
@@ -506,7 +506,7 @@ public class API {
 		return set;
 	}
 
-	public void storeFile(String database, InputStream uploadedInputStream, String fileName) {
+	public void storeFile(String database, InputStream uploadedInputStream, String fileName) throws Exception {
 
 		String uploadedFileLocation = "tmp/" + fileName;
 
@@ -515,6 +515,7 @@ public class API {
 		File file = new File(uploadedFileLocation);
 		
 		read(database, file.getAbsolutePath());
+
 	}
 
 	// save uploaded file to new location
