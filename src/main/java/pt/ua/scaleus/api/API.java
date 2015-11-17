@@ -8,16 +8,15 @@ package pt.ua.scaleus.api;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -329,6 +328,19 @@ public class API {
             dataset.end();
         }
     }
+    
+    public void read(String database, InputStream input, String format) {
+        Dataset dataset = getDataset(database);
+        dataset.begin(ReadWrite.WRITE);
+        try {
+            Model model = dataset.getDefaultModel();
+            model.read(input, null, format);
+            dataset.commit();
+            //model.close();
+        } finally {
+            dataset.end();
+        }
+    }
 
     /**
      * Removes the given triple statement in the database.
@@ -509,37 +521,33 @@ public class API {
         return set;
     }
 
-    public void storeFile(String database, InputStream uploadedInputStream, String fileName) throws Exception {
-
-        String uploadedFileLocation = "tmp/" + fileName;
-
-        // save it
-        writeToFile(uploadedInputStream, uploadedFileLocation);
-        File file = new File(uploadedFileLocation);
-
-        read(database, file.getAbsolutePath());
+    public void storeData(String database, InputStream uploadedInputStream, String fileName) throws Exception {
+	
+    	String format = FilenameUtils.getExtension(fileName);
+    	switch (format) {
+		case "ttl":
+			read(database, uploadedInputStream, "Turtle");
+			break;
+		case "rdf":
+		case "owl":
+			read(database, uploadedInputStream, "RDF/XML");
+			break;
+		case "nt":
+			read(database, uploadedInputStream, "N-TRIPLE");
+			break;
+		case "jsonld":
+			read(database, uploadedInputStream, "JSON-LD");
+			break;
+		case "rj":
+			read(database, uploadedInputStream, "RDF/JSON");
+			break;
+		case "n3":
+			read(database, uploadedInputStream, "N3");
+			break;
+		default:
+			break;
+		}
+        
     }
 
-    // save uploaded file to new location
-    private void writeToFile(InputStream uploadedInputStream,
-            String uploadedFileLocation) {
-
-        try {
-            OutputStream out = new FileOutputStream(new File(
-                    uploadedFileLocation));
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            out = new FileOutputStream(new File(uploadedFileLocation));
-            while ((read = uploadedInputStream.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
-    }
 }

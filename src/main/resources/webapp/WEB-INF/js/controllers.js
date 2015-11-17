@@ -414,10 +414,20 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 
     // FILTERS
 
+	var formats = ['ttl', 'rdf', 'owl', 'nt', 'jsonld', 'rj', 'n3'];
+	
     uploader.filters.push({
         name: 'customFilter',
         fn: function(item /*{File|FileLikeObject}*/, options) {
             return this.queue.length < 10;
+        }
+    });
+    
+    uploader.filters.push({
+        name: 'formatFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+        	console.log(item.name);
+            return (formats.indexOf(item.name.slice(item.name.lastIndexOf('.')+1)) > -1);
         }
     });
 
