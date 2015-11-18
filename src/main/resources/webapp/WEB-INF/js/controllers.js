@@ -411,7 +411,8 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 	var uploader = $scope.uploader = new FileUploader({
         url: './api/v1/upload/' + $scope.dataset
     });
-
+    
+    
     // FILTERS
 
 	var formats = ['ttl', 'rdf', 'owl', 'nt', 'jsonld', 'rj', 'n3'];
@@ -431,6 +432,7 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
         }
     });
 
+    
     // CALLBACKS
 
     uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {

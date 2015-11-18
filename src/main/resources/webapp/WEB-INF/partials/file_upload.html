@@ -34,7 +34,7 @@
 				<tr>
 					<th width="50%">Name</th>
 					<th ng-show="uploader.isHTML5">Size</th>
-					<th ng-show="uploader.isHTML5">Progress</th>
+					<th ng-show="uploader.isHTML5">Upload progress</th>
 					<th>Status</th>
 					<th>Actions</th>
 				</tr>
@@ -50,11 +50,12 @@
 								ng-style="{ 'width': item.progress + '%' }"></div>
 						</div>
 					</td>
-					<td class="text-center"><span ng-show="item.isSuccess"><i
-							class="fa fa-check"></i></span> <span ng-show="item.isCancel"><i
-							class="fa fa-ban"></i></span> <span
-						ng-show="item.isError"><i
-							class="fa fa-times"></i></span></td>
+					<td class="text-center">
+						<span ng-show="item.isUploading"><i class="fa fa-refresh fa-spin"></i> Loading</span>
+						<span ng-show="item.isSuccess"><i class="fa fa-check"></i> Imported</span> 
+						<span ng-show="item.isCancel"><i class="fa fa-ban"></i> Canceled</span> 
+						<span ng-show="item.isError"><i class="fa fa-times"></i> Error</span>
+					</td>
 					<td nowrap>
 						<button type="button" class="btn btn-success btn-xs"
 							ng-click="item.upload()"
@@ -76,7 +77,7 @@
 
 		<div>
 			<div>
-				Queue progress:
+				Upload queue progress:
 				<div class="progress" style="">
 					<div class="progress-bar" role="progressbar"
 						ng-style="{ 'width': uploader.progress + '%' }"></div>

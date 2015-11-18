@@ -329,7 +329,7 @@ public class API {
         }
     }
     
-    public void read(String database, InputStream input, String format) {
+    public void read(String database, InputStream input, String format) throws Exception{
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {

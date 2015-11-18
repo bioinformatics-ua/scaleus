@@ -273,7 +273,7 @@ public class RESTService implements IService {
         } catch (Exception e) {
             log.error("Data import failed", e);
             return Response.status(500).build();
-        }
+        } 
 
 		return Response.status(200).build();
 	}
