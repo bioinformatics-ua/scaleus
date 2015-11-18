@@ -329,12 +329,11 @@ public class API {
         }
     }
     
-    public void read(String database, InputStream input, String format) throws Exception{
+    public void read(String database, InputStream input, Lang lang) throws Exception{
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {
-            Model model = dataset.getDefaultModel();
-            model.read(input, null, format);
+            RDFDataMgr.read(dataset, input, lang);
             dataset.commit();
             //model.close();
         } finally {
@@ -526,23 +525,33 @@ public class API {
     	String format = FilenameUtils.getExtension(fileName);
     	switch (format) {
 		case "ttl":
-			read(database, uploadedInputStream, "Turtle");
+			read(database, uploadedInputStream, Lang.TTL);
 			break;
 		case "rdf":
 		case "owl":
-			read(database, uploadedInputStream, "RDF/XML");
+			read(database, uploadedInputStream, Lang.RDFXML);
 			break;
 		case "nt":
-			read(database, uploadedInputStream, "N-TRIPLE");
+			read(database, uploadedInputStream, Lang.NT);
 			break;
 		case "jsonld":
-			read(database, uploadedInputStream, "JSON-LD");
+			read(database, uploadedInputStream, Lang.JSONLD);
 			break;
 		case "rj":
-			read(database, uploadedInputStream, "RDF/JSON");
+			read(database, uploadedInputStream, Lang.RDFJSON);
 			break;
 		case "n3":
-			read(database, uploadedInputStream, "N3");
+			read(database, uploadedInputStream, Lang.N3);
+			break;
+		case "trig":
+			read(database, uploadedInputStream, Lang.TRIG);
+			break;
+		case "trix":
+			read(database, uploadedInputStream, Lang.TRIX);
+			break;
+		case "trdf":
+		case "rt":
+			read(database, uploadedInputStream, Lang.RDFTHRIFT);
 			break;
 		default:
 			break;

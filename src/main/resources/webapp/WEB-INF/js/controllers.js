@@ -415,7 +415,7 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
     
     // FILTERS
 
-	var formats = ['ttl', 'rdf', 'owl', 'nt', 'jsonld', 'rj', 'n3'];
+	var formats = ['ttl', 'rdf', 'owl', 'nt', 'nq', 'jsonld', 'rj', 'n3', 'trig', 'trix', 'trdf', 'rt'];
 	
     uploader.filters.push({
         name: 'customFilter',
@@ -428,7 +428,7 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
         name: 'formatFilter',
         fn: function(item /*{File|FileLikeObject}*/, options) {
         	console.log(item.name);
-            return (formats.indexOf(item.name.slice(item.name.lastIndexOf('.')+1)) > -1);
+            return (formats.indexOf(item.name.toLowerCase().slice(item.name.lastIndexOf('.')+1)) > -1);
         }
     });
 
