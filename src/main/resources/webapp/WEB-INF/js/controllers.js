@@ -412,7 +412,17 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
         url: './api/v1/upload/' + $scope.dataset
     });
     
-    
+   $scope.$on('$locationChangeStart', function( event ) {
+    	var items = uploader.getNotUploadedItems();
+
+    	if (items.length > 0) {
+	    	var answer = confirm("There are files in the upload queue not yet imported. Are you sure you want to quit?");
+	        if (!answer) {
+	            event.preventDefault();
+	        } 
+    	}
+    });
+	   
     // FILTERS
 
 	var formats = ['ttl', 'rdf', 'owl', 'nt', 'nq', 'jsonld', 'rj', 'n3', 'trig', 'trix', 'trdf', 'rt'];
