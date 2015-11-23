@@ -466,16 +466,38 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
     var uploader = $scope.uploader = new FileUploader({
         url: './api/v1/upload/' + $scope.dataset
     });
+    
+   $scope.$on('$locationChangeStart', function( event ) {
+    	var items = uploader.getNotUploadedItems();
 
+    	if (items.length > 0) {
+	    	var answer = confirm("There are files in the upload queue not yet imported. Are you sure you want to quit?");
+	        if (!answer) {
+	            event.preventDefault();
+	        } 
+    	}
+    });
+	   
     // FILTERS
 
+	var formats = ['ttl', 'rdf', 'owl', 'nt', 'nq', 'jsonld', 'rj', 'n3', 'trig', 'trix', 'trdf', 'rt'];
+	
     uploader.filters.push({
         name: 'customFilter',
         fn: function (item /*{File|FileLikeObject}*/, options) {
             return this.queue.length < 10;
         }
     });
+    
+    uploader.filters.push({
+        name: 'formatFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+        	console.log(item.name);
+            return (formats.indexOf(item.name.toLowerCase().slice(item.name.lastIndexOf('.')+1)) > -1);
+        }
+    });
 
+    
     // CALLBACKS
 
     uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {

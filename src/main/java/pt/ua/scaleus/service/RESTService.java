@@ -269,11 +269,11 @@ public class RESTService implements IService {
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 		try {
-			api.storeFile(database, uploadedInputStream, fileDetail.getFileName());
+			api.storeData(database, uploadedInputStream, fileDetail.getFileName());
         } catch (Exception e) {
             log.error("Data import failed", e);
             return Response.status(500).build();
-        }
+        } 
 
 		return Response.status(200).build();
 	}
