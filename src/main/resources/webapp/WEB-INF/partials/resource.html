@@ -1,40 +1,39 @@
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1 class="page-header">Resources description</h1>
-    </div>
-    <!-- /.col-lg-12 -->
-</div>
 
 <!-- /.row -->
 <div class="row" ng-controller="ResourceCtrl">
+    <div class="col-lg-12">
+        <h1 class="page-header">Linked Data Browser</h1>
+        <h3 ng-show="resource.length === 0">Resource not found in the database.</h3>
+        <div ng-show="resource.length !== 0">
+            <h3>{{resource.prefix}}:{{resource.value}}</h3>
+            <h5> <a href="{{resource.uri}}">{{resource.uri}}</a></h5>
 
-    <a href='{{description.key}}'>{{description.key}}</a>
-
-    <div class="table-responsive"
-         data-ng-repeat="(res, obj) in description">
-        <h3>
-            <a href="{{res}}">{{res}}</a>
-        </h3>
-        <hr>
-        <table class="table table-striped" data-ng-show="obj.length != 0">
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-ng-repeat="(key,val) in obj">
-                    <td><a href="{{key}}">{{key}}</a></td>
-                    <td data-ng-repeat="(k,v) in val" data-ng-switch="v.type == 'uri'">
-                        <a data-ng-href="../{{v.value}}" data-ng-switch-when="true">{{v.value}}</a> 
-                        <span data-ng-switch-when="false">{{v.value}}</span></td>
-                </tr>
-            </tbody>
-
-        </table>
+            <div class="table-responsive">
+                <hr>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="c in resource.content">
+                            <td><a href="{{c.p.uri}}">{{c.p.prefix}}:{{c.p.value}}</a></td>
+                            <td ng-show="c.o.uri"><a href="#resource/{{resource.dataset}}/{{c.o.prefix}}/{{c.o.value}}">{{c.o.prefix}}:{{c.o.value}}</a> <a href="{{c.o.uri}}" title="{{c.o.uri}}"><i class="fa fa-external-link"></i></a></td>
+                            <td ng-show="!c.o.uri">{{c.o.value}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pull-right">View as: 
+            <a data-ng-href="./api/v1/resource/{{resource.dataset}}/{{resource.prefix}}/{{resource.value}}/js" target="_blank">JSON</a> | 
+            <a data-ng-href="./api/v1/resource/{{resource.dataset}}/{{resource.prefix}}/{{resource.value}}/rdf" target="_blank">RDF</a> | 
+            <a data-ng-href="./api/v1/resource/{{resource.dataset}}/{{resource.prefix}}/{{resource.value}}/ttl" target="_blank">TTL</a> | 
+            <a data-ng-href="./api/v1/resource/{{resource.dataset}}/{{resource.prefix}}/{{resource.value}}/ld" target="_blank">JSON-LD</a>
+        </div>
     </div>
-
 </div>
 <!-- /.row -->

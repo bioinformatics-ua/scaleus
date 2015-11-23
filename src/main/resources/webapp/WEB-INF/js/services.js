@@ -62,8 +62,10 @@ services.factory('QueriesService', function ($resource) {
 });
 
 services.factory('ResourceService', function ($resource) {
-    return $resource('./././api/v1/resource/:dataset/:prefix/:resource/js', {}, {
-        get: {method: 'GET'}
+    return $resource('./api/v1/resource/:dataset/:prefix/:resource/:format', {}, {
+        get: {transformResponse: function (data, headersGetter, status) {
+                return {content: data, status: status};
+            }}
     });
 });
 

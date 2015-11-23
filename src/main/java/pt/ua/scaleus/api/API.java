@@ -225,11 +225,11 @@ public class API {
      *
      * @param database
      * @param prefix
-     * @param id
+     * @param resource
      * @param format
      * @return
      */
-    public String describeResource(String database, String uri, String format) {
+    public String describeResource(String database, String prefix, String resource, String format) {
         Model describedModel = ModelFactory.createDefaultModel();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         Dataset dataset = getDataset(database);
@@ -237,12 +237,13 @@ public class API {
 
         try {
             Model model = dataset.getDefaultModel();
-            //String namespace = model.getNsPrefixMap().get(prefix);
-            Resource resource = model.getResource(uri);
-            StmtIterator stat = model.listStatements(resource, null, (RDFNode) null);
+            String namespace = model.getNsPrefixMap().get(prefix);
+            Resource res = model.getResource(namespace+resource);
+            StmtIterator stat = model.listStatements(res, null, (RDFNode) null);
             describedModel.add(stat);
             describedModel.setNsPrefixes(model.getNsPrefixMap());
             switch (format) {
+                case "json":
                 case "js":
                     RDFDataMgr.write(os, describedModel, RDFFormat.RDFJSON);
                     break;

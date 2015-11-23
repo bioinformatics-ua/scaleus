@@ -207,13 +207,13 @@ public class RESTService implements IService {
     }
     
     @GET
-    @Path("/resource/{database}")
+    @Path("/resource/{database}/{prefix}/{resource}/{format}")
     @Produces(MediaType.APPLICATION_JSON)
     @Override
-    public Response resource(@PathParam("database") String database, @QueryParam("uri") String uri, @QueryParam("format") String format) {
+    public Response resource(@PathParam("database") String database, @PathParam("prefix") String prefix, @PathParam("resource") String resource, @PathParam("format") String format) {
         String response = "";
         try {
-            response = api.describeResource(database, uri, format);
+            response = api.describeResource(database, prefix, resource, format);
         } catch (Exception ex) {
             log.error("Service failed", ex);
         }        

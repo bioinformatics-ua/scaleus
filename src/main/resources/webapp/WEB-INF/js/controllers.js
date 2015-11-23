@@ -290,7 +290,7 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
                         }
                     }
                     $scope.updateRecentQueries();
-                    
+
                 } else {
                     $scope.noResults = true;
                     $scope.showQueryTime = false;
@@ -385,10 +385,65 @@ app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, 
     $scope.prefix = $routeParams.prefix;
     $scope.resource = $routeParams.resource;
 
+    var uriToPrefix = function (uri, prefixes) {
+        var resource;
+        var uriToSlit = uri;
+        if (uriToSlit.indexOf("#") !== -1)
+            resource = uriToSlit.split('#').pop();
+        else
+            resource = uriToSlit.split('/').pop();
+        var namespace = uri.substr(0, uri.length - resource.length);
+
+        var prefix = function () {
+            for (var key in prefixes) {
+                //console.log(key);
+                if (prefixes[key] === namespace)
+                    return key;
+            }
+        };
+
+        var map = {
+            "namespace": namespace,
+            "resource": resource,
+            "prefix": prefix()
+        };
+
+        return map;
+    };
+
     $scope.getResource = function () {
-        ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource}, function (response) {
-            console.log(response);
-            $scope.description = response;
+        ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource, format: 'ttl'}, function (response) {
+
+            var parser = N3.Parser(), triples = [], pref = [], N3Util = N3.Util;
+            parser.parse(function (error, triple, prefixes) {
+                if (triple)
+                    triples.push(triple);
+                if (prefixes)
+                    pref = (prefixes);
+            });
+            parser.addChunk(response.content);
+            parser.end();
+
+            var resource = [];
+            if (triples.length !== 0) {
+                var content = [];
+                triples.forEach(function (triple) {
+                    var pred_transf = uriToPrefix(triple.predicate, pref);
+                    var predicate = {uri: triple.predicate, type: pred_transf.namespace, value: pred_transf.resource, prefix: pred_transf.prefix};
+
+                    if (N3Util.isIRI(triple.object)) {
+                        var obj_transf = uriToPrefix(triple.object, pref);
+                        var object = {uri: triple.object, type: obj_transf.namespace, value: obj_transf.resource, prefix: obj_transf.prefix};
+                    } else {
+                        var object = {value: triple.object};
+                    }
+                    content.push({p: predicate, o: object});
+                });
+                resource = {uri: triples[0].subject, prefix: $scope.prefix, value: $scope.resource, dataset: $scope.dataset, content: content};
+                //console.log(JSON.stringify(resource, null, 2));
+            }
+            $scope.resource = resource;
+
         }, function (response) {
             // an error occured
             alert(response.status + " " + response.statusText);
@@ -401,14 +456,14 @@ app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, 
 
 
 app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) {
-    
-	$scope.dataset = SharedService.selectedDataset;
-	
+
+    $scope.dataset = SharedService.selectedDataset;
+
     $scope.$on('datasetChanged', function (event, dataset) {
-    	$scope.dataset = SharedService.selectedDataset;
+        $scope.dataset = SharedService.selectedDataset;
     });
-    
-	var uploader = $scope.uploader = new FileUploader({
+
+    var uploader = $scope.uploader = new FileUploader({
         url: './api/v1/upload/' + $scope.dataset
     });
 
@@ -416,45 +471,45 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 
     uploader.filters.push({
         name: 'customFilter',
-        fn: function(item /*{File|FileLikeObject}*/, options) {
+        fn: function (item /*{File|FileLikeObject}*/, options) {
             return this.queue.length < 10;
         }
     });
 
     // CALLBACKS
 
-    uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+    uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
         console.info('onWhenAddingFileFailed', item, filter, options);
     };
-    uploader.onAfterAddingFile = function(fileItem) {
+    uploader.onAfterAddingFile = function (fileItem) {
         console.info('onAfterAddingFile', fileItem);
     };
-    uploader.onAfterAddingAll = function(addedFileItems) {
+    uploader.onAfterAddingAll = function (addedFileItems) {
         console.info('onAfterAddingAll', addedFileItems);
     };
-    uploader.onBeforeUploadItem = function(item) {
+    uploader.onBeforeUploadItem = function (item) {
         console.info('onBeforeUploadItem', item);
-        item.url =  './api/v1/upload/' + $scope.dataset;
+        item.url = './api/v1/upload/' + $scope.dataset;
     };
-    uploader.onProgressItem = function(fileItem, progress) {
+    uploader.onProgressItem = function (fileItem, progress) {
         console.info('onProgressItem', fileItem, progress);
     };
-    uploader.onProgressAll = function(progress) {
+    uploader.onProgressAll = function (progress) {
         console.info('onProgressAll', progress);
     };
-    uploader.onSuccessItem = function(fileItem, response, status, headers) {
+    uploader.onSuccessItem = function (fileItem, response, status, headers) {
         console.info('onSuccessItem', fileItem, response, status, headers);
     };
-    uploader.onErrorItem = function(fileItem, response, status, headers) {
+    uploader.onErrorItem = function (fileItem, response, status, headers) {
         console.info('onErrorItem', fileItem, response, status, headers);
     };
-    uploader.onCancelItem = function(fileItem, response, status, headers) {
+    uploader.onCancelItem = function (fileItem, response, status, headers) {
         console.info('onCancelItem', fileItem, response, status, headers);
     };
-    uploader.onCompleteItem = function(fileItem, response, status, headers) {
+    uploader.onCompleteItem = function (fileItem, response, status, headers) {
         console.info('onCompleteItem', fileItem, response, status, headers);
     };
-    uploader.onCompleteAll = function() {
+    uploader.onCompleteAll = function () {
         console.info('onCompleteAll');
     };
 
