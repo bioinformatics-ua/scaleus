@@ -87,11 +87,15 @@
 				</thead>
 				<tbody>
 					<tr data-ng-repeat="result in queryResults">
-						<td data-ng-repeat="obj in result"
-							data-ng-switch="obj.type == 'uri'">
-							<a data-ng-href="{{obj.value}}" 
-							data-ng-switch-when="true">{{obj.value}}</a> 
-							<span data-ng-switch-when="false">{{obj.value}}</span>
+						<td data-ng-repeat="obj in result" data-ng-switch="obj.type == 'uri'">
+                                                    <span data-ng-switch-when="true">
+                                                        <a data-ng-show="!obj.prefix" data-ng-href="{{obj.value}}" >{{obj.value}}</a>
+                                                        <a data-ng-show="obj.prefix" data-ng-href="#resource/{{dataset}}/{{obj.prefix}}/{{obj.resource}}" >{{obj.prefix}}:{{obj.resource}}</a>
+                                                         <a data-ng-show="obj.prefix" href="{{obj.value}}" title="{{obj.value}}"><i class="fa fa-external-link"></i></a>
+                                                    </span>
+                                                    <span data-ng-switch-when="false">
+                                                        {{obj.value}}
+                                                    </span>
 						</td>
 					</tr>
 				</tbody>

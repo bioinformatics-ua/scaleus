@@ -40,10 +40,10 @@ import pt.ua.scaleus.service.data.Namespace;
  */
 @Path("/v1")
 public class RESTService implements IService {
-    
+
     API api = Init.getAPI();
     private static final Logger log = Logger.getLogger(RESTService.class);
-    
+
     @GET
     @Path("/sparqler/{dataset}/sparql")
     @Produces("application/sparql-results+xml")
@@ -58,7 +58,7 @@ public class RESTService implements IService {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
     }
-    
+
     @POST
     @Path("/dataset/{name}")
     @Override
@@ -66,7 +66,7 @@ public class RESTService implements IService {
         api.getDataset(name);
         return Response.status(200).build();
     }
-    
+
     @DELETE
     @Path("/dataset/{name}")
     @Override
@@ -82,7 +82,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-    
+
     @GET
     @Path("/dataset")
     @Produces(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(json.toJSONString()).build();
     }
-    
+
     @GET
     @Path("/namespaces/{database}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -118,7 +118,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(json.toJSONString()).build();
     }
-    
+
     @POST
     @Path("/namespaces/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -131,10 +131,10 @@ public class RESTService implements IService {
         } catch (Exception ex) {
             log.error("Service failed", ex);
         }
-        
+
         return Response.status(200).build();
     }
-    
+
     @DELETE
     @Path("/namespaces/{database}/{prefix}")
     @Override
@@ -144,10 +144,10 @@ public class RESTService implements IService {
         } catch (Exception ex) {
             log.error("Service failed", ex);
         }
-        
+
         return Response.status(200).build();
     }
-    
+
     @POST
     @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -162,7 +162,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-    
+
     @DELETE
     @Path("/store/{database}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -176,7 +176,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-    
+
     @GET
     @Path("/data/{database}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -190,7 +190,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(response).build();
     }
-    
+
     @POST
     @Path("/data/{database}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -205,7 +205,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).build();
     }
-    
+
     @GET
     @Path("/resource/{database}/{prefix}/{resource}/{format}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -216,10 +216,10 @@ public class RESTService implements IService {
             response = api.describeResource(database, prefix, resource, format);
         } catch (Exception ex) {
             log.error("Service failed", ex);
-        }        
+        }
         return Response.status(200).entity(response).build();
     }
-    
+
     @GET
     @Path("/properties/{database}/{match}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -239,7 +239,7 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(ja.toJSONString()).build();
     }
-    
+
     @GET
     @Path("/resources/{database}/{match}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -259,23 +259,21 @@ public class RESTService implements IService {
         }
         return Response.status(200).entity(ja.toJSONString()).build();
     }
-    
 
-	@POST
-	@Path("/upload/{database}")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Override  
-	public Response uploadFile (@PathParam("database") String database, 
-			@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-		try {
-			api.storeData(database, uploadedInputStream, fileDetail.getFileName());
+    @POST
+    @Path("/upload/{database}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Override
+    public Response uploadFile(@PathParam("database") String database,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail) {
+        try {
+            api.storeData(database, uploadedInputStream, fileDetail.getFileName());
         } catch (Exception e) {
             log.error("Data import failed", e);
             return Response.status(500).build();
-        } 
-
-		return Response.status(200).build();
-	}
+        }
+        return Response.status(200).build();
+    }
 
 }

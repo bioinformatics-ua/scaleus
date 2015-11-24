@@ -266,7 +266,27 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
                     $scope.queryTime = new Date().getTime() - startQuery;
                     $scope.showQueryTime = true;
                     $scope.noResults = false;
-                    $scope.queryResults = response.results.bindings;
+                    
+                    // update results with namespaces and prefixes
+                    var prefixes = {};
+                    angular.forEach($scope.namespacesContainer, function (val, key, obj) {
+                        prefixes[val.prefix] = val.uri;
+                    });
+                    var res = [];
+                    angular.forEach(response.results.bindings, function (val, key, obj) {
+                        for(var k in val) {
+                            if(val[k].type === 'uri'){ 
+                                var map = uriToPrefix(val[k].value, prefixes);
+                                val[k].namespace = map.namespace;
+                                val[k].prefix = map.prefix;
+                                val[k].resource = map.resource;
+                            }
+                        }
+                        res.push(val);
+                    });
+
+                    $scope.queryResults = res;
+                    $scope.dataset = SharedService.selectedDataset;
                     $scope.sparqlRequest = './api/v1/sparqler/' + SharedService.selectedDataset
                             + '/sparql?query=' + encodeURIComponent(query)
                             + '&inference=' + encodeURIComponent($scope.inference)
@@ -385,32 +405,6 @@ app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, 
     $scope.prefix = $routeParams.prefix;
     $scope.resource = $routeParams.resource;
 
-    var uriToPrefix = function (uri, prefixes) {
-        var resource;
-        var uriToSlit = uri;
-        if (uriToSlit.indexOf("#") !== -1)
-            resource = uriToSlit.split('#').pop();
-        else
-            resource = uriToSlit.split('/').pop();
-        var namespace = uri.substr(0, uri.length - resource.length);
-
-        var prefix = function () {
-            for (var key in prefixes) {
-                //console.log(key);
-                if (prefixes[key] === namespace)
-                    return key;
-            }
-        };
-
-        var map = {
-            "namespace": namespace,
-            "resource": resource,
-            "prefix": prefix()
-        };
-
-        return map;
-    };
-
     $scope.getResource = function () {
         ResourceService.get({dataset: $scope.dataset, prefix: $scope.prefix, resource: $scope.resource, format: 'ttl'}, function (response) {
 
@@ -466,38 +460,38 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
     var uploader = $scope.uploader = new FileUploader({
         url: './api/v1/upload/' + $scope.dataset
     });
-    
-   $scope.$on('$locationChangeStart', function( event ) {
-    	var items = uploader.getNotUploadedItems();
 
-    	if (items.length > 0) {
-	    	var answer = confirm("There are files in the upload queue not yet imported. Are you sure you want to quit?");
-	        if (!answer) {
-	            event.preventDefault();
-	        } 
-    	}
+    $scope.$on('$locationChangeStart', function (event) {
+        var items = uploader.getNotUploadedItems();
+
+        if (items.length > 0) {
+            var answer = confirm("There are files in the upload queue not yet imported. Are you sure you want to quit?");
+            if (!answer) {
+                event.preventDefault();
+            }
+        }
     });
-	   
+
     // FILTERS
 
-	var formats = ['ttl', 'rdf', 'owl', 'nt', 'nq', 'jsonld', 'rj', 'n3', 'trig', 'trix', 'trdf', 'rt'];
-	
+    var formats = ['ttl', 'rdf', 'owl', 'nt', 'nq', 'jsonld', 'rj', 'n3', 'trig', 'trix', 'trdf', 'rt'];
+
     uploader.filters.push({
         name: 'customFilter',
         fn: function (item /*{File|FileLikeObject}*/, options) {
             return this.queue.length < 10;
         }
     });
-    
+
     uploader.filters.push({
         name: 'formatFilter',
-        fn: function(item /*{File|FileLikeObject}*/, options) {
-        	console.log(item.name);
-            return (formats.indexOf(item.name.toLowerCase().slice(item.name.lastIndexOf('.')+1)) > -1);
+        fn: function (item /*{File|FileLikeObject}*/, options) {
+            console.log(item.name);
+            return (formats.indexOf(item.name.toLowerCase().slice(item.name.lastIndexOf('.') + 1)) > -1);
         }
     });
 
-    
+
     // CALLBACKS
 
     uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
@@ -538,3 +532,30 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
     console.info('uploader', uploader);
 
 });
+
+
+var uriToPrefix = function (uri, prefixes) {
+    var resource;
+    var uriToSlit = uri;
+    if (uriToSlit.indexOf("#") !== -1)
+        resource = uriToSlit.split('#').pop();
+    else
+        resource = uriToSlit.split('/').pop();
+    var namespace = uri.substr(0, uri.length - resource.length);
+
+    var prefix = function () {
+        for (var key in prefixes) {
+            //console.log(key);
+            if (prefixes[key] === namespace)
+                return key;
+        }
+    };
+
+    var map = {
+        "namespace": namespace,
+        "resource": resource,
+        "prefix": prefix()
+    };
+
+    return map;
+};
