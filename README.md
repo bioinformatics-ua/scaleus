@@ -14,7 +14,7 @@ RESTfull services over an easy, high performance and transactional triple store.
 
 Simple run the application at [http://localhost/scaleus/](http://localhost/scaleus/):
 ```
-java -jar target/scaleus-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/scaleus-1.0-jar-with-dependencies.jar
 ```
 
 Run in another port:
