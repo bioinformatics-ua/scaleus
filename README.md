@@ -151,6 +151,16 @@ Content-Type: application/x-www-form-urlencoded
 coeus:ieeta dc:title "University of Aveiro" .
 ```
 
+**Describe Resource:**
+
+```
+GET /api/v1/resource/{dataset}/{prefix}/{resource}/{format} HTTP/1.1
+
+Sample parameters:
+
+format = json | rdf | ttl | ld 
+```
+
 ## Python API
 
 [scaleus-python](https://github.com/bioinformatics-ua/scaleus-python)
