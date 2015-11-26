@@ -6,6 +6,8 @@ var app = angular.module('restapp.controllers', []);
 
 app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, SharedService) {
 
+    console.log('on DatasetsCtrl ' + SharedService.selectedDataset);
+
     /* event to manage the selected dataset */
     $scope.selectedDataset = SharedService.selectedDataset;
 
@@ -38,7 +40,7 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
             //console.log("querydatasets");
             //$scope.datasets = response;
             SharedService.updateView(response);
-            $scope.changeDataset(response[0]);
+            if(SharedService.selectedDataset===undefined) $scope.changeDataset(response[0]);
             //SharedService.selectedDataset=(response[0]);
             //$scope.selectedDataset = response[0];
         });
@@ -88,15 +90,16 @@ app.controller('RDFDataCtrl', function ($scope, RDFDataService, SharedService) {
     });
 
     $scope.getRDFData = function () {
+        $scope.content = 'Loading..';
         RDFDataService.get({id: SharedService.selectedDataset}, function (response) {
-            $scope.data = response.content;
+            $scope.content = response.content;  
         });
     };
 
     $scope.saveRDFData = function () {
 
         if ($scope.data) {
-            RDFDataService.save({id: SharedService.selectedDataset}, $.param({data: $scope.data}), function (response) {
+            RDFDataService.save({id: SharedService.selectedDataset}, $.param({data: $scope.content}), function (response) {
                 alert("Data submitted!");
                 $scope.getRDFData();
             }, function (error) {
@@ -106,13 +109,9 @@ app.controller('RDFDataCtrl', function ($scope, RDFDataService, SharedService) {
         } else {
             alert("No data was introduced");
         }
-        ;
-
     };
-
     //init
     $scope.getRDFData();
-
 });
 
 app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedService) {
@@ -150,7 +149,6 @@ app.controller('NamespacesCtrl', function ($scope, NamespacesService, SharedServ
         } else {
             alert("Invalid namespace");
         }
-        ;
     };
 
     $scope.removeNamespace = function (prefix) {

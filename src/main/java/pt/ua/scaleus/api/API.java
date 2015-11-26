@@ -447,7 +447,7 @@ public class API {
         return true;
     }
 
-    public String getRDF(String database) {
+    public String getRDF(String database) throws Exception{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
@@ -457,8 +457,6 @@ public class API {
             } else {
                 return "Data is too long to show!";
             }
-        } catch (Exception e) {
-            log.error("Get data failed", e);
         } finally {
             dataset.end();
         }
