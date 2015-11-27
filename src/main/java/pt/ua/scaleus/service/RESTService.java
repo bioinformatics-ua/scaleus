@@ -101,7 +101,7 @@ public class RESTService implements IService {
     @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response getNamespaces(@PathParam("database") String database) {
-        JSONObject json = null;
+        JSONObject json = new JSONObject();
         try {
             Map<String, String> namespaces = api.getNsPrefixMap(database);
             JSONArray ja = new JSONArray();
@@ -111,10 +111,10 @@ public class RESTService implements IService {
                 mapJo.put("uri", entry.getValue());
                 ja.add(mapJo);
             }
-            json = new JSONObject();
             json.put("namespaces", ja);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
         return Response.status(200).entity(json.toJSONString()).build();
     }
@@ -130,6 +130,7 @@ public class RESTService implements IService {
             api.setNsPrefix(database, prefix, uri);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
 
         return Response.status(200).build();
@@ -143,6 +144,7 @@ public class RESTService implements IService {
             api.removeNsPrefix(database, prefix);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
 
         return Response.status(200).build();
@@ -159,6 +161,7 @@ public class RESTService implements IService {
             api.addStatement(database, triple);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
         return Response.status(200).build();
     }
@@ -173,6 +176,7 @@ public class RESTService implements IService {
             api.removeStatement(database, triple);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
         return Response.status(200).build();
     }
@@ -187,6 +191,7 @@ public class RESTService implements IService {
             response = api.getRDF(database);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
         return Response.status(200).entity(response).build();
     }
@@ -216,6 +221,7 @@ public class RESTService implements IService {
             response = api.describeResource(database, prefix, resource, format);
         } catch (Exception ex) {
             log.error("Service failed", ex);
+            return Response.serverError().build();
         }
         return Response.status(200).entity(response).build();
     }
