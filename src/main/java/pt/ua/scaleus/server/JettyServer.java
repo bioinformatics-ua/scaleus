@@ -62,7 +62,7 @@ public class JettyServer {
         } catch (ParseException ex) {
             log.error("CommandLine parse error", ex);
         }
-
+        
         Server server = new Server(port);
 
         // setup the web pages/scripts app
@@ -76,6 +76,7 @@ public class JettyServer {
         //API init parameters
         Map<String, String> apiInit = new HashMap<>();
         apiInit.put("jersey.config.server.provider.classnames", RESTService.class.getCanonicalName()+";org.glassfish.jersey.media.multipart.MultiPartFeature");
+        // for request filtering add also: ;org.glassfish.jersey.filter.LoggingFilter
         //Test init parameters
         //Map<String, String> testInit = new HashMap<>();
         //testInit.put("jersey.config.server.provider.classnames", TestService.class.getCanonicalName());
