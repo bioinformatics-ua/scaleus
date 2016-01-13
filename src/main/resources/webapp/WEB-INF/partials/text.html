@@ -1,0 +1,65 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Text Search</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<!-- /.row -->
+<div class="row" ng-controller="TextCtrl">
+
+
+        <div class="col-lg-3">
+            <div class="input-group">
+                <input type="text" class="form-control" data-ng-model="text" placeholder="Search for..." maxlength="10">
+                <span class="input-group-btn" >
+                    <button class="btn btn-primary" type="button" data-ng-click="getData()" ng-disabled="spinner"><span ng-show="!spinner">Go!</span><span><i class="fa fa-refresh fa-spin" ng-show="spinner"></i></span></button> 
+                </span>
+            </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+
+    <div class="col-lg-12">
+    <br><br>
+    <div>
+        <h2 class="sub-header" data-ng-show="queryResults.length != 0">Query
+            results: </h2>
+        <h2 class="sub-header" data-ng-show="noResults">No
+            results.</h2>
+        <div class="table-responsive" data-ng-show="queryResults.length != 0">
+            <table class="table table-striped"
+                   >
+                <thead>
+                    <tr>
+                        <th data-ng-repeat="(key, val) in queryResults[0]">
+                            {{key}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="result in queryResults">
+                        <td data-ng-repeat="obj in result" data-ng-switch="obj.type == 'uri'">
+                            <span data-ng-switch-when="true">
+                                <a data-ng-show="!obj.prefix" data-ng-href="{{obj.value}}" >{{obj.value}}</a>
+                                <a data-ng-show="obj.prefix" data-ng-href="#resource/{{dataset}}/{{obj.prefix}}/{{obj.resource}}" >{{obj.prefix}}:{{obj.resource}}</a>
+                                <a data-ng-show="obj.prefix" href="{{obj.value}}" title="{{obj.value}}"><i class="fa fa-external-link"></i></a>
+                            </span>
+                            <span data-ng-switch-when="false">
+                                {{obj.value}}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pull-right">View as: 
+                <a data-ng-href="{{sparqlRequest}}&format=json" target="_blank">JSON</a> | 
+                <a data-ng-href="{{sparqlRequest}}&format=rdf" target="_blank">RDF</a> | 
+                <a data-ng-href="{{sparqlRequest}}&format=ttl" target="_blank">TTL</a> | 
+                <a data-ng-href="{{sparqlRequest}}&format=csv" target="_blank">CSV</a> | 
+                <a data-ng-href="{{sparqlRequest}}&format=text" target="_blank">TEXT</a>
+            </div>
+
+        </div>
+    </div>
+    </div><!-- /.col-lg-12 -->
+
+</div>
+<!-- /.row -->

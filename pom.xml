@@ -83,7 +83,12 @@
             <version>2.4</version>
             <type>jar</type>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-text</artifactId>
+            <version>3.0.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <resources>

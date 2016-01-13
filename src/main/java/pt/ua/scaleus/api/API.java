@@ -28,6 +28,9 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.query.text.EntityDefinition;
+import org.apache.jena.query.text.TextDatasetFactory;
+import org.apache.jena.query.text.TextIndexConfig;
 import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -48,7 +51,10 @@ import org.apache.jena.sparql.resultset.ResultsFormat;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.util.PrintUtil;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.RDFS;
 import org.apache.log4j.Logger;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
 
 import pt.ua.scaleus.service.data.NQuad;
 import pt.ua.scaleus.service.data.NTriple;
@@ -62,6 +68,7 @@ public class API {
     private static final Logger log = Logger.getLogger(API.class);
     //String input = "resources/data/output.rdf";
     String directory = "datasets/";
+    String index = "index/";
     HashMap<String, Dataset> datasets = new HashMap<>();
 
     public HashMap<String, Dataset> getDatasets() {
@@ -152,7 +159,74 @@ public class API {
         if (datasets.containsKey(name)) {
             dataset = datasets.get(name);
         } else {
-            dataset = TDBFactory.createDataset(directory + name);
+            log.debug("Loading... " + name);
+
+            Dataset dataset_aux = TDBFactory.createDataset(directory + name);
+            Model dataset_model = ModelFactory.createOntologyModel();
+
+            dataset_aux.begin(ReadWrite.READ);
+            try {
+                dataset_model = dataset_aux.getDefaultModel();
+            } finally {
+                dataset_aux.end();
+            }
+
+            // Define the index mapping 
+            EntityDefinition entDef = new EntityDefinition("uri", "text");
+            entDef.setPrimaryPredicate(RDFS.label.asNode());
+            entDef.setUidField("uid");//synchronized within the index
+            entDef.setLangField("lang");
+
+            //Disable properties from index used for literals and resources at same time
+            ExtendedIterator<Statement> op = dataset_model.listStatements();
+            Set<Property> literal_props = new HashSet<>();
+            Set<Property> other_props = new HashSet<>();
+            while (op.hasNext()) {
+                Statement stat = op.next();
+                if (stat.getObject().isLiteral()) {
+                    literal_props.add(stat.getPredicate());
+                } else {
+                    other_props.add(stat.getPredicate());
+                }
+            }
+            Set<Property> intersection = new HashSet<>(literal_props);
+            intersection.retainAll(other_props);
+            literal_props.removeAll(intersection);
+            for (Property prop : literal_props) {
+                entDef.setPrimaryPredicate(prop);
+            }
+
+            // Lucene, in memory.
+            // Join together into a dataset
+            TextIndexConfig config = new TextIndexConfig(entDef);
+            config.setValueStored(true);//save literals
+
+            File indexFile = new File(index + name);
+            boolean indexIsCreated = indexFile.exists();
+
+            try {
+                Directory dir = new SimpleFSDirectory(indexFile);
+                dataset = TextDatasetFactory.createLucene(dataset_aux, dir, config);
+            } catch (IOException ex) {
+                log.error("Index disabled in " + name);
+                dataset = dataset_aux; //Lucene is disable here
+            }
+
+            dataset.begin(ReadWrite.WRITE);
+            try {
+                Model model = dataset.getDefaultModel();
+                if (!indexIsCreated) {
+                    log.debug("Indexing... " + name);
+                    model.removeAll();
+                    model.add(dataset_model);
+                }else{
+                    model.setNsPrefixes(dataset_model.getNsPrefixMap());
+                }
+                dataset.commit();
+            } finally {
+                dataset.end();
+            }
+
             datasets.put(name, dataset);
         }
         return dataset;
@@ -210,7 +284,7 @@ public class API {
                 }
                 qe = QueryExecutionFactory.create(query, inference);
             } else {
-                qe = QueryExecutionFactory.create(query, model);
+                qe = QueryExecutionFactory.create(query, dataset);
             }
             response = execute(qe, format);
         } finally {
@@ -237,7 +311,7 @@ public class API {
         try {
             Model model = dataset.getDefaultModel();
             String namespace = model.getNsPrefixMap().get(prefix);
-            Resource res = model.getResource(namespace+resource);
+            Resource res = model.getResource(namespace + resource);
             StmtIterator stat = model.listStatements(res, null, (RDFNode) null);
             describedModel.add(stat);
             describedModel.setNsPrefixes(model.getNsPrefixMap());
@@ -329,8 +403,8 @@ public class API {
             dataset.end();
         }
     }
-    
-    public void read(String database, InputStream input, Lang lang) throws Exception{
+
+    public void read(String database, InputStream input, Lang lang) throws Exception {
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.WRITE);
         try {
@@ -447,7 +521,7 @@ public class API {
         return true;
     }
 
-    public String getRDF(String database) throws Exception{
+    public String getRDF(String database) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Dataset dataset = getDataset(database);
         dataset.begin(ReadWrite.READ);
@@ -520,42 +594,42 @@ public class API {
     }
 
     public void storeData(String database, InputStream uploadedInputStream, String fileName) throws Exception {
-	
-    	String format = FilenameUtils.getExtension(fileName);
-    	switch (format) {
-		case "ttl":
-			read(database, uploadedInputStream, Lang.TTL);
-			break;
-		case "rdf":
-		case "owl":
-			read(database, uploadedInputStream, Lang.RDFXML);
-			break;
-		case "nt":
-			read(database, uploadedInputStream, Lang.NT);
-			break;
-		case "jsonld":
-			read(database, uploadedInputStream, Lang.JSONLD);
-			break;
-		case "rj":
-			read(database, uploadedInputStream, Lang.RDFJSON);
-			break;
-		case "n3":
-			read(database, uploadedInputStream, Lang.N3);
-			break;
-		case "trig":
-			read(database, uploadedInputStream, Lang.TRIG);
-			break;
-		case "trix":
-			read(database, uploadedInputStream, Lang.TRIX);
-			break;
-		case "trdf":
-		case "rt":
-			read(database, uploadedInputStream, Lang.RDFTHRIFT);
-			break;
-		default:
-			break;
-		}
-        
+
+        String format = FilenameUtils.getExtension(fileName);
+        switch (format) {
+            case "ttl":
+                read(database, uploadedInputStream, Lang.TTL);
+                break;
+            case "rdf":
+            case "owl":
+                read(database, uploadedInputStream, Lang.RDFXML);
+                break;
+            case "nt":
+                read(database, uploadedInputStream, Lang.NT);
+                break;
+            case "jsonld":
+                read(database, uploadedInputStream, Lang.JSONLD);
+                break;
+            case "rj":
+                read(database, uploadedInputStream, Lang.RDFJSON);
+                break;
+            case "n3":
+                read(database, uploadedInputStream, Lang.N3);
+                break;
+            case "trig":
+                read(database, uploadedInputStream, Lang.TRIG);
+                break;
+            case "trix":
+                read(database, uploadedInputStream, Lang.TRIX);
+                break;
+            case "trdf":
+            case "rt":
+                read(database, uploadedInputStream, Lang.RDFTHRIFT);
+                break;
+            default:
+                break;
+        }
+
     }
 
 }

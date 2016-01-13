@@ -40,7 +40,8 @@ app.controller('DatasetsCtrl', function ($scope, $location, DatasetsService, Sha
             //console.log("querydatasets");
             //$scope.datasets = response;
             SharedService.updateView(response);
-            if(SharedService.selectedDataset===undefined) $scope.changeDataset(response[0]);
+            if (SharedService.selectedDataset === undefined)
+                $scope.changeDataset(response[0]);
             //SharedService.selectedDataset=(response[0]);
             //$scope.selectedDataset = response[0];
         });
@@ -92,7 +93,7 @@ app.controller('RDFDataCtrl', function ($scope, RDFDataService, SharedService) {
     $scope.getRDFData = function () {
         $scope.content = 'Loading..';
         RDFDataService.get({id: SharedService.selectedDataset}, function (response) {
-            $scope.content = response.content;  
+            $scope.content = response.content;
         });
     };
 
@@ -264,7 +265,7 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
                     $scope.queryTime = new Date().getTime() - startQuery;
                     $scope.showQueryTime = true;
                     $scope.noResults = false;
-                    
+
                     // update results with namespaces and prefixes
                     var prefixes = {};
                     angular.forEach($scope.namespacesContainer, function (val, key, obj) {
@@ -272,8 +273,8 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
                     });
                     var res = [];
                     angular.forEach(response.results.bindings, function (val, key, obj) {
-                        for(var k in val) {
-                            if(val[k].type === 'uri'){ 
+                        for (var k in val) {
+                            if (val[k].type === 'uri') {
                                 var map = uriToPrefix(val[k].value, prefixes);
                                 val[k].namespace = map.namespace;
                                 val[k].prefix = map.prefix;
@@ -396,6 +397,65 @@ app.controller('QueriesCtrl', function ($scope, $cookies, QueriesService, Namesp
 
 });
 
+app.controller('TextCtrl', function ($scope, QueriesService, SharedService) {
+
+
+    $scope.getData = function () {
+        if ($scope.text) {
+            $scope.spinner = true;
+            var query = "SELECT ?score ?uri ?literal { (?uri ?score ?literal) <http://jena.apache.org/text#query>  '*" + $scope.text + "*' }";
+
+            QueriesService.query({dataset: SharedService.selectedDataset, query: query, format: 'json'}, function (response) {
+                if (response.results.bindings && response.results.bindings.length !== 0) {
+                   
+                    $scope.noResults = false;
+
+                    // update results with namespaces and prefixes
+                    var prefixes = {};
+                    angular.forEach($scope.namespacesContainer, function (val, key, obj) {
+                        prefixes[val.prefix] = val.uri;
+                    });
+                    var res = [];
+                    angular.forEach(response.results.bindings, function (val, key, obj) {
+                        for (var k in val) {
+                            if (val[k].type === 'uri') {
+                                var map = uriToPrefix(val[k].value, prefixes);
+                                val[k].namespace = map.namespace;
+                                val[k].prefix = map.prefix;
+                                val[k].resource = map.resource;
+                            }
+                        }
+                        res.push(val);
+                    });
+
+                    $scope.queryResults = res;
+                    $scope.dataset = SharedService.selectedDataset;
+                    $scope.sparqlRequest = './api/v1/sparqler/' + SharedService.selectedDataset
+                            + '/sparql?query=' + encodeURIComponent(query);
+
+                } else {
+                    $scope.noResults = true;
+                    $scope.queryResults = [];
+                }
+                $scope.spinner = false;
+            }, function (response) {
+                // an error occured
+                $scope.noResults = true;
+                $scope.queryResults = [];
+                $scope.spinner = false;
+                alert(response.status + " " + response.statusText);
+            });
+        } else {
+            alert("Write some text!");
+        }
+        ;
+    }
+    // init
+
+    $scope.spinner = false;
+    $scope.queryResults = [];
+    $scope.noResults = false;
+});
 
 app.controller('ResourceCtrl', function ($scope, $routeParams, ResourceService, SharedService) {
 

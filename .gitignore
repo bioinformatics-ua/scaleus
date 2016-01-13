@@ -1,5 +1,6 @@
 target/*
 datasets/*
+index/*
 *catalog-v001.xml
 *.DS_Store
 nb-configuration.xml

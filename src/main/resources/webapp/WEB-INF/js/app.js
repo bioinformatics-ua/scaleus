@@ -21,6 +21,9 @@ app.config(['$routeProvider', function ($routeProvider) {
                 when("/sparqler", {
                     templateUrl: "partials/sparqler.html"
                 }).
+                when("/text", {
+                    templateUrl: "partials/text.html"
+                }).
                 when("/namespaces", {
                     templateUrl: "partials/namespaces.html"
                 }).

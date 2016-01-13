@@ -7,7 +7,7 @@
 
 <!-- /.row -->
 <div class="row" ng-controller="QueriesCtrl">
-    
+    <div class="col-lg-12">
     <div class="btn-group" role="group">
         <button type="button" class="btn btn-default" data-ng-click="putQuery('SELECT * { \n?s ?p ?o \n} LIMIT 1000')">Get all</button>
         <button type="button" class="btn btn-default" data-ng-click="putQuery('SELECT (COUNT(*) as ?count)\nWHERE {\n?s ?p ?o .\n}')">Count</button>
@@ -110,6 +110,6 @@
 
 		</div>
 	</div>
-
+ </div><!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
