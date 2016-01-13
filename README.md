@@ -3,6 +3,8 @@ RESTfull services over an easy, high performance and transactional triple store.
 
 [AngularJS](https://angularjs.org/) + [Jetty Embedded](http://www.eclipse.org/jetty/) (RESTfull API) + [Apache Jena Framework](https://jena.apache.org/)
 
+### [Download](https://github.com/bioinformatics-ua/scaleus/releases)
+
 ## Main Features:
 
 - Easy to deploy.
