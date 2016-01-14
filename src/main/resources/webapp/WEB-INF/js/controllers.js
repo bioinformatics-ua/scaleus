@@ -403,7 +403,7 @@ app.controller('TextCtrl', function ($scope, QueriesService, SharedService) {
     $scope.getData = function () {
         if ($scope.text) {
             $scope.spinner = true;
-            var query = "SELECT ?score ?uri ?literal { (?uri ?score ?literal) <http://jena.apache.org/text#query>  '*" + $scope.text + "*' }";
+            var query = "SELECT ?score ?uri ?literal { (?uri ?score ?literal) <http://jena.apache.org/text#query>  '*" + $scope.text + "*' } LIMIT 100";
 
             QueriesService.query({dataset: SharedService.selectedDataset, query: query, format: 'json'}, function (response) {
                 if (response.results.bindings && response.results.bindings.length !== 0) {
