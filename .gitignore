@@ -10,3 +10,6 @@ logging.properties
 .classpath
 .settings/*
 nbactions.xml
+# JetBrains IDE
+*.iml
+.idea/
