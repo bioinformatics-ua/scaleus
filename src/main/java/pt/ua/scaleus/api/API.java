@@ -284,7 +284,7 @@ public class API {
                 }
                 qe = QueryExecutionFactory.create(query, inference);
             } else {
-                qe = QueryExecutionFactory.create(query, dataset);
+                qe = QueryExecutionFactory.create(query, model);
             }
             response = execute(qe, format);
         } finally {
