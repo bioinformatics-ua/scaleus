@@ -6,8 +6,10 @@
 package pt.ua.scaleus.server;
 
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.DispatcherType;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -68,10 +70,11 @@ public class JettyServer {
         // setup the web pages/scripts app
         final URL warUrl = JettyServer.class.getClassLoader().getResource(WEBAPPDIR);
         final String warUrlString = warUrl.toExternalForm();
-        ServletContextHandler webpages = new ServletContextHandler();		
+        ServletContextHandler webpages = new ServletContextHandler();
         webpages.setContextPath(baseWebPath);		
         webpages.setResourceBase(warUrlString);		
         webpages.addServlet(DefaultServlet.class, "/");
+        webpages.addFilter(AppFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
         //API init parameters
         Map<String, String> apiInit = new HashMap<>();
@@ -86,6 +89,7 @@ public class JettyServer {
                 //JettyUtils.createServletHandler(ServletContainer.class, baseWebPath, "/test/*", testInit).getHandler(), 
                 webpages, //Web static content
         };
+        ((ServletContextHandler)handlers[0]).addFilter(AppFilter.class, "/api/*", EnumSet.of(DispatcherType.REQUEST));
 
         // register the handlers on the server
         ContextHandlerCollection contextHandlers = new ContextHandlerCollection();
