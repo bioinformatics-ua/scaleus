@@ -36,6 +36,9 @@ app.config(['$routeProvider', function ($routeProvider) {
                 when("/fileupload", {
                     templateUrl: "partials/file_upload.html"
                 }).
+                when("/excelupload", {
+                    templateUrl: "partials/excel_upload.html"
+                }).
                 when("/resource/:database/:prefix/:resource", {
                     templateUrl: "partials/resource.html"
                 }).

@@ -592,6 +592,49 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 });
 
 
+app.controller('ExcelCtrl', function ($scope, SharedService) {
+
+    console.log('on ExcelCtrl ' + SharedService.selectedDataset);
+
+
+    $scope.excelChangeHandler = function (files) {
+        var result = [];
+        console.log('excelChangeHandler')
+        //console.log(files)
+        var i,f;
+        for (i = 0, f = files[i]; i != files.length; ++i) {
+            //console.log(i)
+            var reader = new FileReader();
+            var name = f.name;
+            reader.onload = function(e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, {type: 'binary'});
+                console.log(workbook)
+
+                var sheet_name_list = workbook.SheetNames;
+                console.log(sheet_name_list);
+                sheet_name_list.forEach(function(y) {
+                    var worksheet = workbook.Sheets[y];
+                    var json=XLSX.utils.sheet_to_json(worksheet);
+
+                    result.push({sheet : json});
+
+                });
+
+
+
+            };
+            reader.readAsBinaryString(f);
+        }
+        console.log(result);
+        $scope.excelData=result;
+    };
+
+
+
+});
+
+
 var uriToPrefix = function (uri, prefixes) {
     var resource;
     var uriToSlit = uri;
