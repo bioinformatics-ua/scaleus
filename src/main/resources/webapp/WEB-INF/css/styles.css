@@ -34,3 +34,10 @@ table thead {
 html, body {
 	height: 100%;
 }
+
+.table-responsive {
+    overflow-x: auto;
+}
+.excel{
+    font-size: 10px;
+}

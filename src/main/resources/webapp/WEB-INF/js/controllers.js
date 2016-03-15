@@ -592,45 +592,86 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 });
 
 
-app.controller('ExcelCtrl', function ($scope, SharedService) {
+app.controller('ExcelUploadCtrl', function ($scope, FileUploader, SharedService) {
 
-    console.log('on ExcelCtrl ' + SharedService.selectedDataset);
+    console.log('on ExcelUploadCtrl ' + SharedService.selectedDataset);
 
+    var uploader = $scope.uploader = new FileUploader();
+    //console.info('uploader', uploader);
 
-    $scope.excelChangeHandler = function (files) {
-        var result = [];
-        console.log('excelChangeHandler')
-        //console.log(files)
-        var i,f;
-        for (i = 0, f = files[i]; i != files.length; ++i) {
-            //console.log(i)
-            var reader = new FileReader();
-            var name = f.name;
-            reader.onload = function(e) {
-                var data = e.target.result;
-                var workbook = XLSX.read(data, {type: 'binary'});
-                console.log(workbook)
+    $scope.$on('$locationChangeStart', function (event) {
+        var items = uploader.getNotUploadedItems();
 
-                var sheet_name_list = workbook.SheetNames;
-                console.log(sheet_name_list);
-                sheet_name_list.forEach(function(y) {
-                    var worksheet = workbook.Sheets[y];
-                    var json=XLSX.utils.sheet_to_json(worksheet);
-
-                    result.push({sheet : json});
-
-                });
-
-
-
-            };
-            reader.readAsBinaryString(f);
+        if (items.length > 0) {
+            var answer = confirm("There are files in the upload queue not yet imported. Are you sure you want to quit?");
+            if (!answer) {
+                event.preventDefault();
+            }
         }
-        console.log(result);
-        $scope.excelData=result;
+    });
+
+    $scope.showModalcreateIndividual = function(col){
+        $scope.individualColumn = col;
+        $scope.individualURL = "http://example.org/";
+        console.log(col);
+        $scope.individualPreview = [];
+        var json = $scope.excelView.bindings.slice(0,6);
+        console.log(json)
+        json.forEach(function(y){
+            $scope.individualPreview.push(y[col]);
+        });
+        console.log($scope.individualPreview)
+    }
+
+    $scope.createIndividual = function(){
+
+        var json = $scope.excelView.bindings;
+        console.log(json)
+        var newColumn = $scope.individualColumn+'_individual';
+        json.forEach(function(value,i){
+            var newIndividual = $scope.individualURL + value[$scope.individualColumn];
+            value[newColumn] = newIndividual.replace(" ", "_");
+            json[i]=value;
+        });
+        console.log(json)
+        $scope.excelView.vars.push(newColumn);
+        $scope.excelView.bindings = json;
+        //$scope.$apply();
+    }
+
+
+    uploader.onAfterAddingFile = function (fileItem) {
+        //console.info('onAfterAddingFile', fileItem);
+
+        $scope.excelView = {};
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+
+            var data = e.target.result;
+
+            var workbook = XLSX.read(data, {type: 'binary'});
+            //console.log(workbook)
+
+            var sheet_name_list = workbook.SheetNames;
+            //console.log(sheet_name_list);
+            //sheet_name_list.forEach(function(y) {
+            $scope.worksheet = workbook.Sheets[sheet_name_list[0]];
+            var json=XLSX.utils.sheet_to_json($scope.worksheet);
+
+            var output = {};
+            output['vars'] = Object.keys(json[0]);
+            output['bindings'] = json;
+            output['sheet'] = sheet_name_list[0];
+
+            console.log(output)
+            $scope.excelView = output;
+
+            //});
+            $scope.$apply();
+        };
+        reader.readAsBinaryString(fileItem._file);
     };
-
-
 
 });
 

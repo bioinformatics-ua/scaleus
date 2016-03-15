@@ -1,36 +1,85 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Excel Upload</h1>
+        <h1 class="page-header">Spreadsheet Integration</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
-<div class="row" ng-controller="ExcelCtrl">
+<div class="row" ng-controller="ExcelUploadCtrl" uploader="uploader">
+    <div class="col-lg-12">
+        <input type="file" nv-file-select="" uploader="uploader" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet"/>
+        <h2>{{excelView.sheet}}</h2>
+        <div class="table-responsive" >
+            <table class="table table-condensed table-hover excel">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th data-ng-repeat="col in excelView.vars">
 
-    <input type="file" name="input_excel" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="angular.element(this).scope().excelChangeHandler(this.files)">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{col}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a data-ng-click="showModalcreateIndividual(col)" data-toggle="modal" data-target="#individualModal">Create Individual</a></li>
+                                <li><a href="#">Normalize</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Link to</a></li>
+                            </ul>
+                        </div>
 
-    {{excelData}}
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="value in excelView.bindings">
+                    <td>
+                        <span class="label label-warning">{{value['__rowNum__']}}</span>
+                    </td>
+                    <td data-ng-repeat="col in excelView.vars">
+                        {{value[col]}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-    <div class="table-responsive" >
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th data-ng-repeat="(key, val) in excelData">
-                    {{key}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr data-ng-repeat="value in excelData">
-                       {{value}}
-
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        </div>
         <div class="pull-right">Download as:
-            <a data-ng-href="" target="_blank">CSV</a>
+        <a data-ng-href="" target="_blank">JSON</a>
         </div>
 
     </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="individualModal" tabindex="-1" role="dialog" aria-labelledby="individualModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Create Individual</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>URL</h4>
+
+                    <input type="text" class="form-control" data-ng-model="individualURL" placeholder="http://">
+
+                    <h4>Preview</h4>
+
+                    <span data-ng-repeat="row in individualPreview">
+                        {{individualURL}}{{row}} </br>
+                    </span>
+                    ...
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="createIndividual()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
