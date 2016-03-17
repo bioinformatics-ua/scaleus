@@ -592,7 +592,7 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 });
 
 
-app.controller('ExcelUploadCtrl', function ($scope, FileUploader, SharedService) {
+app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoCompleteService, SharedService) {
 
     console.log('on ExcelUploadCtrl ' + SharedService.selectedDataset);
 
@@ -610,8 +610,55 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, SharedService)
         }
     });
 
-    $scope.showModalcreateIndividual = function(col){
-        $scope.individualColumn = col;
+    $scope.removeColumn = function(col){
+        var json = $scope.excelView;
+        var index = json.vars.indexOf(col);
+        if (index > -1) { json.vars.splice(index, 1) }
+        json.bindings.forEach(function(value,i){
+            delete json.bindings[i][col];
+        });
+        $scope.excelView = json;
+    }
+
+    $scope.getProperties = function (val) {
+        var property = PropAutoCompleteService.get({dataset: SharedService.selectedDataset, match: val});
+        return property.$promise;
+    };
+
+    $scope.showModalLink = function(col){
+        //load links
+
+    }
+
+    $scope.createLink = function(){
+        var s = $scope.startColumnSelect;
+        var p = $scope.inputPropertyLink;
+        var o = $scope.endColumnSelect;
+
+        var elem = {
+            s : s,
+            p : p,
+            o : o
+        };
+
+        var found = function(elem){
+            return $scope.columnLinks.some(function (el) {
+                return el.s === elem.s && el.p === elem.p && el.o == elem.o;
+            });
+        }
+
+        var index = found(elem);
+        if(!index) $scope.columnLinks.push(elem);
+
+    }
+
+    $scope.removeLink = function(link){
+        var index = $scope.columnLinks.indexOf(link);
+        if (index > -1) { $scope.columnLinks.splice(index, 1) }
+    }
+
+    $scope.showModalcreateURI = function(col){
+        $scope.column = col;
         $scope.individualURL = "http://example.org/";
         console.log(col);
         $scope.individualPreview = [];
@@ -623,18 +670,18 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, SharedService)
         console.log($scope.individualPreview)
     }
 
-    $scope.createIndividual = function(){
+    $scope.createURI = function(){
 
         var json = $scope.excelView.bindings;
         console.log(json)
-        var newColumn = $scope.individualColumn+'_individual';
+        var newColumn = $scope.column+'_URI';
         json.forEach(function(value,i){
-            var newIndividual = $scope.individualURL + value[$scope.individualColumn];
+            var newIndividual = $scope.individualURL + value[$scope.column];
             value[newColumn] = newIndividual.replace(" ", "_");
             json[i]=value;
         });
         console.log(json)
-        $scope.excelView.vars.push(newColumn);
+        $scope.excelView.vars.unshift(newColumn);
         $scope.excelView.bindings = json;
         //$scope.$apply();
     }
@@ -672,6 +719,13 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, SharedService)
         };
         reader.readAsBinaryString(fileItem._file);
     };
+
+
+    //init
+    $scope.columnLinks = [];
+    $scope.startColumnSelect = "";
+    $scope.inputPropertyLink = "";
+    $scope.endColumnSelect = "";
 
 });
 

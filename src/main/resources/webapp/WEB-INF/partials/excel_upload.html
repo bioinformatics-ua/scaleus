@@ -9,55 +9,56 @@
     <div class="col-lg-12">
         <input type="file" nv-file-select="" uploader="uploader" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet"/>
         <h2>{{excelView.sheet}}</h2>
-        <div class="table-responsive" >
-            <table class="table table-condensed table-hover excel">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th data-ng-repeat="col in excelView.vars">
+        <div data-ng-show="excelView">
 
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{col}} <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a data-ng-click="showModalcreateIndividual(col)" data-toggle="modal" data-target="#individualModal">Create Individual</a></li>
-                                <li><a href="#">Normalize</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Link to</a></li>
-                            </ul>
-                        </div>
+            <div class="table-responsive" >
+                <table class="table table-condensed table-hover excel">
+                    <thead>
+                    <tr>
+                        <th><button data-ng-click="showModalLink(col)" type="button" class="btn btn-warning btn-block"  data-toggle="modal" data-target="#linkModal"><i class="fa fa-link"></i> Mappings</button>
+                        </th>
+                        <th data-ng-repeat="col in excelView.vars">
+                            <div class="btn-group btn-block">
+                                <button ng-class="col.endsWith('_URI') ? 'btn-success' : 'btn-primary'" type="button" class="btn btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{col}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu btn-block " role="menu">
+                                    <li data-ng-show="!col.endsWith('_URI')"><a data-ng-click="showModalcreateURI(col)" data-toggle="modal" data-target="#individualModal">Create URI</a></li>
+                                    <li data-ng-show="!col.endsWith('_URI')" class="disabled"><a href="#">Normalize</a></li>
+                                    <li><a data-ng-click="removeColumn(col)">Remove</a></li>
+                                </ul>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-ng-repeat="value in excelView.bindings">
+                        <td>
+                            <span class="label label-primary">{{value['__rowNum__']}}</span>
+                        </td>
+                        <td data-ng-repeat="col in excelView.vars">
+                            {{value[col]}}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr data-ng-repeat="value in excelView.bindings">
-                    <td>
-                        <span class="label label-warning">{{value['__rowNum__']}}</span>
-                    </td>
-                    <td data-ng-repeat="col in excelView.vars">
-                        {{value[col]}}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-        </div>
-        <div class="pull-right">Download as:
-        <a data-ng-href="" target="_blank">JSON</a>
+            </div>
+            <div class="pull-right">Download as:
+            <a data-ng-href="" target="_blank">JSON</a>
+            </div>
         </div>
 
     </div>
 
 
-    <!-- Modal -->
+    <!-- Modal Individual -->
     <div class="modal fade" id="individualModal" tabindex="-1" role="dialog" aria-labelledby="individualModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Create Individual</h4>
+                    <h4 class="modal-title">Create URI</h4>
                 </div>
                 <div class="modal-body">
                     <h4>URL</h4>
@@ -67,19 +68,74 @@
                     <h4>Preview</h4>
 
                     <span data-ng-repeat="row in individualPreview">
-                        {{individualURL}}{{row}} </br>
+                        <p>{{individualURL}}{{row}}</p>
                     </span>
-                    ...
+                    <p>...</p>
 
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="createIndividual()">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="createURI()">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Link -->
+    <div class="modal fade" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Columns Mappings</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Create mappings between columns data</h4>
+
+                    <div class="row">
+                        <div class="col-md-3 text-center"><h6>Start Column</h6></div>
+                        <div class="col-md-3 text-center"><h6>Property</h6></div>
+                        <div class="col-md-3 text-center"><h6>End Column</h6></div>
+                        <div class="col-md-3 "></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <select ng-model="startColumnSelect">
+                                <option data-ng-repeat="col in excelView.vars">{{col}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" data-ng-model="inputPropertyLink" placeholder="http://" typeahead="property for property in getProperties($viewValue)">
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <select ng-model="endColumnSelect">
+                                <option data-ng-repeat="col in excelView.vars">{{col}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3"><i class="fa fa-plus-circle fa-3x" data-ng-click="createLink()"></i></div>
+                    </div>
+
+
+
+
+                    <h4>Mappings List</h4>
+
+                    <div data-ng-repeat="link in columnLinks">
+                        <p><i class="fa fa-minus-circle" data-ng-click="removeLink(link)"></i> <span class="label label-primary">{{link.s}}</span> <span class="label label-warning">{{link.p}}</span> <span class="label label-primary">{{link.o}}</span></p>
+                    </div>
+
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 </div>

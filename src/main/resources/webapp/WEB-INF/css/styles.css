@@ -37,6 +37,7 @@ html, body {
 
 .table-responsive {
     overflow-x: auto;
+    white-space: nowrap;
 }
 .excel{
     font-size: 10px;
