@@ -592,7 +592,7 @@ app.controller('FileUploadCtrl', function ($scope, FileUploader, SharedService) 
 });
 
 
-app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoCompleteService, SharedService) {
+app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoCompleteService, TriplesService, SharedService) {
 
     console.log('on ExcelUploadCtrl ' + SharedService.selectedDataset);
 
@@ -609,6 +609,43 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
             }
         }
     });
+
+    $scope.process = function(){
+        $scope.spinner = true;
+        var data = $scope.excelView.bindings;
+        var mappings = $scope.columnLinks;
+        var triples = [];
+        mappings.forEach(function(m){
+            data.forEach(function(d){
+                var subject = d[m.s];
+                var predicate = m.p;
+                var object = d[m.o];
+                var triple = {
+                    s: subject,
+                    p: predicate,
+                    o: object
+                }
+                triples.push(triple);
+            });
+        });
+        console.log(data)
+        console.log(mappings)
+        console.log(triples)
+
+        var triples_count = 0;
+        triples.forEach(function(triple){
+            TriplesService().save({dataset: SharedService.selectedDataset}, triple, function (response) {
+                triples_count++;
+                if(triples_count === triples.length) $scope.spinner = false;
+            }, function (response) {
+                triples_count++;
+                if(triples_count === triples.length) $scope.spinner = false;
+                // an error occured
+                alert(response.status + " " + response.statusText);
+            });
+        });
+
+    }
 
     $scope.removeColumn = function(col){
         var json = $scope.excelView;
@@ -647,8 +684,10 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
             });
         }
 
-        var index = found(elem);
-        if(!index) $scope.columnLinks.push(elem);
+        if(elem.s !=="" && elem.p !=="" && elem.o !==""){
+            var index = found(elem);
+            if(!index) $scope.columnLinks.push(elem);
+        }
 
     }
 
@@ -660,27 +699,27 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
     $scope.showModalcreateURI = function(col){
         $scope.column = col;
         $scope.individualURL = "http://example.org/";
-        console.log(col);
+        //console.log(col);
         $scope.individualPreview = [];
         var json = $scope.excelView.bindings.slice(0,6);
-        console.log(json)
+        //console.log(json)
         json.forEach(function(y){
             $scope.individualPreview.push(y[col]);
         });
-        console.log($scope.individualPreview)
+        //console.log($scope.individualPreview)
     }
 
     $scope.createURI = function(){
 
         var json = $scope.excelView.bindings;
-        console.log(json)
+        //console.log(json)
         var newColumn = $scope.column+'_URI';
         json.forEach(function(value,i){
             var newIndividual = $scope.individualURL + value[$scope.column];
             value[newColumn] = newIndividual.replace(" ", "_");
             json[i]=value;
         });
-        console.log(json)
+        //console.log(json)
         $scope.excelView.vars.unshift(newColumn);
         $scope.excelView.bindings = json;
         //$scope.$apply();
@@ -711,7 +750,7 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
             output['bindings'] = json;
             output['sheet'] = sheet_name_list[0];
 
-            console.log(output)
+            //console.log(output)
             $scope.excelView = output;
 
             //});
@@ -726,6 +765,7 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
     $scope.startColumnSelect = "";
     $scope.inputPropertyLink = "";
     $scope.endColumnSelect = "";
+    $scope.spinner = false;
 
 });
 

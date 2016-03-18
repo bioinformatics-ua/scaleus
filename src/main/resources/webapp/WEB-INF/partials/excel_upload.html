@@ -10,7 +10,7 @@
         <input type="file" nv-file-select="" uploader="uploader" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet"/>
         <h2>{{excelView.sheet}}</h2>
         <div data-ng-show="excelView">
-
+            <button type="button" class="btn btn-warning"  data-toggle="modal" data-target="#integrationModal"><i class="fa fa-link"></i> Process</button>
             <div class="table-responsive" >
                 <table class="table table-condensed table-hover excel">
                     <thead>
@@ -23,8 +23,8 @@
                                     {{col}} <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu btn-block " role="menu">
-                                    <li data-ng-show="!col.endsWith('_URI')"><a data-ng-click="showModalcreateURI(col)" data-toggle="modal" data-target="#individualModal">Create URI</a></li>
-                                    <li data-ng-show="!col.endsWith('_URI')" class="disabled"><a href="#">Normalize</a></li>
+                                    <li data-ng-show="!col.endsWith('_URI') && (excelView.vars.indexOf(col+'_URI') === -1)"><a data-ng-click="showModalcreateURI(col)" data-toggle="modal" data-target="#individualModal">Create URI</a></li>
+                                    <li data-ng-show="!col.endsWith('_URI')" class="disabled"><a href="#" >Normalize</a></li>
                                     <li><a data-ng-click="removeColumn(col)">Remove</a></li>
                                 </ul>
                             </div>
@@ -91,7 +91,7 @@
                     <h4 class="modal-title">Columns Mappings</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Create mappings between columns data</h4>
+                    <h4>Create mappings between columns data:</h4>
 
                     <div class="row">
                         <div class="col-md-3 text-center"><h6>Start Column</h6></div>
@@ -100,26 +100,25 @@
                         <div class="col-md-3 "></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3 text-center">
-                            <select ng-model="startColumnSelect">
-                                <option data-ng-repeat="col in excelView.vars">{{col}}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" data-ng-model="inputPropertyLink" placeholder="http://" typeahead="property for property in getProperties($viewValue)">
-                        </div>
-                        <div class="col-md-3 text-center">
-                            <select ng-model="endColumnSelect">
-                                <option data-ng-repeat="col in excelView.vars">{{col}}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3"><i class="fa fa-plus-circle fa-3x" data-ng-click="createLink()"></i></div>
+                        <form>
+                            <div class="col-md-3 text-center">
+                                <select ng-model="startColumnSelect">
+                                    <option data-ng-repeat="col in excelView.vars">{{col}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="url" class="form-control" data-ng-model="inputPropertyLink" placeholder="http://" typeahead="property for property in getProperties($viewValue)" required>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <select ng-model="endColumnSelect">
+                                    <option data-ng-repeat="col in excelView.vars">{{col}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3"><i class="fa fa-plus-circle fa-3x" data-ng-click="createLink()"></i></div>
+                        </form>
                     </div>
 
-
-
-
-                    <h4>Mappings List</h4>
+                    <h4>Mappings established:</h4>
 
                     <div data-ng-repeat="link in columnLinks">
                         <p><i class="fa fa-minus-circle" data-ng-click="removeLink(link)"></i> <span class="label label-primary">{{link.s}}</span> <span class="label label-warning">{{link.p}}</span> <span class="label label-primary">{{link.o}}</span></p>
@@ -130,7 +129,29 @@
 
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Integration -->
+    <div class="modal fade" id="integrationModal" tabindex="-1" role="dialog" aria-labelledby="integrationModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Run Integration</h4>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-success btn-block" data-ng-click="process()" ng-disabled="spinner">Run <i class="fa fa-forward" ng-show="!spinner"/><i class="fa fa-refresh fa-spin" ng-show="spinner"></i></button>
+
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
                 </div>
             </div>
         </div>
