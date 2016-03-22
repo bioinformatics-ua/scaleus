@@ -42,3 +42,7 @@ html, body {
 .excel{
     font-size: 10px;
 }
+.btn-block{
+    padding-left: 10px;
+    padding-right: 10px;
+}

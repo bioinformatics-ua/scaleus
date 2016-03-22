@@ -612,6 +612,7 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
 
     $scope.process = function(){
         $scope.spinner = true;
+        $scope.triples_count = 0;
         var data = $scope.excelView.bindings;
         var mappings = $scope.columnLinks;
         var triples = [];
@@ -632,14 +633,13 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
         console.log(mappings)
         console.log(triples)
 
-        var triples_count = 0;
         triples.forEach(function(triple){
             TriplesService().save({dataset: SharedService.selectedDataset}, triple, function (response) {
-                triples_count++;
-                if(triples_count === triples.length) $scope.spinner = false;
+                $scope.triples_count++;
+                if($scope.triples_count === triples.length) $scope.spinner = false;
             }, function (response) {
-                triples_count++;
-                if(triples_count === triples.length) $scope.spinner = false;
+                $scope.triples_count++;
+                if($scope.triples_count === triples.length) $scope.spinner = false;
                 // an error occured
                 alert(response.status + " " + response.statusText);
             });
@@ -700,13 +700,15 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
         $scope.column = col;
         $scope.individualURL = "http://example.org/";
         //console.log(col);
-        $scope.individualPreview = [];
+        var individualPreview = [];
         var json = $scope.excelView.bindings.slice(0,6);
         //console.log(json)
         json.forEach(function(y){
-            $scope.individualPreview.push(y[col]);
+            individualPreview.push(y[col]);
         });
-        //console.log($scope.individualPreview)
+        $scope.individualPreview = individualPreview;
+        //console.log($scope.individualPreview);
+
     }
 
     $scope.createURI = function(){
@@ -766,6 +768,7 @@ app.controller('ExcelUploadCtrl', function ($scope, FileUploader, PropAutoComple
     $scope.inputPropertyLink = "";
     $scope.endColumnSelect = "";
     $scope.spinner = false;
+    $scope.triples_count = 0;
 
 });
 

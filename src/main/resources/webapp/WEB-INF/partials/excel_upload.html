@@ -8,45 +8,59 @@
 <div class="row" ng-controller="ExcelUploadCtrl" uploader="uploader">
     <div class="col-lg-12">
         <input type="file" nv-file-select="" uploader="uploader" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet"/>
-        <h2>{{excelView.sheet}}</h2>
+        <p></p>
         <div data-ng-show="excelView">
-            <button type="button" class="btn btn-warning"  data-toggle="modal" data-target="#integrationModal"><i class="fa fa-link"></i> Process</button>
-            <div class="table-responsive" >
-                <table class="table table-condensed table-hover excel">
-                    <thead>
-                    <tr>
-                        <th><button data-ng-click="showModalLink(col)" type="button" class="btn btn-warning btn-block"  data-toggle="modal" data-target="#linkModal"><i class="fa fa-link"></i> Mappings</button>
-                        </th>
-                        <th data-ng-repeat="col in excelView.vars">
-                            <div class="btn-group btn-block">
-                                <button ng-class="col.endsWith('_URI') ? 'btn-success' : 'btn-primary'" type="button" class="btn btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{col}} <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu btn-block " role="menu">
-                                    <li data-ng-show="!col.endsWith('_URI') && (excelView.vars.indexOf(col+'_URI') === -1)"><a data-ng-click="showModalcreateURI(col)" data-toggle="modal" data-target="#individualModal">Create URI</a></li>
-                                    <li data-ng-show="!col.endsWith('_URI')" class="disabled"><a href="#" >Normalize</a></li>
-                                    <li><a data-ng-click="removeColumn(col)">Remove</a></li>
-                                </ul>
-                            </div>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr data-ng-repeat="value in excelView.bindings">
-                        <td>
-                            <span class="label label-primary">{{value['__rowNum__']}}</span>
-                        </td>
-                        <td data-ng-repeat="col in excelView.vars">
-                            {{value[col]}}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
 
+            <div class="panel panel-primary">
+                <div class="panel-heading">{{excelView.sheet}}
+                    <div class="pull-right">
+                        <a class="btn btn-warning btn-xs" data-ng-click="showModalLink(col)" data-toggle="modal" type="button" data-target="#linkModal"><i class="fa fa-link"></i> Mappings</a>
+                        <a class="btn btn-success btn-xs" type="button" data-toggle="modal" data-target="#integrationModal"><i class="fa fa-forward"></i> Process</a>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <div class="table-responsive" >
+                        <table class="table table-condensed table-hover excel">
+                            <thead>
+                            <tr>
+                                <th>
+
+                                </th>
+                                <th data-ng-repeat="col in excelView.vars">
+                                    <div class="btn-group btn-block">
+                                        <button ng-class="col.endsWith('_URI') ? 'btn-success' : 'btn-primary'" type="button" class="btn btn-block btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{col}} <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu btn-block " role="menu">
+                                            <li data-ng-show="!col.endsWith('_URI') && (excelView.vars.indexOf(col+'_URI') === -1)"><a data-ng-click="showModalcreateURI(col)" data-toggle="modal" data-target="#individualModal">Create URI</a></li>
+                                            <li data-ng-show="!col.endsWith('_URI')" class="disabled"><a href="#" >Normalize</a></li>
+                                            <li><a data-ng-click="removeColumn(col)">Remove</a></li>
+                                        </ul>
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="value in excelView.bindings" class="text-center">
+                                <td>
+                                    <span class="label label-primary">{{value['__rowNum__']}}</span>
+                                </td>
+                                <td data-ng-repeat="col in excelView.vars">
+                                    {{value[col]}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
             </div>
-            <div class="pull-right">Download as:
+            <!-- end panel-->
+            <!-- <div class="pull-right">Download as:
             <a data-ng-href="" target="_blank">JSON</a>
-            </div>
+            </div>-->
         </div>
 
     </div>
@@ -61,17 +75,16 @@
                     <h4 class="modal-title">Create URI</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>URL</h4>
+                    <h4>URI</h4>
 
                     <input type="text" class="form-control" data-ng-model="individualURL" placeholder="http://">
 
-                    <h4>Preview</h4>
+                    <h4>Data Preview</h4>
 
-                    <span data-ng-repeat="row in individualPreview">
+                    <span data-ng-repeat="row in individualPreview track by $index">
                         <p>{{individualURL}}{{row}}</p>
                     </span>
                     <p>...</p>
-
 
                 </div>
                 <div class="modal-footer">
@@ -91,37 +104,36 @@
                     <h4 class="modal-title">Columns Mappings</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Create mappings between columns data:</h4>
 
-                    <div class="row">
-                        <div class="col-md-3 text-center"><h6>Start Column</h6></div>
-                        <div class="col-md-3 text-center"><h6>Property</h6></div>
-                        <div class="col-md-3 text-center"><h6>End Column</h6></div>
-                        <div class="col-md-3 "></div>
+                    <div data-ng-show="excelView.vars[0].endsWith('_URI')">
+                        <h4>Create mappings between columns data:</h4>
+
+                        <h6>Start Column</h6>
+                        <select ng-model="startColumnSelect" class="input-sm">
+                            <option data-ng-repeat="col in excelView.vars" ng-if="col.endsWith('_URI')">{{col}}</option>
+                        </select>
+
+                        <h6>Property</h6>
+                        <input type="url" class="form-control" data-ng-model="inputPropertyLink" placeholder="http://" typeahead="property for property in getProperties($viewValue)" required>
+
+                        <h6>End Column</h6>
+                        <select ng-model="endColumnSelect" class="input-sm">
+                            <option data-ng-repeat="col in excelView.vars">{{col}}</option>
+                        </select>
+                        <p></p>
+                        <button class="btn btn-success btn-sm" type="button" data-ng-click="createLink()">
+                            <i class="fa fa-plus-circle"></i>
+                        </button>
+
+                        <h4>Mappings established:</h4>
+
+                        <div data-ng-repeat="link in columnLinks">
+                            <p><i class="fa fa-minus-circle" data-ng-click="removeLink(link)"></i> <span class="label label-primary">{{link.s}}</span> <span class="label label-warning">{{link.p}}</span> <span class="label label-primary">{{link.o}}</span></p>
+                        </div>
                     </div>
-                    <div class="row">
-                        <form>
-                            <div class="col-md-3 text-center">
-                                <select ng-model="startColumnSelect">
-                                    <option data-ng-repeat="col in excelView.vars">{{col}}</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="url" class="form-control" data-ng-model="inputPropertyLink" placeholder="http://" typeahead="property for property in getProperties($viewValue)" required>
-                            </div>
-                            <div class="col-md-3 text-center">
-                                <select ng-model="endColumnSelect">
-                                    <option data-ng-repeat="col in excelView.vars">{{col}}</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3"><i class="fa fa-plus-circle fa-3x" data-ng-click="createLink()"></i></div>
-                        </form>
-                    </div>
 
-                    <h4>Mappings established:</h4>
-
-                    <div data-ng-repeat="link in columnLinks">
-                        <p><i class="fa fa-minus-circle" data-ng-click="removeLink(link)"></i> <span class="label label-primary">{{link.s}}</span> <span class="label label-warning">{{link.p}}</span> <span class="label label-primary">{{link.o}}</span></p>
+                    <div class="alert alert-warning" role="alert" data-ng-show="!excelView.vars[0].endsWith('_URI')">
+                        Please, click on columns headers to create some URIs first.
                     </div>
 
 
@@ -144,9 +156,13 @@
                     <h4 class="modal-title">Run Integration</h4>
                 </div>
                 <div class="modal-body">
-                    <button type="button" class="btn btn-success btn-block" data-ng-click="process()" ng-disabled="spinner">Run <i class="fa fa-forward" ng-show="!spinner"/><i class="fa fa-refresh fa-spin" ng-show="spinner"></i></button>
-
-
+                    <div data-ng-show="columnLinks.length !== 0" >
+                        <button type="button" class="btn btn-success btn-block" data-ng-click="process()" ng-disabled="spinner">Run <i class="fa fa-forward" ng-show="!spinner"/><i class="fa fa-refresh fa-spin" ng-show="spinner"></i></button>
+                        <p>{{triples_count}} triples added.</p>
+                    </div>
+                    <div class="alert alert-warning" role="alert" data-ng-show="columnLinks.length === 0">
+                        Please, define columns <a data-dismiss="modal" class="alert-link" data-ng-click="showModalLink(col)" data-toggle="modal" data-target="#linkModal">Mappings</a> first.
+                    </div>
                 </div>
 
 
