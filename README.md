@@ -1,5 +1,7 @@
 # SCALEUS
-RESTfull services over an easy, high performance and transactional triple store.
+Semantic Web Services Integration for Biomedical Applications
+
+Scaleus is a semantic web migration tool designed to be simple to deploy and use. The solution is tailored to help users in the creation of new semantic web applications from scratch. In a single package, we include a high-perfomance triplestore supporting multiple independent datasets, simplified API and services for data integration and management, and a SPARQL query engine, supporting real-time inference mechanisms and optimized text searches over the knowledge base.
 
 [AngularJS](https://angularjs.org/) + [Jetty Embedded](http://www.eclipse.org/jetty/) (RESTfull API) + [Apache Jena Framework](https://jena.apache.org/)
 
@@ -11,8 +13,11 @@ RESTfull services over an easy, high performance and transactional triple store.
 - Simple RESTfull API for data management.
 - RDFS Inference support over SPARQL queries. Inference rules are also supported.
 - Multiple datasets support.
+- Spreedsheet import (.xlsx, .xls, .ods, etc.).
 
-## Run 
+## Documentation
+
+### Run 
 
 Simple run the application at [http://localhost/scaleus/](http://localhost/scaleus/):
 ```
@@ -29,7 +34,7 @@ Run and import data:
 java -jar target/scaleus-1.0-SNAPSHOT-jar-with-dependencies.jar -d {dataset_name} -i {file_location}
 ```
 
-## REST API
+### REST API
 
 **List all datasets available:**
 
