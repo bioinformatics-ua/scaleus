@@ -1,6 +1,8 @@
 # SCALEUS
 Semantic Web Services Integration for Biomedical Applications
 
+![Dashboard](https://cloud.githubusercontent.com/assets/1446805/16911177/dfd57c1a-4cd4-11e6-8c7e-598dbf9218e3.png)
+
 Scaleus is a semantic web migration tool designed to be simple to deploy and use. The solution is tailored to help users in the creation of new semantic web applications from scratch. In a single package, we include a high-perfomance triplestore supporting multiple independent datasets, simplified API and services for data integration and management, and a SPARQL query engine, supporting real-time inference mechanisms and optimized text searches over the knowledge base.
 
 [AngularJS](https://angularjs.org/) + [Jetty Embedded](http://www.eclipse.org/jetty/) (RESTfull API) + [Apache Jena Framework](https://jena.apache.org/)
