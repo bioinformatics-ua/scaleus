@@ -175,3 +175,9 @@ format = json | rdf | ttl | ld
 ## Python API
 
 [scaleus-python](https://github.com/bioinformatics-ua/scaleus-python)
+
+## Reference
+
+Please use this reference when citing SCALEUS in your work:
+
+* DOI: [10.1007/s10916-017-0705-8](http://dx.doi.org/10.1007/s10916-017-0705-8)
