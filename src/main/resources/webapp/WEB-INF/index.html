@@ -35,7 +35,7 @@
             <nav class="navbar navbar-default navbar-fixed-top" role="navigation"
                  style="margin-bottom: 0">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#index">SCALEUS</a>
+                    <a class="navbar-brand" href="#index">SCALEUS <small><i>Access Mode</i></small></a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -71,11 +71,11 @@
                                         </select>--> <span class="input-group-btn">
                                             <button class="btn btn-default"
                                                     data-ng-click="deleteDataset()"
-                                                    ng-confirm-click="Are you sure you want to delete '{{selectedDataset}}'?">
+                                                    ng-confirm-click="Are you sure you want to delete '{{selectedDataset}}'?" disabled>
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                             <button class="btn btn-default"
-                                                    data-ng-click="showAddDatabase()">
+                                                    data-ng-click="showAddDatabase()" disabled>
                                                 <i class="fa fa-plus-square-o"></i>
                                             </button>
                                         </span>

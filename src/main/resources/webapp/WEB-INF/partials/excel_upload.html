@@ -1,13 +1,13 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Spreadsheet Integration</h1>
+        <h1 class="page-header">Spreadsheet Integration <small><i>Disabled</i></small></h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
 <div class="row" ng-controller="ExcelUploadCtrl" uploader="uploader">
     <div class="col-lg-12">
-        <input type="file" nv-file-select="" uploader="uploader" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet"/>
+        <input type="file" nv-file-select="" uploader="uploader" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet" disabled/>
         <p></p>
         <div data-ng-show="excelView">
 
